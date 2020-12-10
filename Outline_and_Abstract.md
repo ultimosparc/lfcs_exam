@@ -1,4 +1,5 @@
 # Outline
+This repository contains teaching materials to pass the LFCS systemadminstrator exam (operation system is CentOS). In addtion to that, there is test exam that includes all exercises found in the sources. 
 
 ## 1) Essential Commands
 https://github.com/ultimosparc/lfcs_exam/blob/main/Essential_Commands.md
