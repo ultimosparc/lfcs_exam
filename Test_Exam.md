@@ -1,19 +1,17 @@
 # Test Exam
 According to the exercises from the sources, I have created a serie of tasks for every topic.  
 
-## 1) Essential Commands
+## 1. Essential Commands
 
-## 2) User and Group Management
+## 2. User and Group Management
 
-## 3) Operation of Running Systems
+## 3. Operation of Running Systems
 
-## 4) Service Configuration
+## 4. Service Configuration
 
-## 5) Networking
+## 5. Networking
 
-## 6) Storage Management
+## 6. Storage Management
 
-## 7) Test Exam
-
-## 7) Sources
+## 7. Solutions & Remarks
 
