@@ -13,9 +13,11 @@ T4: _Erstelle ein komprimiertes Archiv "test.tar" der Dateien "datei1" und "date
 
 ## 2. User and Group Management
 
+T5: _Erstellen Sie einen neuen User "Peter" und geben Sie Ihm "Superuser"-Rechte._
+
 ## 3. Operation of Running Systems
 
-T5: _Erstellen Sie einen Softlink und Hardlink auf die Datei "test"._
+T6: _Erstellen Sie einen Softlink und Hardlink auf die Datei "test"._
 
 ## 4. Service Configuration
 
@@ -85,9 +87,24 @@ S4: Mögliche Lösung wäre:
        "tar -xvf". Falls bei der Archivierung noch die Option p mitgegeben wird, werden die Rechte mit archiviert.
        Um zu prüfen, ob "test.tar" wirklich komprimiert ist, einfach "file test.tar" ausführen. 
        
-T5: _Erstellen Sie einen Softlink, genannt "symlink", und Hardlink, genannt "hardlink", auf die Datei "test"._
+T5: _Erstellen Sie einen neuen User "Peter" und geben Sie Ihm "Superuser"-Rechte._
 
 S5: Mögliche Lösung wäre:
+    
+    useradd -m
+    
+       Um fas Archiv wieder zu extrahieren, muss einfach nur das "c" mit dem "x" ausgetauscht werden,
+       "tar -xvf". Falls bei der Archivierung noch die Option p mitgegeben wird, werden die Rechte mit archiviert.
+       Um zu prüfen, ob "test.tar" wirklich komprimiert ist, einfach "file test.tar" ausführen.S4: Mögliche Lösung wäre:
+    
+    tar -cvzf vi test.tar datei1 datei2; rm -rf datei1 datei2;
+    
+       Um fas Archiv wieder zu extrahieren, muss einfach nur das "c" mit dem "x" ausgetauscht werden,
+       "tar -xvf". Falls bei der Archivierung noch die Option p mitgegeben wird, werden die Rechte mit archiviert.
+       Um zu prüfen, ob "test.tar" wirklich komprimiert ist, einfach "file test.tar" ausführen.
+T6: _Erstellen Sie einen Softlink, genannt "symlink", und Hardlink, genannt "hardlink", auf die Datei "test"._
+
+S6: Mögliche Lösung wäre:
     
     ln -s test symlink; ln test hardlink
     
