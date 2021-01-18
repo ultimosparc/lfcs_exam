@@ -91,7 +91,10 @@ T5: _Erstellen Sie einen neuen User "Peter" und geben Sie Ihm "Superuser"-Rechte
 
 S5: Mögliche Lösung wäre:
     
-    useradd -m
+    1. sudo useradd -m -s /bin/bash Peter;
+    2. sudo visudo
+    3. Peter ALL=(ALL:ALL) ALL
+    4. :wq
     
        Um fas Archiv wieder zu extrahieren, muss einfach nur das "c" mit dem "x" ausgetauscht werden,
        "tar -xvf". Falls bei der Archivierung noch die Option p mitgegeben wird, werden die Rechte mit archiviert.
