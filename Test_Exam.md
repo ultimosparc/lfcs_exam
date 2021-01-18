@@ -1,17 +1,13 @@
 # Test Exam
-According to the exercises from the sources, I have created a serie of tasks for every topic.  
-
-Mögliche Examsaufgabe (EA)
-
-Lösung (LÖ)
+According to the exercises from the sources, I have created a serie of tasks for every topic. (task (T))
 
 ## 1. Essential Commands
 
-EA1: _Ersetzen Sie das Wort "Haus" mit dem Wort "Eigenheim" überall in der Textdatei "Immobilien.txt" (Substitution)._
+T1: _Ersetzen Sie das Wort "Haus" mit dem Wort "Eigenheim" überall in der Textdatei "Immobilien.txt" (Substitution)._
     
-EA2: _Ersetzen Sie in Zeile 200 den Preis von 100.000€ nach 150.000€ in der Textdatei "Immobilien.txt" (Substitution)._
+T2: _Ersetzen Sie in Zeile 200 den Preis von 100.000€ nach 150.000€ in der Textdatei "Immobilien.txt" (Substitution)._
        
-EA3: _Löschen Sie in der Textdatei "Immobilien.txt" die Zeile 202._
+T3: _Löschen Sie in der Textdatei "Immobilien.txt" die Zeile 202._
 
 ## 2. User and Group Management
 
@@ -25,9 +21,11 @@ EA3: _Löschen Sie in der Textdatei "Immobilien.txt" die Zeile 202._
 
 ## 7. Solutions & Remarks
 
-EA1: _Ersetzen Sie das Wort "Haus" mit dem Wort "Eigenheim" überall in der Textdatei "Immobilien.txt" (Substitution)._
+task (T), solution (S)
 
-LÖ: Es gibt hier zwei mögliche Lösungswege. 
+T1: _Ersetzen Sie das Wort "Haus" mit dem Wort "Eigenheim" überall in der Textdatei "Immobilien.txt" (Substitution)._
+
+S1: Es gibt hier zwei mögliche Lösungswege. 
 
     1. File-Streaming
       
@@ -46,9 +44,9 @@ LÖ: Es gibt hier zwei mögliche Lösungswege.
         In der zweiten Lösung wird ebenfalls eine Substitution durchgeführt, jedoch bietet dieser Lösungsweg den Vorteil,
         man kann direkt im vi Editor sehen, ob die Änderungen erfolgreich ungesetzt wurden. 
       
-EA2: _Ersetzen Sie in Zeile 200 den Preis von 100.000€ nach 150.000€ in der Textdatei "Immobilien.txt" (Substitution)._
+T2: _Ersetzen Sie in Zeile 200 den Preis von 100.000€ nach 150.000€ in der Textdatei "Immobilien.txt" (Substitution)._
 
-LÖ: Mögliche Lösung wäre:
+S2: Mögliche Lösung wäre:
   
     1. vi Immoblien.txt
     2. :set number
@@ -60,9 +58,9 @@ LÖ: Mögliche Lösung wäre:
        Das Ersetzen von Textstellen in einer Textdatei wird gerne als eine Teilaufgabe 
        verwendet im Zusammenhang mit dem Ersetzen von User-Eigenschaften, z.B. für das Passwort-Datei. 
        
-EA3: _Löschen Sie in der Textdatei "Immobilien.txt" die Zeile 202._
+T3: _Löschen Sie in der Textdatei "Immobilien.txt" die Zeile 202._
 
-LÖ: Mögliche Lösung wäre:
+S3: Mögliche Lösung wäre:
     
     1. vi Immoblien.txt
     2. :set number
