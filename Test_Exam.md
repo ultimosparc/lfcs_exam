@@ -1,5 +1,5 @@
 # Test Exam
-According to the exercises from the sources, I have created a serie of tasks for every topic. (task (T))
+According to the exercises from the sources, I have created a serie of tasks for every topic. (Task (T))
 
 ## 1. Essential Commands
 
@@ -21,7 +21,7 @@ T3: _Löschen Sie in der Textdatei "Immobilien.txt" die Zeile 202._
 
 ## 7. Solutions & Remarks
 
-task (T), solution (S)
+Task (T), Solution (S)
 
 T1: _Ersetzen Sie das Wort "Haus" mit dem Wort "Eigenheim" überall in der Textdatei "Immobilien.txt" (Substitution)._
 
