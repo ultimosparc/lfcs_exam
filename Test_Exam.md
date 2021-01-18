@@ -15,6 +15,8 @@ T4: _Erstelle ein komprimiertes Archiv "test.tar" der Dateien "datei1" und "date
 
 ## 3. Operation of Running Systems
 
+T5: _Erstellen Sie einen Softlink und Hardlink auf die Datei "test"._
+
 ## 4. Service Configuration
 
 ## 5. Networking
@@ -82,4 +84,15 @@ S4: Mögliche Lösung wäre:
        Um fas Archiv wieder zu extrahieren, muss einfach nur das "c" mit dem "x" ausgetauscht werden,
        "tar -xvf". Falls bei der Archivierung noch die Option p mitgegeben wird, werden die Rechte mit archiviert.
        Um zu prüfen, ob "test.tar" wirklich komprimiert ist, einfach "file test.tar" ausführen. 
+       
+T5: _Erstellen Sie einen Softlink, genannt "symlink", und Hardlink, genannt "hardlink", auf die Datei "test"._
+
+S5: Mögliche Lösung wäre:
+    
+    ln -s test symlink; ln test hardlink
+    
+       Der Unterschied zwischen einen Hardlink und einem Symlink (auch Softlink genannt) besteht darin,
+       das Hardlinks und Ursprungsdatei teilen sich die gleiche inode. Bei Softlinks ist das nicht der 
+       Fall. 
+       
        
