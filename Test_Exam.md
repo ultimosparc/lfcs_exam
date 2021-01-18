@@ -9,6 +9,8 @@ T2: _Ersetzen Sie in Zeile 200 den Preis von 100.000€ nach 150.000€ in der T
        
 T3: _Löschen Sie in der Textdatei "Immobilien.txt" die Zeile 202._
 
+T4: _Erstelle ein komprimiertes Archiv "test.tar" der Dateien "datei1" und "datei2" und lösche die beiden Dateien "datei1" und "datei2"._
+
 ## 2. User and Group Management
 
 ## 3. Operation of Running Systems
@@ -66,7 +68,18 @@ S3: Mögliche Lösung wäre:
     2. :set number
     3. :202
     5. :d 
-    6 :wq
+    6. :wq
     
        Im Vi-Editor gibt es verschiedene Wege eine Zeile zu löschen, jedoch der "delete"-Befehl 
        ist simpel und schnell auszuführen, zusätzlich kann man das Ergebniss gleich im vi-Editor betrachten. 
+ 
+T4: _Erstelle ein komprimiertes Archiv "test.tar" der Dateien "datei1" und "datei2" und lösche die beiden Dateien "datei1" und "datei2"._
+
+S4: Mögliche Lösung wäre:
+    
+    tar -cvzf vi test.tar datei1 datei2; rm -rf datei1 datei2;
+    
+       Um fas Archiv wieder zu extrahieren, muss einfach nur das "c" mit dem "x" ausgetauscht werden,
+       "tar -xvf". Falls bei der Archivierung noch die Option p mitgegeben wird, werden die Rechte mit archiviert.
+       Um zu prüfen, ob "test.tar" wirklich komprimiert ist, einfach "file test.tar" ausführen. 
+       
