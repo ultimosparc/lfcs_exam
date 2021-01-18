@@ -7,7 +7,25 @@ Lösung (LÖ)
 
 ## 1. Essential Commands
 
-EA: _Ersetzen Sie das Wort "Haus" mit dem Wort "Eigenheim" überall in der Textdatei "Immobilien.txt" (Substitution)._
+EA1: _Ersetzen Sie das Wort "Haus" mit dem Wort "Eigenheim" überall in der Textdatei "Immobilien.txt" (Substitution)._
+    
+EA2: _Ersetzen Sie in Zeile 200 den Preis von 100.000€ nach 150.000€ in der Textdatei "Immobilien.txt" (Substitution)._
+       
+EA3: _Löschen Sie in der Textdatei "Immobilien.txt" die Zeile 202._
+
+## 2. User and Group Management
+
+## 3. Operation of Running Systems
+
+## 4. Service Configuration
+
+## 5. Networking
+
+## 6. Storage Management
+
+## 7. Solutions & Remarks
+
+EA1: _Ersetzen Sie das Wort "Haus" mit dem Wort "Eigenheim" überall in der Textdatei "Immobilien.txt" (Substitution)._
 
 LÖ: Es gibt hier zwei mögliche Lösungswege. 
 
@@ -28,7 +46,7 @@ LÖ: Es gibt hier zwei mögliche Lösungswege.
         In der zweiten Lösung wird ebenfalls eine Substitution durchgeführt, jedoch bietet dieser Lösungsweg den Vorteil,
         man kann direkt im vi Editor sehen, ob die Änderungen erfolgreich ungesetzt wurden. 
       
-EA: _Ersetzen Sie in Zeile 200 den Preis von 100.000€ nach 150.000€ in der Textdatei "Immobilien.txt" (Substitution)._
+EA2: _Ersetzen Sie in Zeile 200 den Preis von 100.000€ nach 150.000€ in der Textdatei "Immobilien.txt" (Substitution)._
 
 LÖ: Mögliche Lösung wäre:
   
@@ -42,7 +60,7 @@ LÖ: Mögliche Lösung wäre:
        Das Ersetzen von Textstellen in einer Textdatei wird gerne als eine Teilaufgabe 
        verwendet im Zusammenhang mit dem Ersetzen von User-Eigenschaften, z.B. für das Passwort-Datei. 
        
-EA: _Löschen Sie in der Textdatei "Immobilien.txt" die Zeile 202._
+EA3: _Löschen Sie in der Textdatei "Immobilien.txt" die Zeile 202._
 
 LÖ: Mögliche Lösung wäre:
     
@@ -54,16 +72,3 @@ LÖ: Mögliche Lösung wäre:
     
        Im Vi-Editor gibt es verschiedene Wege eine Zeile zu löschen, jedoch der "delete"-Befehl 
        ist simpel und schnell auszuführen, zusätzlich kann man das Ergebniss gleich im vi-Editor betrachten. 
-
-## 2. User and Group Management
-
-## 3. Operation of Running Systems
-
-## 4. Service Configuration
-
-## 5. Networking
-
-## 6. Storage Management
-
-## 7. Solutions & Remarks
-
