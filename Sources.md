@@ -3,3 +3,4 @@
 * https://guides.github.com/features/mastering-markdown/
 * https://www.certlibrary.com/exam/LFCS
 * https://github.com/ultimosparc/lfcs/
+* https://www.guru99.com/managing-processes-in-linux.html
