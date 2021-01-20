@@ -19,6 +19,8 @@ T5: _Erstellen Sie einen neuen User "Peter" und geben Sie Ihm "Superuser"-Rechte
 
 T6: _Erstellen Sie einen Softlink und Hardlink auf die Datei "test"._
 
+T7: _Geben Sie dem Prozess "Sleep" eine höhre Priorität, damit dieser schneller ausgeführt wird_
+
 ## 4. Service Configuration
 
 ## 5. Networking
@@ -113,4 +115,12 @@ S6: Mögliche Lösung wäre:
        das Hardlinks und Ursprungsdatei teilen sich die gleiche inode. Bei Softlinks ist das nicht der 
        Fall. 
        
-       
+T7: _Geben Sie dem Prozess "Sleep" eine höhre Priorität, damit dieser schneller ausgeführt wird_
+
+S7: Mögliche Lösung wäre:
+    
+    ln -s test symlink; ln test hardlink
+    
+       Der Unterschied zwischen einen Hardlink und einem Symlink (auch Softlink genannt) besteht darin,
+       das Hardlinks und Ursprungsdatei teilen sich die gleiche inode. Bei Softlinks ist das nicht der 
+       Fall. 
