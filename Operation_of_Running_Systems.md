@@ -58,6 +58,15 @@ benutzen. Dieser Job öffnet die sogenannte "Chrontable". In dieser Tabelle werd
 
         * * * * * /tmp/test.sh
         
-Ein solcher Eintrag besteht aus einem Zeiteintrag " * * * * * " und dem Befehl/Skript. 
+Ein solcher Eintrag besteht aus einem Zeiteintrag " * * * * * " und dem Befehl/Skript. Anhand der Systemlogs kann geprüft werden, ob ein Chronjob ausgeführt wurde.
+An den folgenden Stellen im Dateisystem befinden sich Logs:
 
+        /etc/rsyslog.conf
+        /etc/syslog.conf
+        /var/log
 
+Folgende Beispiele zeigen Zugriff auf Logs, um die Ausführung von Chronjobs zu prüfen:
+
+        grep -ic cron /var/log/* | grep -v :0
+        grep cron /etc/rsyslog.conf
+        grep -i debian-sa1 syslog | tail -1
