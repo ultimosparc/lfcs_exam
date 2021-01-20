@@ -17,13 +17,17 @@ T4: _Erstelle ein komprimiertes Archiv "test.tar" der Dateien "datei1" und "date
 
 T5: _Erstellen Sie einen neuen User "Peter" und geben Sie Ihm "Superuser"-Rechte._
 
+T6: _Erstellen Sie eine neue Gruppe "Verkäufer" und fügen Sie den User Peter hinzu_
+
+T7: _Erstellen Sie einen Unterordner "Haus" und ändern Sie die Gruppe zu "Verkäufer" und den Besitzer zu root_
+
 ## 3. Operation of Running Systems
 
-T6: _Erstellen Sie einen Softlink und Hardlink auf die Datei "test"._
+T8: _Erstellen Sie einen Softlink und Hardlink auf die Datei "test"._
 
-T7: _Geben Sie dem Prozess "Sleep" eine höhre Priorität, damit dieser schneller ausgeführt wird_
+T9: _Geben Sie dem Prozess "Sleep" eine höhre Priorität, damit dieser schneller ausgeführt wird_
 
-T8: _Legen Sie einen Chronjob an, der jede Minute das Skript /tmp/test.sh ausführt_
+T10: _Legen Sie einen Chronjob an, der jede Minute das Skript /tmp/test.sh ausführt_
 
 ## 4. Service Configuration
 
@@ -108,10 +112,32 @@ S5: Mögliche Lösung wäre:
        In dieser Datei kann auch notiert werden, welche Gruppen Superuser-Rechte bekommen sollen. 
        Damit können mehrere User gleichzeitig mit Superuser-Rechten ausgestattet werden.
        Standardmäßig existiert bereits eine solche Gruppe, genannt "wheel".
-       
-T6: _Erstellen Sie einen Softlink, genannt "symlink", und Hardlink, genannt "hardlink", auf die Datei "test"._
+
+T6: _Erstellen Sie eine neue Gruppe "Verkäufer" und fügen Sie den User Peter hinzu_
 
 S6: Mögliche Lösung wäre:
+    
+    1. groupadd Verkäufer
+    2. sudo usermod -aG Verkäufer Peter
+        
+       Wenn die Optionen -aG nicht verwendet werden, dann wird der User gelöscht von allen Gruppen, 
+       die nicht innerhalb der -G Liste stehen. 
+
+T7: _Erstellen Sie einen Unterordner "Haus" in /home/Peter und ändern Sie die Gruppe zu "Verkäufer" und den Besitzer zu root_
+
+S7: Mögliche Lösung wäre:
+    
+    1. cd ~
+    2. mkdir -p Haus
+    3. sudo chown -fvR root Haus
+    
+       Die Option -p vergewissert, das auch die Parentordner existieren, falls nicht, dann werden diese angelegt. 
+       -f unterdrückt Fehlermeldungen und Abbrüche, -v gibt Ausdrücke der Zwischenergebnisse während der 
+       Ausführung aus und -R setzt den Change rekursiv auf die Unterordner um. 
+       
+T8: _Erstellen Sie einen Softlink, genannt "symlink", und Hardlink, genannt "hardlink", auf die Datei "test"._
+
+S8: Mögliche Lösung wäre:
     
     ln -s test symlink; ln test hardlink
     
@@ -119,9 +145,9 @@ S6: Mögliche Lösung wäre:
        das Hardlinks und Ursprungsdatei teilen sich die gleiche inode. Bei Softlinks ist das nicht der 
        Fall. 
        
-T7: _Geben Sie dem Prozess "Sleep" eine höhre Priorität, damit dieser schneller ausgeführt wird_
+T9: _Geben Sie dem Prozess "Sleep" eine höhre Priorität, damit dieser schneller ausgeführt wird_
 
-S7: Mögliche Lösung wäre:
+S9: Mögliche Lösung wäre:
     
     1. top -u username --> PID bestimmen
     2. renice '-20' -p 'PID'
@@ -129,9 +155,9 @@ S7: Mögliche Lösung wäre:
         Wir der erste Befehl "top -u username" nochmal ausgeführt, dann
         muss sich der NI-Wert des Prozess "Sleep" geändert haben.
         
-T8: _Legen Sie einen Chronjob an, der jede Minute das Skript /tmp/test.sh ausführt_
+T10: _Legen Sie einen Chronjob an, der jede Minute das Skript /tmp/test.sh ausführt_
 
-S8: Mögliche Lösung wäre:
+S10: Mögliche Lösung wäre:
     
     1. chrontab -e
     2. */1 * * * * /tmp/test.sh
