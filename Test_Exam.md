@@ -119,8 +119,8 @@ T7: _Geben Sie dem Prozess "Sleep" eine höhre Priorität, damit dieser schnelle
 
 S7: Mögliche Lösung wäre:
     
-    ln -s test symlink; ln test hardlink
+    1. top -u username --> PID bestimmen
+    2. renice '-20' -p 'PID'
     
-       Der Unterschied zwischen einen Hardlink und einem Symlink (auch Softlink genannt) besteht darin,
-       das Hardlinks und Ursprungsdatei teilen sich die gleiche inode. Bei Softlinks ist das nicht der 
-       Fall. 
+        Wir der erste Befehl "top -u username" nochmal ausgeführt, dann
+        muss sich der NI-Wert des Prozess "Sleep" geändert haben.
