@@ -1,9 +1,23 @@
 # lfcs_exam
 
-_Priorisierung von Prozessen_
+_Priorisierung von Prozessen_ [5]
 
-Den Prozessen in einem Unix-System werden sogenannte nice-Werte vergeben. Anhand dieser Werte
+Linux can run a lot of processes at a time, which can slow down the speed of some high priority processes and result in poor performance.
+To avoid this, you can tell your machine to prioritize processes as per your requirements.
+Dies erfolgt über die Vergabe von sogenannte nice-Werten. Anhand dieser Werte
 werden die Prozesse unterschiedlich schnell ausgeführt. 
+This priority is called Niceness in Linux, and it has a value between -20 to 19. The lower the Niceness index, the higher would be a priority given to that task.
+The default value of all the processes is 0.
+To start a process with a niceness value other than the default value use the following syntax
+
+        nice -n 'Nice value' process name
+        
+Den Nice-Werte von laufende Prozesse können mit dem Befehl _renice_ modifiziert werden. Z.B. könnte 
+ein Befehl wie folgt aussehen:
+
+        renice 'nice value' -p 'PID'
+        
+
 Mit dem Programm _top_ können alle aktuell laufenden Prozesse vom ganzem System angezeigt werden.
 Zum Beispiel könnte die Ausgabe wie folgt aussehen: 
 
