@@ -5,3 +5,6 @@
     3. https://www.certlibrary.com/exam/LFCS
     4. https://github.com/ultimosparc/lfcs/
     5. https://www.guru99.com/managing-processes-in-linux.html
+    6. https://www.howtogeek.com/schedule-tasks-on-linux-introduction-to-crontab-files/
+    7. https://www.networkworld.com/scheduling-tasks-on-linux-using-the-at-command
+    8. https://bencane.com/did-my-cronjob-run/
