@@ -43,8 +43,23 @@ einen Prozess. D.h. die Bezeichnung Prozess steht für "ausführbares Programm".
 dann startet man den Prozess im Vordergrund und schiebt den Prozess in den Hintergrund vom Terminal. Das bedeutet, 
 während der Ausführungszeit des Prozesses bleibt das Terminal "ansprechbar", d.h. es können weitere Befehle eingeben werden. 
 Prozesse im Hintergrund nennt man Job. Jobs haben wie Prozesse einen Parentprozess. Jobs, dessen Parentprozess den "init-Prozess" ist, nennt man "Demoans".   
-und in den Background gepackt, z.B. mit _programm &_, dann 
 
-he cron daemon on Linux runs tasks in the background at specific times; it’s like the Task Scheduler on Windows. Add tasks to your system’s crontab files using the appropriate syntax and cron will automatically run them for you.
+Linux bietet die Möglichkeit, Jobs zu einer bestimmten Zeit ausführen. Solche Jobs nennt man Chron-Jobs (Chronjobs). Es gibt zwei Befehle, um solche Chronjobs zu erstellen. Der erste Befehl ist "at". Ein möglicher Aufruf könnte wie folgt aussehen
 
+        at 8PM
+        
+Damit können einzeilige Jobs zu bestimmten Zeiten ausgeführt werden. Die zweite Möglichkeit um Chronjobs zu erstellen ergibt sich durch den Befehl "chrontab". 
 Crontab files can be used to automate backups, system maintenance and other repetitive tasks. The syntax is powerful and flexible, so you can have a task run every fifteen minutes or at a specific minute on a specific day every year.
+Um einen Chromjob zu erstellen, man muss den Befehl
+
+        chrontab -e
+        
+benutzen. Dieser Job öffnet die sogenannte "Chrontable". In dieser Tabelle werden nun die Chronjobs definiert. Zum Beispiel könnte ein Eintrag wie folgt aussehen: 
+
+        * * * * * /tmp/test.sh
+        
+Ein solcher Eintrag besteht aus einem Zeiteintrag " * * * * * " und dem Befehl/Skript. Um die den Zeiteintrag zu definieren
+
+Mit der Option -l kann man alle Jobs auflisten.
+
+
