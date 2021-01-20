@@ -47,8 +47,9 @@ S1: Es gibt hier zwei mögliche Lösungswege.
       2. : %s/Haus/Eigenheim/g
       3. :wq
       
-        In der zweiten Lösung wird ebenfalls eine Substitution durchgeführt, jedoch bietet dieser Lösungsweg den Vorteil,
-        man kann direkt im vi Editor sehen, ob die Änderungen erfolgreich ungesetzt wurden. 
+        In der zweiten Lösung wird ebenfalls eine Substitution durchgeführt, 
+        jedoch bietet dieser Lösungsweg den Vorteil, man kann direkt im vi
+        Editor sehen, ob die Änderungen erfolgreich ungesetzt wurden. 
       
 T2: _Ersetzen Sie in Zeile 200 den Preis von 100.000€ nach 150.000€ in der Textdatei "Immobilien.txt" (Substitution)._
 
@@ -77,7 +78,7 @@ S3: Mögliche Lösung wäre:
        Im Vi-Editor gibt es verschiedene Wege eine Zeile zu löschen, jedoch der "delete"-Befehl 
        ist simpel und schnell auszuführen, zusätzlich kann man das Ergebniss gleich im vi-Editor betrachten. 
  
-T4: _Erstelle ein komprimiertes Archiv "test.tar" der Dateien "datei1" und "datei2" und lösche die beiden Dateien "datei1" und "datei2"._
+T4: _Erstelle ein komprimiertes Archiv "test.tar" der Dateien "datei1" und "datei2" und löschen Sie die beiden Dateien "datei1" und "datei2"._
 
 S4: Mögliche Lösung wäre:
     
@@ -96,15 +97,12 @@ S5: Mögliche Lösung wäre:
     3. Peter ALL=(ALL:ALL) ALL
     4. :wq
     
-       Um fas Archiv wieder zu extrahieren, muss einfach nur das "c" mit dem "x" ausgetauscht werden,
-       "tar -xvf". Falls bei der Archivierung noch die Option p mitgegeben wird, werden die Rechte mit archiviert.
-       Um zu prüfen, ob "test.tar" wirklich komprimiert ist, einfach "file test.tar" ausführen.S4: Mögliche Lösung wäre:
-    
-    tar -cvzf vi test.tar datei1 datei2; rm -rf datei1 datei2;
-    
-       Um fas Archiv wieder zu extrahieren, muss einfach nur das "c" mit dem "x" ausgetauscht werden,
-       "tar -xvf". Falls bei der Archivierung noch die Option p mitgegeben wird, werden die Rechte mit archiviert.
-       Um zu prüfen, ob "test.tar" wirklich komprimiert ist, einfach "file test.tar" ausführen.
+       Visudo ist ein spezielles Programm, das den vi-Editor benutzt, um die Datei 
+       zu öffnen, wo die Superuser-Rechte liegen.
+       In dieser Datei kann auch notiert werden, welche Gruppen Superuser-Rechte bekommen sollen. 
+       Damit können mehrere User gleichzeitig mit Superuser-Rechten ausgestattet werden.
+       Standardmäßig existiert bereits eine solche Gruppe, genannt "wheel".
+       
 T6: _Erstellen Sie einen Softlink, genannt "symlink", und Hardlink, genannt "hardlink", auf die Datei "test"._
 
 S6: Mögliche Lösung wäre:
