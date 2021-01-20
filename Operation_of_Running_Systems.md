@@ -1,4 +1,4 @@
-# lfcs_exam
+# Operation_of_Running_Systems
 
 _Priorisierung von Prozessen_ [5]
 
@@ -34,3 +34,17 @@ Zum Beispiel könnte die Ausgabe wie folgt aussehen:
        35 constan+  20   0   17648   2100   1504 R   0.0  0.0   0:00.03 top
        
  In der Spalte _NI_ sieht man, alle Prozesse haben einen Nice-Wert von 0. 
+
+
+ _Ausführung von Jobs auf einem Linux-System_ [6,7,8]
+
+Das Programm "echo" schreibt beispielsweise eine Nachricht in die Standardausgabe "stdout". Führt man das Programm "echo" aus, dann generiert man
+einen Prozess. D.h. die Bezeichnung Prozess steht für "ausführbares Programm". Wird nun der Befehl "echo test &" im Terminal eingegeben, 
+dann startet man den Prozess im Vordergrund und schiebt den Prozess in den Hintergrund vom Terminal. Das bedeutet, 
+während der Ausführungszeit des Prozesses bleibt das Terminal "ansprechbar", d.h. es können weitere Befehle eingeben werden. 
+Prozesse im Hintergrund nennt man Job. Jobs haben wie Prozesse einen Parentprozess. Jobs, dessen Parentprozess den "init-Prozess" ist, nennt man "Demoans".   
+und in den Background gepackt, z.B. mit _programm &_, dann 
+
+he cron daemon on Linux runs tasks in the background at specific times; it’s like the Task Scheduler on Windows. Add tasks to your system’s crontab files using the appropriate syntax and cron will automatically run them for you.
+
+Crontab files can be used to automate backups, system maintenance and other repetitive tasks. The syntax is powerful and flexible, so you can have a task run every fifteen minutes or at a specific minute on a specific day every year.
