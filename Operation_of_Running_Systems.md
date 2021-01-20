@@ -58,8 +58,6 @@ benutzen. Dieser Job öffnet die sogenannte "Chrontable". In dieser Tabelle werd
 
         * * * * * /tmp/test.sh
         
-Ein solcher Eintrag besteht aus einem Zeiteintrag " * * * * * " und dem Befehl/Skript. Um die den Zeiteintrag zu definieren
-
-Mit der Option -l kann man alle Jobs auflisten.
+Ein solcher Eintrag besteht aus einem Zeiteintrag " * * * * * " und dem Befehl/Skript. 
 
 
