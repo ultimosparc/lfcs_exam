@@ -1,6 +1,8 @@
 # Test Exam
 According to the exercises from the sources, I have created a serie of tasks for every topic. (Task (T))
 
+Die Aufgaben bilden eine Grundlage, um bestimmte Teilaufgaben von Examsaufgaben zu idenzifizieren und zu lösen.  
+
 ## 1. Essential Commands
 
 T1: _Ersetzen Sie das Wort "Haus" mit dem Wort "Eigenheim" überall in der Textdatei "Immobilien.txt" (Substitution)._
@@ -20,6 +22,8 @@ T5: _Erstellen Sie einen neuen User "Peter" und geben Sie Ihm "Superuser"-Rechte
 T6: _Erstellen Sie einen Softlink und Hardlink auf die Datei "test"._
 
 T7: _Geben Sie dem Prozess "Sleep" eine höhre Priorität, damit dieser schneller ausgeführt wird_
+
+T8: _Legen Sie einen Chronjob an, der jede Minute das Skript /tmp/test.sh ausführt_
 
 ## 4. Service Configuration
 
@@ -124,3 +128,13 @@ S7: Mögliche Lösung wäre:
     
         Wir der erste Befehl "top -u username" nochmal ausgeführt, dann
         muss sich der NI-Wert des Prozess "Sleep" geändert haben.
+        
+T8: _Legen Sie einen Chronjob an, der jede Minute das Skript /tmp/test.sh ausführt_
+
+S8: Mögliche Lösung wäre:
+    
+    1. chrontab -e
+    2. */1 * * * * /tmp/test.sh
+    3. chrontab -l
+    
+       Ein Zeiteintrag kann mit Hilfe der Tabelle "more /etc/crontab" definiert werden (nur unter CentOS).
