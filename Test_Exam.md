@@ -129,11 +129,10 @@ S7: Mögliche Lösung wäre:
     
     1. cd ~
     2. mkdir -p Haus
-    3. sudo chown -fvR root Haus
+    3. sudo chown -cR root Haus
     
        Die Option -p vergewissert, das auch die Parentordner existieren, falls nicht, dann werden diese angelegt. 
-       -f unterdrückt Fehlermeldungen und Abbrüche, -v gibt Ausdrücke der Zwischenergebnisse während der 
-       Ausführung aus und -R setzt den Change rekursiv auf die Unterordner um. 
+      -R setzt den Change rekursiv auf die Unterordner um. 
        
 T8: _Erstellen Sie einen Softlink, genannt "symlink", und Hardlink, genannt "hardlink", auf die Datei "test"._
 
