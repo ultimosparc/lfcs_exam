@@ -1,5 +1,14 @@
 # Operation_of_Running_Systems
 
+    Locate and analyse system log files and manipulate it
+    Limit the number of user processes for a specific account or group
+    Install/update packages, get information about installed packages (depends on your distribution)
+    Schedule tasks to run at a set date and time (using cron)
+    Use scripting to automate system maintenance tasks
+    Diagnose and manage processes (find process ID for example)
+
+
+
 _Priorisierung von Prozessen_ [5]
 
 Linux can run a lot of processes at a time, which can slow down the speed of some high priority processes and result in poor performance.
