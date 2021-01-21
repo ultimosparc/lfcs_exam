@@ -129,7 +129,7 @@ S7: Mögliche Lösung wäre:
     
     1. cd ~
     2. mkdir -p Haus
-    3. sudo chown -cR root Haus
+    3. sudo chown root:Verkäufer Haus
     
        Die Option -p vergewissert, das auch die Parentordner existieren, falls nicht, dann werden diese angelegt. 
       -R setzt den Change rekursiv auf die Unterordner um. 
