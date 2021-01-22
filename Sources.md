@@ -8,3 +8,4 @@
     6. https://www.howtogeek.com/schedule-tasks-on-linux-introduction-to-crontab-files/
     7. https://www.networkworld.com/scheduling-tasks-on-linux-using-the-at-command
     8. https://bencane.com/did-my-cronjob-run/
+    9. http://www.compsci.hunter.cuny.edu/~sweiss/course_materials/unix_lecture_notes/chapter_03.pdf
