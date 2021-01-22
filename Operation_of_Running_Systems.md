@@ -7,8 +7,32 @@
     Use scripting to automate system maintenance tasks
     Diagnose and manage processes (find process ID for example)
 
+Priviligierte und nicht priviligierte Prozesse und userspace und systemspace. 
+Unix OS Kernel ist eine API mit verschiedenen Entry points, ein Entry point liefern service das der Kernel anbietet. 
+Kernel Ansammlung von Funktionen mit Api wo die Funktionen fest definiert sind mit Parametern und Datentypen, die dann als Entrypunkt für den Service dienen
+Kernel wird in den Systemspace geladen nach dem booten und bleibt dort bis zum zum shutdown
+user können über user prozesse mit dem Api mit dem Kernel kommunizieren, der die geforderten Resoucen verwaltet und ensprechende Werte zurückliefert.
+The kernel provides many services to user programs, including
 
+ process scheduling and management,
+ I/O handling,
+ physical and virtual memory management,
+ device management,
+ le management,
+ signaling and inter-process communication,
+ multi-threading,
+ multi-tasking,
+ real-time signaling and scheduling, and
+ networking services.
+Network services include protocols such as HTTP, NIS, NFS, X.25, SSH, SFTP, TCP/IP, and Java.
+Exactly which protocols are supported is not important; what is important is for you to understand
+that the kernel provides the means by which a user program can make requests for these services.
 
+There are two dierent methods by which a program can make requests for services from the kernel:
+ by making a system call to a function (i.e., entry point) built directly into the kernel, or
+ by calling a higher-level library (i.q. system programs) routine that makes use of this call.
+
+Ein System Programm kann man beispielweise unter /bin, /usr/bin gefunden werden
 _Priorisierung von Prozessen_ [5]
 
 Linux can run a lot of processes at a time, which can slow down the speed of some high priority processes and result in poor performance.
@@ -45,9 +69,7 @@ Zum Beispiel könnte die Ausgabe wie folgt aussehen:
  In der Spalte _NI_ sieht man, alle Prozesse haben einen Nice-Wert von 0. 
 
 
- _Ausführung von Jobs auf einem Linux-System_ [6,7,8]
-
-
+ _Ausführung von Jobs auf einem Linux-System_ [6,7,8,9]
 Das Programm "echo" schreibt beispielsweise eine Nachricht in die Standardausgabe "stdout". Führt man das Programm "echo" aus, dann generiert man
 einen Prozess. D.h. die Bezeichnung Prozess steht für "ausführbares Programm". Wird nun der Befehl "echo test &" im Terminal eingegeben, 
 dann startet man den Prozess im Vordergrund und schiebt den Prozess in den Hintergrund vom Terminal. Das bedeutet, 
@@ -56,7 +78,8 @@ Prozesse im Hintergrund nennt man Job. Jobs haben wie Prozesse einen Parentproze
 Bei allen Begriffen, die oben genannt werden, handelt es sich um abstrakte Begriffe, die von einander abhängen. Die folgende Darstellung illustriert noch einmal
 diese Abhängigkeiten: 
     
-    File (sourcecode) ->  program (executable file) ->  
+    file (sourcecode) ->  program (executable file) -> process (running instance of a program)
+        -> job (process in background) -> demoan (job having init as parent) 
 
 Linux bietet die Möglichkeit, Jobs zu einer bestimmten Zeit ausführen. Solche Jobs nennt man Chron-Jobs (Chronjobs). Es gibt zwei Befehle, um solche Chronjobs zu erstellen. Der erste Befehl ist "at". Ein möglicher Aufruf könnte wie folgt aussehen
 
