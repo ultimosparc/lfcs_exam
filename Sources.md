@@ -11,3 +11,4 @@
     9. http://www.compsci.hunter.cuny.edu/~sweiss/course_materials/unix_lecture_notes/chapter_03.pdf
     10. https://szumigalski.com/2020/05/18/lfcs-admin-exam-preparation-guide-searching-for-files/
     11. https://www.youtube.com/watch?v=bIaNDBDxwhA&feature=youtu.be
+    12. https://www.youtube.com/playlist?list=PLC5eRS3MXpp8KEG-o6CgJZL5tsO27Oru6
