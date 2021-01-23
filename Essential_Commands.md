@@ -63,7 +63,12 @@ Es existieren weitere Befehhhhhhhhle nach Dateien zu suchen.
 man -k "keyword" 
 
 
+Set up a mail server.
+The questions were outcome based, i.e. Set up a mail server.
 
+You were free to use the tools you deemed right as assessment was proficiency based.
+
+I don't know how much has changed but practice was key. i.e. I set up various mail servers before finding an approach I was confident with.
 
 
 
