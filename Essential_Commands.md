@@ -29,7 +29,40 @@ Weitere Ooptionen:
     -u Updaten von einzlnen Dateien 
  
  
-_Suchen nach Dateien_ [9]
+_Suchen nach Dateien_ [10]
+
+Es gibt verschiedene Befehle zum Suchen von Textdateien. Meist wird der Befehl _find_ genutzt. It can be used to search by name, file type, timestamp, owner, and many other attributes. Ein möglicher Befehl kann wie folgt aussehen:
+
+    find <folder> -name <file>
+    
+<folder> und <file> sind Platzhalter. Falls <folder> wegfällt, dann sucht das Programm im lokalen Ordner. Weitere Operationen: 
+    
+    -iname incasitive Suche nach Dateien
+    -type <d> Suche nach File-Typen (d Verzeichnis, f Datei, l Link)
+    -user <name> Suche nach Besitzer
+    -atime <time> Suche nach Generierungszeit
+    -size <size> Suche nach Dateigröße
+    -perm <Permissions> Suche nach Dateien durch die Rechte
+    
+Ein besondere Option des _find_ Befehls zeigt das folgende Beispiel
+
+    find . -perm 777 -exec rm -f '{}' \;
+    
+Das Beispiel sucht nach Dateien im lokalen Ordner, die mindestens die Berechtigung von 777 haben. Falls gefunden, dann einmal löschen, ohne extra nachzufragen. {} will be substitute with result of find. 
+The exec's command must be contained between -exec and \;.
+; is treated as end of command character in bash shell. For this I must escape it with \. If escaped it will be interpreted by find and not by bash shell.
+Es existieren weitere Befehhhhhhhhle nach Dateien zu suchen. 
+
+    which – returns the location of the command base on the PATH settings
+    whereis – returns the location of the binary, source file, and man page, it can return multiple versions of command if they exist.
+    type – returns information about the command type and details based on how the command is related to the shell configuration.
+    locate sucht wie find nach Datei, jedoch über eine interne Datenbank
+ 
+
+
+
+
+
 
 
 
