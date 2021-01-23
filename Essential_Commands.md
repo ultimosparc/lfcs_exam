@@ -60,7 +60,7 @@ Es existieren weitere Befehhhhhhhhle nach Dateien zu suchen.
  
 
 
-
+man -k "keyword" 
 
 
 
