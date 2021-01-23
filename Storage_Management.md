@@ -16,6 +16,7 @@ What is the difference between the i and a commands of the vi editor?
  
  ssh-agent speichert die Schlüssel für die Zugriff
 
+RAID, LVM, partitioning and fs manipulations are the must. As well as fsck.
     List, create, delete, and modify physical storage partitions, including GPT (using fdisk, gdisk utilities)
     Manage and configure LVM partitions
     Create and manage software RAID (using mdadm)
