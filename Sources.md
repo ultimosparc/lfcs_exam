@@ -10,3 +10,4 @@
     8. https://bencane.com/did-my-cronjob-run/
     9. http://www.compsci.hunter.cuny.edu/~sweiss/course_materials/unix_lecture_notes/chapter_03.pdf
     10. https://szumigalski.com/2020/05/18/lfcs-admin-exam-preparation-guide-searching-for-files/
+    11. https://www.youtube.com/watch?v=bIaNDBDxwhA&feature=youtu.be
