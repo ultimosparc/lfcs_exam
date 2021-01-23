@@ -13,3 +13,7 @@
     11. https://www.youtube.com/watch?v=bIaNDBDxwhA&feature=youtu.be
     12. https://www.youtube.com/playlist?list=PLC5eRS3MXpp8KEG-o6CgJZL5tsO27Oru6
     13. https://www.tecmint.com/sed-command-to-create-edit-and-manipulate-files-in-linux/
+    14. https://github.com/maxbischoff/lfcs-practice
+    15. http://mathematicbren.blogspot.com/2014/12/practice-test.html
+    16. http://mathematicbren.blogspot.com/2014/12/youse-big-fine-sysadmin-wont-you-back.html
+    17. http://mathematicbren.blogspot.com/2014/12/raid-and-you.html
