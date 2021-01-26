@@ -17,3 +17,4 @@
     15. http://mathematicbren.blogspot.com/2014/12/practice-test.html
     16. http://mathematicbren.blogspot.com/2014/12/youse-big-fine-sysadmin-wont-you-back.html
     17. http://mathematicbren.blogspot.com/2014/12/raid-and-you.html
+    18. http://www.compsci.hunter.cuny.edu/~sweiss/course_materials/csci340/slides/chapter03.html#207
