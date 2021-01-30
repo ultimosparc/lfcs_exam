@@ -33,6 +33,11 @@ T10: _Legen Sie einen Chronjob an, der jede Minute das Skript /tmp/test.sh ausf√
 
 ## 5. Networking
 
+Upon reboot, manually configure grub to boot into runlevel 3
+Upon booting, set the machine to permanently boot into runlevel 3
+Change the hostname to CENT6
+https://phoenixnap.com/kb/how-to-set-or-change-a-hostname-in-centos-7
+
 ## 6. Storage Management
 
 ## 7. Solutions & Remarks
