@@ -40,6 +40,18 @@ https://phoenixnap.com/kb/how-to-set-or-change-a-hostname-in-centos-7
 
 ## 6. Storage Management
 
+T: _Erstellen Sie ein Backup des Heimverzeichnis von User "Peter" und der ganzen Partition/Hard Drive._
+
+S: Folgende Lösungen sind möglich, entweder über sudo oder root ausführen 
+
+    1. Backup des Heimverzeichnis von "Peter"
+        1. mkdir /backups (falls noch nicht verhanden)
+        2. tar cvfz /backups/user_backup_peter.tar /home/Peter
+    
+    2. Backup der Partition/Hard Drive
+        
+        
+
 ## 7. Solutions & Remarks
 
 Task (T), Solution (S)
