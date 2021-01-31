@@ -106,3 +106,26 @@ As root, locate the now running infinite_loop and forcefully kill it by PID
 Create a backup of the /etc/yum.repos.d folder using tar or rsync; place your backup in /root
 Create a local repo using a live dvd iso of Centos
 Using your local repo, install the appropriate packages needed for virtualization.
+
+Creating Backups:
+dd - Use this tool to take complete back ups of entire partitions or drives. 
+dd if=[device you want to backup] of=[backup.img]
+IMPORTANT: This backup will be of the entire extent of the device you mention even if there is space on the drive. It will backup the entire extent. 
+rsync - use this tool if you need to perform backups over a network. 
+rsync -av [source] [destination]
+tar - Standard archiving. 
+tar cvf tarball.tar /directory/
+Some practical code:
+dd if=/dev/sda of=/backups/sda.img
+rsync -av /root/ /backups/
+tar cvfj rootarchive.bz2 /root/
+Restoring Backups: Pretty much straightforward in most cases. 
+dd - simply reverse the process
+rsync - Same idea as dd - Reverse the process. 
+tar - Use the extract directive (x)
+Some practical code:
+dd if=/backups/sda.img /dev/sda
+rsync -v /backups/ /root/
+tar xvfj rootarchive.bz2
+Make sure you are in the directory you want to the data to be unpacked into. 
+As always, consult man pages for more information. 
