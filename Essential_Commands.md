@@ -7,18 +7,18 @@ _Archivieren von Dateien_ [9]
 Dateien können in Archiven verpackt werden. Das Tool dafür ist _tar_. 
 Ein möglicher Befehl zum Generieren eines Archives könnte wie folgt aussehen: 
 
-    tar -cvf test.tar datei1 datei2
+    tar cvf test.tar datei1 datei2 verzeichnis1
 
-Dieser Befehl generiert ein Archiv "test.tar" (-c) aus den Dateien "datei1" und "datei2". Dabei wird im Terminal ausgegeben, welche Dateien ins Archiv gepackt werden (-v). 
+Dieser Befehl generiert ein Archiv "test.tar" (-c) aus den Dateien "datei1" und "datei2" und dem Verzeichnis "verzeichnis1". Dabei wird im Terminal ausgegeben, welche Dateien ins Archiv gepackt werden (-v). 
 Das Entpacken eines Archivs kann wie folgt realisiert werden: 
 
-    tar -xvf test.tar (Size: 10 KB)
+    tar xvf test.tar (Size: 10 KB)
     
 Die Option -x steht für Entpacken. Es gibt zusätzlich die Möglichkeit, ein Archiv zu komprimieren. Unteranderem gibt es folgende Möglichkeiten der Kompromierung:
 
     -z gzip (Size: 131 B)
     -j bzip2/bz (Size: 140 B)
-    -J xz (Size: 180 B
+    -J xz (Size: 180 B)
     
 Wie im Beispiel beobachtet werden kann, das Archiv kann bis um das 10fache verkleinert werden. Damit wird klar, jedes Archiv sollte komprimiert werden. Gewöhnlich benutzt man gzip, um ein tar Archiv zu komprimieren. 
 Weitere Ooptionen: 
@@ -51,13 +51,36 @@ Ein besondere Option des _find_ Befehls zeigt das folgende Beispiel
 Das Beispiel sucht nach Dateien im lokalen Ordner, die mindestens die Berechtigung von 777 haben. Falls gefunden, dann einmal löschen, ohne extra nachzufragen. {} will be substitute with result of find. 
 The exec's command must be contained between -exec and \;.
 ; is treated as end of command character in bash shell. For this I must escape it with \. If escaped it will be interpreted by find and not by bash shell.
-Es existieren weitere Befehhhhhhhhle nach Dateien zu suchen. 
+Es existieren weitere Befehhle nach Dateien zu suchen. 
 
     which – returns the location of the command base on the PATH settings
     whereis – returns the location of the binary, source file, and man page, it can return multiple versions of command if they exist.
     type – returns information about the command type and details based on how the command is related to the shell configuration.
     locate sucht wie find nach Datei, jedoch über eine interne Datenbank
  
+_Creating Backups_ [9]
+
+Creating Backups:
+dd - Use this tool to take complete back ups of entire partitions or drives. 
+dd if=[device you want to backup] of=[backup.img]
+IMPORTANT: This backup will be of the entire extent of the device you mention even if there is space on the drive. It will backup the entire extent. 
+rsync - use this tool if you need to perform backups over a network. 
+rsync -av [source] [destination]
+tar - Standard archiving. 
+tar cvf tarball.tar /directory/
+Some practical code:
+dd if=/dev/sda of=/backups/sda.img
+rsync -av /root/ /backups/
+tar cvfj rootarchive.bz2 /root/
+Restoring Backups: Pretty much straightforward in most cases. 
+dd - simply reverse the process
+rsync - Same idea as dd - Reverse the process. 
+tar - Use the extract directive (x)
+Some practical code:
+dd if=/backups/sda.img /dev/sda
+rsync -v /backups/ /root/
+tar xvfj rootarchive.bz2
+Make sure you are in the directory you want to the data to be unpacked into. 
 
 
 man -k "keyword" 
@@ -72,7 +95,7 @@ I don't know how much has changed but practice was key. i.e. I set up various ma
 
 
 
-    Searching files (using find, a lot of it in different levels)
+    
     Compare and manipulate file content (using diff for example)
     Input-output redirection (>,>>,<<,<,|,2&1 etc.)
     Create, manage hard and soft links
@@ -107,25 +130,4 @@ Create a backup of the /etc/yum.repos.d folder using tar or rsync; place your ba
 Create a local repo using a live dvd iso of Centos
 Using your local repo, install the appropriate packages needed for virtualization.
 
-Creating Backups:
-dd - Use this tool to take complete back ups of entire partitions or drives. 
-dd if=[device you want to backup] of=[backup.img]
-IMPORTANT: This backup will be of the entire extent of the device you mention even if there is space on the drive. It will backup the entire extent. 
-rsync - use this tool if you need to perform backups over a network. 
-rsync -av [source] [destination]
-tar - Standard archiving. 
-tar cvf tarball.tar /directory/
-Some practical code:
-dd if=/dev/sda of=/backups/sda.img
-rsync -av /root/ /backups/
-tar cvfj rootarchive.bz2 /root/
-Restoring Backups: Pretty much straightforward in most cases. 
-dd - simply reverse the process
-rsync - Same idea as dd - Reverse the process. 
-tar - Use the extract directive (x)
-Some practical code:
-dd if=/backups/sda.img /dev/sda
-rsync -v /backups/ /root/
-tar xvfj rootarchive.bz2
-Make sure you are in the directory you want to the data to be unpacked into. 
 As always, consult man pages for more information. 
