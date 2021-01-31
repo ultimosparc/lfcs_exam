@@ -18,3 +18,4 @@
     16. http://mathematicbren.blogspot.com/2014/12/raid-and-you.html
     17. http://www.compsci.hunter.cuny.edu/~sweiss/course_materials/csci340/slides/chapter03.html#207
     18. https://www.gratisexam.com/download/linux-foundation/lfcs/Linux-Foundation.Pass4sure.LFCS.v2019-03-20.by.Austin.154q.pdf
+    19. https://github.com/karakays/lfcs
