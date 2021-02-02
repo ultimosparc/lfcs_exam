@@ -20,17 +20,12 @@ Alternativ, oft findet man auch die Bezeichnung hd{order}{partition}. Dabei ist 
 /dev/sd\* is the entire disk device file which could be of type SCSI, SATA or USB. Following letter identifies the order, /dev/sda is the first device, /dev/sdb the second etc. The number refers to partition number, /dev/sda2 is the second partition on /dev/sda.
 
 Auf einem Speichermedium, wie beispielsweise /dev/sda1, sind die Daten in Partitionen organisiert. A partition can be identified by device-node, a label or a UUID.
+Auflistung aller block devices und Anhängepunkte kann mal mit 
 
-
-
-blkid prints block device attributes and requires root access.
-
-blkid -k # list all known filesystems
-
-lsblk lists block devices and mount points for each.
-
-lsblk -f # list with filesystem type and uuid
-Disk geometry
+    lsblk -f
+    
+aufgelistet werden. Es listet alle Partition in Baumstruktur auf und gibt die UUID, Label usw. an, die man dann ändern kann. 
+Je nach Hardware
 
 Rotational disks consist of platters, each of which is read by heads as disk spins. Tracks are divided into sectors in 512 byte size. SSDs are not rotational and have no moving parts.
 Partitioning
