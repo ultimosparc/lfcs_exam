@@ -98,6 +98,13 @@ Check array details
 cat /proc/mdstat (less detailed summary)
 mdadm --detail /dev/md0 (more detailed summary
 So there's my rundown - As always, this is all valid for CentOS - I can't attest to other distros. It's quick. It's dirty. Most of all, it's efficient. I like it.   
+    To backup MBR, copy MBR table sudo dd if=/dev/sda of=mbrbackup bs=512 count=1
+dd if=mbrbackupk of=/dev/sda bs=512 count=1
+To backup GPT, use sgdisk sudo sgdisk --backup=sdabackup /dev/sda
+fdisk 	most standard interactive tool, works for MBR and GPT
+fdisk -l # list all partitions fdisk <device> # go to interactive mode for device
+ /proc/partitions is what kernel is aware of partitions.
+Das Konzept von Swap muss einmal wiederholt werden 
 
 ## 7. Solutions & Remarks
 
