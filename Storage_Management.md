@@ -3,12 +3,16 @@
 _Filesystems, Partitions, Mounting and Backups_ [19, 20]
 
 Daten in modernen Computern werden auf bestimmter Hardware wie HDD, USB oder SSD längerfristig gespeichert. Verbindungen zum Datenaustausch, die interne Elemente in einem Computer Daten austauschen lassen, werden "Bus" bezeichnet. Ein Beispiel für eine solche Verbindung wäre zwischen Festplatte und Motherboard. Ein "Bus" ist also eine Art Interface für den Datenaustausch zwischen interne Elemente eines Computers. Beispiele für ein "Bus" wären SATA und SCSI.
-Auf einem linearen Speichermedium werden die Daten in sogenannten Partitionen gespeichert. Die Daten einer Partition werden durch ein Filesystem struktuiert. Ein Filesystem eine virtuelle, hierarche geordnete Struktur, die aus Verzeichnissen und Dateien besteht. Abstrakt, ein Filesystem ist ein Baum, der an der Wurzel ("/") beginnt und alle Zweige leiten sich dann von diesem Verzeichnis ab.  
 
+Auf einem physischen Speichermedium werden die Daten in Sektoren eingeteilt. Bei alten Speichermedien hatten die Sektoren eine Größe von 512 KByte, bei modernen Systemen gibt es eine solche festgelegt Größe grundsätzlich nicht. Grundsätzlich wird ein Speichermedium in sogenannte "contiguous groups of sectors" eingeteilt. Ein anderer Begriff für eine solche Gruppe ist "Partition". Neben dem Speicherbereich für den Boot-Vorgang werden die Daten einer Partition in sogenannte Daten-Zylinder eingeteilt. Jeder der Daten-Zylinder besitzt Daten, Verzeichnisse und die Inode-Tabelle, die jeder Datei/Verzeichnis eine eindeutige Inode # zuordnet. Die Inode-Tabelle verweist auf die Blöcke im physischen Speicher, wo die Dateien/Verzeichnisse abgelegt sind. Auf der Inode-Tabelle drauf gibt es eine sogenannte "Verzeichnis-Tabelle". Anhand der Verzeichnis-Tabelle kann man über den Kernel auf die einzelnen Verzeichnisse und Dateien zugreifen. Diese Tabelle entspricht abstrakt einem Filesystem. Demnach kann Filesystem wie folgt skizziert werden. Es ist eine abstrakte, hierarche geordnete Struktur, die aus Verzeichnissen und Dateien besteht. Die Urpsrung eines Filesystem in Unix beginnt mit dem sogenannten "root-Verzeichnis"  ("/"). Vereinfacht gesagt, das root-Verzeichnis ist die Wurzel vom Verzeichnisbaum.   
 
-Phyische Geräte wie Speichermedien (HDD,USB,SSD) werden in Linux als Textdatei im Verzeichnis /dev zur Verfügung gestellt. 
-Der Kernel in Unix greift auf Geräte (Drucker, Maus usw.) über sogenannte "Slots" oder "Känäle" zu. Solche "Slots"/"Kanäle" sind nummeriert und enthalten ein Interface für den Datenaustausch (Gerätetreiber). D.h. es gibt ebenfalls eine Nummerierung der Gerätetreiber, die analog zur Nummerierung der "Slots"/"Kanäle" und als Hauptgerätenummer (Major Device Number) gekannt ist. Ein Gerätetreiber kann mehrere Geräte des gleichen Typs verwalten. Die einzelnen Geräte sind ebenfalls nummeriert. Die Nummerierung der Geräte wird als Untergerätenummer (Minor Device Number) bezeichnet. Die einzelnen Geräte werden geordnet nach blockorientierten Geräten mit direktem Zugriff, wie z. B. Disketten oder Festplatten, und zeichenorientierten sequentiellen Geräte, wie Drucker, Terminal oder Maus.   
-Damit hat jede Gerätedatei drei "Koordinaten", mit der sie vom Kernel, unabhängig von ihrem Namen, eindeutig identifiziert werden kann.
+![Unix_Storage_Concept](https://user-images.githubusercontent.com/15387251/106927311-52bb2200-6712-11eb-81d6-8582dc38094c.png)
+
+Gewöhnlich hat ein Computer eine primäre Partition, die auf einem primären Speichermedium abgelegt ist und das OS enthält. In vielen Fällen werden zusätzliche sekundäre Speichermedien wie USB, externe Festplatte usw. benutzen, die alle selbst eine eigene Partition mit einem eigenen Filesystem und Typ haben. Anders als wie bei Windows, wo die verschiedenen Filesysteme in Koexistenz existieren, werden in UNIX-ähnlichen Betriebssystemen solche "sekundären Partitionen" als Unterverzeichnisse in das primäre Filesystem asselimiert (eingebunden).
+Das sogenannte "Mounting" kann in Unix mit dem Befehl mount ausgeführt werden. Ohne Parameter ausgeführt, zeigt der Befehl alles eingehängten Partitionen, dessen Typen und deren Einhängepunkte auf.  
+Neben anderen phyischen Geräten wie Drucker usw. werden Speichermedien bzw. deren Partitionen im Verzeichnis /dev "eingehängt", d.h. deren Filesystem wird nun ein Unterverzeichnisbaum vom primären Filesystem und ist somit für alle User zugänglich. D.h. ein physisches Speichermedium wird in UNIX durch das sekundäre Filesystem präsentiert.
+
+Bei der Namengebung der Dateien und Verzeichnisse in /dev muss folgendes Konzept beachtet werden. Der Kernel in Unix greift auf Geräte (Drucker, Maus usw.) über sogenannte "Slots" oder "Känäle" zu. Solche "Slots"/"Kanäle" sind nummeriert und enthalten ein Interface für den Datenaustausch (Gerätetreiber). D.h. es gibt ebenfalls eine Nummerierung der Gerätetreiber, die analog zur Nummerierung der "Slots"/"Kanäle" und als Hauptgerätenummer (Major Device Number) gekannt ist. Ein Gerätetreiber kann mehrere Geräte des gleichen Typs verwalten. Die einzelnen Geräte sind ebenfalls nummeriert. Die Nummerierung der Geräte wird als Untergerätenummer (Minor Device Number) bezeichnet. Die einzelnen Geräte werden geordnet nach blockorientierten Geräten mit direktem Zugriff, wie z. B. Disketten oder Festplatten, und zeichenorientierten sequentiellen Geräte, wie Drucker, Terminal oder Maus. Damit wird jedes Objekt im Unterverzeichnis /dev mit drei Koordinaten vom Kernel eindeutig identifiziert werden.
 Entsprechend diesem Konzept findet man oft die folgende Namensgebung für Speichergeräte: 
 
     Device naming scheme /dev/sd{order}{partition}
@@ -21,18 +25,13 @@ Alternativ, oft findet man auch die Bezeichnung hd{order}{partition}. Dabei ist 
 
 /dev/sd\* is the entire disk device file which could be of type SCSI, SATA or USB. Following letter identifies the order, /dev/sda is the first device, /dev/sdb the second etc. The number refers to partition number, /dev/sda2 is the second partition on /dev/sda.
 
-Auf einem Speichermedium, wie beispielsweise /dev/sda1, sind die Daten in Partitionen organisiert. A partition can be identified by device-node, a label or a UUID.
-Auflistung aller block devices und Anhängepunkte kann mal mit 
+Angenommen, /dev/sda1 ist eine "eingehängte" Partition. A solche partition can be identified by device-node, a label or a UUID.
+Auflistung aller block devices und derren Anhängepunkte kann mit 
 
     lsblk -f
     
 aufgelistet werden. Es listet alle Partition in Baumstruktur auf und gibt die UUID, Label usw. an, die man dann ändern kann. 
-Je nach Hardware
-
-Rotational disks consist of platters, each of which is read by heads as disk spins. Tracks are divided into sectors in 512 byte size. SSDs are not rotational and have no moving parts.
-Partitioning
-
-Disk is divided into contiguous groups of sectors called partitions. Partitioning promotes:
+Vorteile Partitionskonzept:  
 
     separation of user space from system space.
     easier backups
@@ -47,114 +46,29 @@ A partition is associated with
     filesystem
 
 Partition table schemes
+Im ersten Sektor eines Speichermedium liegen die Metadaten des Speicherdaten. Bei alten Computersystemen spricht man vom sogeannten Master Boot Record (MBR). Dieser enthält unteranderem: 
 
-The content of hardware disk starts disk metadata, e.g. partition tables.
+    Partitionstabelle
+    Größenangaben der Festplatte
+    Programmcode
+    Hilfsprogramme
 
-MBR
+Damit das Betriebssystem gestartet werden kann, wird das MBR nach starten des Computers in den Arbeitsspeicher geladen und dieser veranlasst, das der Bootsektor von der Festplatte abgearbeitet wird und letztlich das Betriebssystem startet. Die Partitionstabelle is stored in the first 512 bytes of the disk. 
 
-    Dates back to early days of MSDOS. In some tools, aka, dos or msdos. Table is stored in the first 512 bytes of the disk. Up to 4 primary partitions of which one as an extended partition.
-    Table has 4 entries and each 16 bytes size. Entry in the table contains active bit, file system code (xfs, ext4, swap etc.) and number of sectors.
+![Ext2](https://user-images.githubusercontent.com/15387251/106944119-830cbb80-6726-11eb-88b4-55e2505e65bd.png)
 
-mbr-scheme
+Bei neuen Computersystemen wurde das alte BIOS durch den UEFI-Standard abgelöst. Damit wurde auch ein neues Layout für die Partionstabellen entwickelt, der GBT-Standard.
 
-GPT
+![gbt](https://user-images.githubusercontent.com/15387251/106944315-b8b1a480-6726-11eb-91b3-0121f180d534.png)
 
-    modern. disk starts with the GPT header (and also proactive MBR for backwards compatibility)
-    Up to 128 partitions in the table and each 128 bytes of size.
+The GUID Partition Table (GPT) is a standard for the layout of partition tables of a physical computer storage device, such as a hard disk drive or solid-state drive, using universally unique identifiers, which are also known as globally unique identifiers (GUIDs). 
 
-gpt-scheme
+Entsprechend dem GPT-Schema besteht ein Datenträger aus den folgenden Bereichen:
 
-    The partition table and filesystem comes with the vendor and it's possible to migrate it from MBR to GPT.
+    Master Boot Record (MBR) in Sektor 0 (dem ersten, 512 Bytes großen Datenblock), dessen spezielle Konfiguration den Einsatz der Platte auch unter MBR-Betriebssystemen erlaubt und vor Veränderungen durch MBR-Partitionierungstools schützt (Schutz-MBR; von englisch protective MBR)
+    primäre GUID-Partitionstabelle (GPT), bestehend aus Header und Partitionseinträgen
+    Partitionen
+    sekundäre GPT, bestehend aus Header und Partitionseinträgen
 
-Backup partition tables
+Die sekundäre GUID-Partitionstabelle am Ende des Datenträgers ist teilweise eine Kopie der primären GPT am Anfang des Datenträgers: Die Inhalte der Felder für die Positionen des eigenen und des alternativen GPT Headers sind vertauscht und die Adresse der Partitionstabelle verweist auf die Kopie der Partitionstabelle am Ende der Platte vor dem alternativen Header. Damit haben beide GPT-Header auch eine unterschiedliche CRC32-Prüfsumme. Durch die enthaltene Redundanz kann im Fehlerfall die Partitionstabelle wiederhergestellt werden. Da in der GPT eine Prüfsumme eingetragen wird, kann festgestellt werden, ob beide bzw. welche der beiden GPT fehlerhaft sind. 
 
-To backup MBR, copy MBR table sudo dd if=/dev/sda of=mbrbackup bs=512 count=1
-
-To restore MBR write it back to the disk sudo dd if=mbrbackupk of=/dev/sda bs=512 count=1
-
-To backup GPT, use sgdisk sudo sgdisk --backup=sdabackup /dev/sda
-Partition table editors
-
-Tools below at hardware device level. No filesystems need to be mounted ahead.
-tool 	purpose
-fdisk 	most standard interactive tool, works for MBR and GPT
-sfdisk 	non-interactive fdisk for scripting
-parted 	GNU version, interactive tool, works for MBR and GPT
-gdisk 	guid partition table manipulator
-sgdisk 	script interface for gdisk
-fdisk
-
-fdisk -l # list all partitions fdisk <device> # go to interactive mode for device
-parted
-
-parted [options] [device [command]]
-
-parted -l # list partition tables on all devices parted /dev/sdb print # partition table for /dev/sdb
-parted interactive mode
-
-(parted) mktable gpt # create a partition table (destroys data) (parted) mkpart primary 0 8000 # create part
-
-    /proc/partitions is what kernel is aware of partitions.
-
-    losetup to associate a file or block device with a loop device. A loop device is pseudo device which makes a file to be accessed as a block device. Certain commands like lsblk work only with block devices.
-
-
-
-
-
-Exam's preparing &amp; test exam
-
-Mit welche Befehl kann SWAP deaktiviert werden
-swapoff, /sbin/swapoff
-
-What is the difference between the i and a commands of the vi editor?
- i (insert) inserts text before the current cursor position whereas a (append) inserts text after the cursor.
- 
- Umgebungsvariablen wiederholen
- 
- find methode . -maxdepth Optionen sollte man kennen
- 
- Was passiert mit einen Programm das chrashed, es wird eine corefile geniert,
- ulimit sollte man kennen
- 
- ssh-agent speichert die Schlüssel für die Zugriff
-
-RAID, LVM, partitioning and fs manipulations are the must. As well as fsck.
-    List, create, delete, and modify physical storage partitions, including GPT (using fdisk, gdisk utilities)
-    Manage and configure LVM partitions
-    Create and manage software RAID (using mdadm)
-    Mount file systems during boot (using systemctl mount target)
-    Configure user and group disk quotas for filesystem
-    Configure and manage swap partitions or files
-    Be familiar with storage encryption (using LUKS)
-    
-    Been going over software RAID in CentOS 6.5 for my LFCS exam that is next week. Here are my notes so that I don't forget. 
-
-mdadm 
-This is the tool you want to use to create software RAID
-/etc/mdadm.conf (Main configuration file)
-Syntax
-mdadm -C -v <device name> --level=<raid level> --raid-devices=<#> <dev files>
-EX: mdadm -C -v /dev/rd0 --level=raid0 --raid-devices=2 /dev/sdb /dev/sdc
-This will create a raid array named /dev/rd0 out of two arbitrary HDs
-You will need to format those two drives the same way you normally would with mkfs and whatnot. 
-EX: mdadm --stop /dev/md0        #Stops the Array
-EX: mdadm --remove /dev/md0  #Disassembles the array
-You can use mdadm to do some other cool things. Here are a couple:
-Set up monitoring services
-Run the following command to append the appropriate info to the /etc/mdadm.conf 
-mdadm --detail --scan >> /etc/mdadm.conf
-This will tell the mdadm service to monitor any raid arrays.
-The "mdadm --detail --scan" command will give details about the drive.
-Verify that the mdadm monitor service is running and that it is set to start at boot
-sysvinit - #service mdmonitor start
-sysvinit - #chkconfig mdmonitor on
-systemd - #systemctl start mdmonitor
-systemd - #systemctl enable mdmonitor
-Setup mail alerts
-echo "MAILADDR root" >> /etc/mdadm.conf
-This will append the local root host as the address
-Check array details
-cat /proc/mdstat (less detailed summary)
-mdadm --detail /dev/md0 (more detailed summary
-So there's my rundown - As always, this is all valid for CentOS - I can't attest to other distros. It's quick. It's dirty. Most of all, it's efficient. I like it. 
