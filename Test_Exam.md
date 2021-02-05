@@ -5,29 +5,29 @@ Die Aufgaben bilden eine Grundlage, um bestimmte Teilaufgaben von Examsaufgaben 
 
 ## 1. Essential Commands
 
-T1: _Ersetzen Sie das Wort "Haus" mit dem Wort "Eigenheim" überall in der Textdatei "Immobilien.txt" (Substitution)._
+T: _Ersetzen Sie das Wort "Haus" mit dem Wort "Eigenheim" überall in der Textdatei "Immobilien.txt" (Substitution)._
     
-T2: _Ersetzen Sie in Zeile 200 den Preis von 100.000€ nach 150.000€ in der Textdatei "Immobilien.txt" (Substitution)._
+T: _Ersetzen Sie in Zeile 200 den Preis von 100.000€ nach 150.000€ in der Textdatei "Immobilien.txt" (Substitution)._
        
-T3: _Löschen Sie in der Textdatei "Immobilien.txt" die Zeile 202._
+T: _Löschen Sie in der Textdatei "Immobilien.txt" die Zeile 202._
 
-T4: _Erstelle ein komprimiertes Archiv "test.tar" der Dateien "datei1" und "datei2" und lösche die beiden Dateien "datei1" und "datei2"._
+T: _Erstelle ein komprimiertes Archiv "test.tar" der Dateien "datei1" und "datei2" und lösche die beiden Dateien "datei1" und "datei2"._
 
 ## 2. User and Group Management
 
-T5: _Erstellen Sie einen neuen User "Peter" und geben Sie Ihm "Superuser"-Rechte._
+T: _Erstellen Sie einen neuen User "Peter" und geben Sie Ihm "Superuser"-Rechte._
 
-T6: _Erstellen Sie eine neue Gruppe "Verkäufer" und fügen Sie den User Peter hinzu_
+T: _Erstellen Sie eine neue Gruppe "Verkäufer" und fügen Sie den User Peter hinzu_
 
-T7: _Erstellen Sie einen Unterordner "Haus" und ändern Sie die Gruppe zu "Verkäufer" und den Besitzer zu root_
+T: _Erstellen Sie einen Unterordner "Haus" und ändern Sie die Gruppe zu "Verkäufer" und den Besitzer zu root_
 
 ## 3. Operation of Running Systems
 
-T8: _Erstellen Sie einen Softlink und Hardlink auf die Datei "test"._
+T: _Erstellen Sie einen Softlink und Hardlink auf die Datei "test"._
 
-T9: _Geben Sie dem Prozess "Sleep" eine höhre Priorität, damit dieser schneller ausgeführt wird_
+T: _Geben Sie dem Prozess "Sleep" eine höhre Priorität, damit dieser schneller ausgeführt wird_
 
-T10: _Legen Sie einen Chronjob an, der jede Minute das Skript /tmp/test.sh ausführt_
+T: _Legen Sie einen Chronjob an, der jede Minute das Skript /tmp/test.sh ausführt_
 
 ## 4. Service Configuration
 
@@ -50,12 +50,13 @@ S: Folgende Lösungen sind möglich, entweder über sudo oder root ausführen
     
     2. Backup der Partition/Hard Drive
         
-      Exam's preparing &amp; test exam
+ T     Exam's preparing &amp; test exam
 
 Mit welche Befehl kann SWAP deaktiviert werden
 swapoff, /sbin/swapoff
-What is the difference between the i and a commands of the vi editor?
- i (insert) inserts text before the current cursor position whereas a (append) inserts text after the cursor.
+swapon -a alle makrierten SWAP Partitionen die in /etc/fstab entsprechend gekennzeichnet
+swapon -e alle nicht dargestellten SWAP Paritionen
+
  Umgebungsvariablen wiederholen
  find methode . -maxdepth Optionen sollte man kennen
  Was passiert mit einen Programm das chrashed, es wird eine corefile geniert,
@@ -110,9 +111,9 @@ Das Konzept von Swap muss einmal wiederholt werden
 
 Task (T), Solution (S)
 
-T1: _Ersetzen Sie das Wort "Haus" mit dem Wort "Eigenheim" überall in der Textdatei "Immobilien.txt" (Substitution)._
+T: _Ersetzen Sie das Wort "Haus" mit dem Wort "Eigenheim" überall in der Textdatei "Immobilien.txt" (Substitution)._
 
-S1: Es gibt hier zwei mögliche Lösungswege. 
+S: Es gibt hier zwei mögliche Lösungswege. 
 
     1. File-Streaming
       
@@ -132,9 +133,9 @@ S1: Es gibt hier zwei mögliche Lösungswege.
         jedoch bietet dieser Lösungsweg den Vorteil, man kann direkt im vi
         Editor sehen, ob die Änderungen erfolgreich ungesetzt wurden. 
       
-T2: _Ersetzen Sie in Zeile 200 den Preis von 100.000€ nach 150.000€ in der Textdatei "Immobilien.txt" (Substitution)._
+T: _Ersetzen Sie in Zeile 200 den Preis von 100.000€ nach 150.000€ in der Textdatei "Immobilien.txt" (Substitution)._
 
-S2: Mögliche Lösung wäre:
+S: Mögliche Lösung wäre:
   
     1. vi Immoblien.txt
     2. :set number
@@ -146,9 +147,9 @@ S2: Mögliche Lösung wäre:
        Das Ersetzen von Textstellen in einer Textdatei wird gerne als eine Teilaufgabe 
        verwendet im Zusammenhang mit dem Ersetzen von User-Eigenschaften, z.B. für das Passwort-Datei. 
        
-T3: _Löschen Sie in der Textdatei "Immobilien.txt" die Zeile 202._
+T: _Löschen Sie in der Textdatei "Immobilien.txt" die Zeile 202._
 
-S3: Mögliche Lösung wäre:
+S: Mögliche Lösung wäre:
     
     1. vi Immoblien.txt
     2. :set number
@@ -159,9 +160,9 @@ S3: Mögliche Lösung wäre:
        Im Vi-Editor gibt es verschiedene Wege eine Zeile zu löschen, jedoch der "delete"-Befehl 
        ist simpel und schnell auszuführen, zusätzlich kann man das Ergebniss gleich im vi-Editor betrachten. 
  
-T4: _Erstelle ein komprimiertes Archiv "test.tar" der Dateien "datei1" und "datei2" und löschen Sie die beiden Dateien "datei1" und "datei2"._
+T: _Erstelle ein komprimiertes Archiv "test.tar" der Dateien "datei1" und "datei2" und löschen Sie die beiden Dateien "datei1" und "datei2"._
 
-S4: Mögliche Lösung wäre:
+S: Mögliche Lösung wäre:
     
     tar -cvzf vi test.tar datei1 datei2; rm -rf datei1 datei2;
     
@@ -169,9 +170,9 @@ S4: Mögliche Lösung wäre:
        "tar -xvf". Falls bei der Archivierung noch die Option p mitgegeben wird, werden die Rechte mit archiviert.
        Um zu prüfen, ob "test.tar" wirklich komprimiert ist, einfach "file test.tar" ausführen. 
        
-T5: _Erstellen Sie einen neuen User "Peter" und geben Sie Ihm "Superuser"-Rechte._
+T: _Erstellen Sie einen neuen User "Peter" und geben Sie Ihm "Superuser"-Rechte._
 
-S5: Mögliche Lösung wäre:
+S: Mögliche Lösung wäre:
     
     1. sudo useradd -m -s /bin/bash Peter;
     2. sudo visudo
@@ -184,9 +185,9 @@ S5: Mögliche Lösung wäre:
        Damit können mehrere User gleichzeitig mit Superuser-Rechten ausgestattet werden.
        Standardmäßig existiert bereits eine solche Gruppe, genannt "wheel".
 
-T6: _Erstellen Sie eine neue Gruppe "Verkäufer" und fügen Sie den User Peter hinzu_
+T: _Erstellen Sie eine neue Gruppe "Verkäufer" und fügen Sie den User Peter hinzu_
 
-S6: Mögliche Lösung wäre:
+S: Mögliche Lösung wäre:
     
     1. groupadd Verkäufer
     2. sudo usermod -aG Verkäufer Peter
@@ -194,9 +195,9 @@ S6: Mögliche Lösung wäre:
        Wenn die Optionen -aG nicht verwendet werden, dann wird der User gelöscht von allen Gruppen, 
        die nicht innerhalb der -G Liste stehen. 
 
-T7: _Erstellen Sie einen Unterordner "Haus" in /home/Peter und ändern Sie die Gruppe zu "Verkäufer" und den Besitzer zu root_
+T: _Erstellen Sie einen Unterordner "Haus" in /home/Peter und ändern Sie die Gruppe zu "Verkäufer" und den Besitzer zu root_
 
-S7: Mögliche Lösung wäre:
+S: Mögliche Lösung wäre:
     
     1. cd ~
     2. mkdir -p Haus
@@ -205,9 +206,9 @@ S7: Mögliche Lösung wäre:
        Die Option -p vergewissert, das auch die Parentordner existieren, falls nicht, dann werden diese angelegt. 
       -R setzt den Change rekursiv auf die Unterordner um. 
        
-T8: _Erstellen Sie einen Softlink, genannt "symlink", und Hardlink, genannt "hardlink", auf die Datei "test"._
+T: _Erstellen Sie einen Softlink, genannt "symlink", und Hardlink, genannt "hardlink", auf die Datei "test"._
 
-S8: Mögliche Lösung wäre:
+S: Mögliche Lösung wäre:
     
     ln -s test symlink; ln test hardlink
     
@@ -215,9 +216,9 @@ S8: Mögliche Lösung wäre:
        das Hardlinks und Ursprungsdatei teilen sich die gleiche inode. Bei Softlinks ist das nicht der 
        Fall. 
        
-T9: _Geben Sie dem Prozess "Sleep" eine höhre Priorität, damit dieser schneller ausgeführt wird_
+T: _Geben Sie dem Prozess "Sleep" eine höhre Priorität, damit dieser schneller ausgeführt wird_
 
-S9: Mögliche Lösung wäre:
+S: Mögliche Lösung wäre:
     
     1. top -u username --> PID bestimmen
     2. renice '-20' -p 'PID'
@@ -225,9 +226,9 @@ S9: Mögliche Lösung wäre:
         Wir der erste Befehl "top -u username" nochmal ausgeführt, dann
         muss sich der NI-Wert des Prozess "Sleep" geändert haben.
         
-T10: _Legen Sie einen Chronjob an, der jede Minute das Skript /tmp/test.sh ausführt_
+T: _Legen Sie einen Chronjob an, der jede Minute das Skript /tmp/test.sh ausführt_
 
-S10: Mögliche Lösung wäre:
+S: Mögliche Lösung wäre:
     
     1. chrontab -e
     2. */1 * * * * /tmp/test.sh
