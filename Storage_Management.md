@@ -72,3 +72,16 @@ Entsprechend dem GPT-Schema besteht ein Datenträger aus den folgenden Bereichen
 
 Die sekundäre GUID-Partitionstabelle am Ende des Datenträgers ist teilweise eine Kopie der primären GPT am Anfang des Datenträgers: Die Inhalte der Felder für die Positionen des eigenen und des alternativen GPT Headers sind vertauscht und die Adresse der Partitionstabelle verweist auf die Kopie der Partitionstabelle am Ende der Platte vor dem alternativen Header. Damit haben beide GPT-Header auch eine unterschiedliche CRC32-Prüfsumme. Durch die enthaltene Redundanz kann im Fehlerfall die Partitionstabelle wiederhergestellt werden. Da in der GPT eine Prüfsumme eingetragen wird, kann festgestellt werden, ob beide bzw. welche der beiden GPT fehlerhaft sind. 
 
+Um eine Partition anzulegen, muss neuer Speicherbereich festgelegt werden und dann in der Partitionstabelle eingetragen werden. Standardmäßig erstellt man eine Partition mit dem Befehl fdisk. 
+
+_Configuration of the SWAP Partition_ [21]
+
+Im Fall, der Arbeitsspeicher RAM eines Computersystems reicht nicht aus, UNIX benutzt ein Teil des Langzeitspeichers (SWAP Partition), um die operativen Prozesse auszuführen, um den Betrieb aufrechtzuhalten. D.h. nicht wichtige Daten werden in einer Auslagersdatei auf dem Langzeitspeicher wie eine Festplatte ziwschenzeitlich abgelegt. Swap should usually equal 2x physical RAM for up to 2 GB of physical RAM, and then an additional 1x physical RAM for any amount above 2 GB, but never less than 32 MB. 
+Gewöhnlich wird bereits beim AnlegenUm nun eine solche Auslagerungsdatei anzulegen müssen folgende Punkte bearbeitet werden
+pürfen ob schon swap Partitionen existieren
+Falls es keine SWAP Parition oder man eine weitere SWAP Parition anlegen möchte müssen folgende Punkte durchgegangen: 
+1. Auslagerungsdatei anlegen mit Bestimmung der Größe und ins Verzeichnis einbinden
+2. SWAP Partition aktivieren
+3. Entscheiden ob die SWAP Parition nun permant exisiteren muss
+kurzfristig und permanent anlegen
+    
