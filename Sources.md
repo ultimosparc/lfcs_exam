@@ -20,3 +20,4 @@
     18. https://www.gratisexam.com/download/linux-foundation/lfcs/Linux-Foundation.Pass4sure.LFCS.v2019-03-20.by.Austin.154q.pdf
     19. https://github.com/karakays/lfcs
     20. https://www.nextop.de/lhb/node20.html
+    21. https://www.tecmint.com/create-partitions-and-filesystems-in-linux/
