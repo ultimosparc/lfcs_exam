@@ -97,7 +97,14 @@ Falls man die Partition bzw. die Änderung der Partitionstabelle persitieren wil
     
 in die Datei /etc/fstab gemacht werden, wobei UUID referenziert auf die SWAP Partition. 
 Alternativ kann man das Programm fdisk werden, um eine SWAP Partition zu erstellen. Zunächst sucht man die Partition aus, wo noch Platz ist unter /dev, dann führt man den Befehl 
-fdisk /dev/sda1 zum Beispiel aus. Dann geht man durch das Programm n -> 82 -> p -> w und man dann einen entsprechenden Eintrag. Danach aktiviert man die Partition mit swapon -a und prüft ob die Partition läuft mit swapon -e. 
+fdisk /dev/sda1 zum Beispiel aus. Dann geht man durch das Programm n -> 82 -> p -> w und man dann einen entsprechenden Eintrag. Danach folgende Befehle
+
+    partprobe           //Aktuallisieren der Partitionstabelle
+    mkswap /dev/sda1    //Formatieren der Swap Partition
+    swapon -a           // Swap partition aktivieren
+    swapon -s           // Prüfen ob die Aktivierung geklappt hat
+    
+ausführen. 
 
 
     
