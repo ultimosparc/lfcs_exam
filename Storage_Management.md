@@ -72,16 +72,32 @@ Entsprechend dem GPT-Schema besteht ein Datenträger aus den folgenden Bereichen
 
 Die sekundäre GUID-Partitionstabelle am Ende des Datenträgers ist teilweise eine Kopie der primären GPT am Anfang des Datenträgers: Die Inhalte der Felder für die Positionen des eigenen und des alternativen GPT Headers sind vertauscht und die Adresse der Partitionstabelle verweist auf die Kopie der Partitionstabelle am Ende der Platte vor dem alternativen Header. Damit haben beide GPT-Header auch eine unterschiedliche CRC32-Prüfsumme. Durch die enthaltene Redundanz kann im Fehlerfall die Partitionstabelle wiederhergestellt werden. Da in der GPT eine Prüfsumme eingetragen wird, kann festgestellt werden, ob beide bzw. welche der beiden GPT fehlerhaft sind. 
 
-Um eine Partition anzulegen, muss neuer Speicherbereich festgelegt werden und dann in der Partitionstabelle eingetragen werden. Standardmäßig erstellt man eine Partition mit dem Befehl fdisk. 
+Um eine Partition anzulegen, muss neuer Speicherbereich festgelegt und in der Partitionstabelle eingetragen werden. Standardmäßig erstellt man eine Partition mit dem Befehl fdisk. 
 
 _Configuration of the SWAP Partition_ [21]
 
 Im Fall, der Arbeitsspeicher RAM eines Computersystems reicht nicht aus, UNIX benutzt ein Teil des Langzeitspeichers (SWAP Partition), um die operativen Prozesse auszuführen, um den Betrieb aufrechtzuhalten. D.h. nicht wichtige Daten werden in einer Auslagersdatei auf dem Langzeitspeicher wie eine Festplatte ziwschenzeitlich abgelegt. Swap should usually equal 2x physical RAM for up to 2 GB of physical RAM, and then an additional 1x physical RAM for any amount above 2 GB, but never less than 32 MB. 
 Gewöhnlich wird bereits beim AnlegenUm nun eine solche Auslagerungsdatei anzulegen müssen folgende Punkte bearbeitet werden
 pürfen ob schon swap Partitionen existieren
-Falls es keine SWAP Parition oder man eine weitere SWAP Parition anlegen möchte müssen folgende Punkte durchgegangen: 
-1. Auslagerungsdatei anlegen mit Bestimmung der Größe und ins Verzeichnis einbinden
-2. SWAP Partition aktivieren
-3. Entscheiden ob die SWAP Parition nun permant exisiteren muss
-kurzfristig und permanent anlegen
+Falls es keine SWAP Parition oder man eine weitere SWAP Parition anlegen möchte müssen folgende Punkte durchgegangen. Angenommen RAM ist 1.5 GB, dann sollte die SWAP Partitioin ein Größe von 2x 1.5 GB= 3 GB haben: 
+
+    SWAP Parition erstellen
+    
+       sudo dd if=/dev/zero of=/swapfile bs=1M count=3072   //Auslagerungsdatei anlegen
+       sudo chmod 0600 /dev/swapfile                            //SWAP Partition sollte nicht von jedem gelesen werden, die Rechte müssen gesetzt werden
+       sudo mkswap /dev/swapfile                                //Formatieren der SWAP Partition
+       sudo swapon /dev/swapfile                                //SWAP Partition aktivieren
+       
+       /dev/zero is a special file in Unix-like operating systems that provides as many null characters (ASCII NUL, 0x00) as are read from it.[1] One of the typical uses is to             
+       provide a character stream for initializing data storage. Bei 3072 Blöcken ist die Blockgröße 1MB. 
+
+Falls man die Partition bzw. die Änderung der Partitionstabelle persitieren will, dann muss ein entsprechender Eintrag 
+
+    UUID=99e34f44-b366-4805-b290-614717f9058b     swap     swap     defaults     0 0
+    
+in die Datei /etc/fstab gemacht werden, wobei UUID referenziert auf die SWAP Partition. 
+Alternativ kann man das Programm fdisk werden, um eine SWAP Partition zu erstellen. Zunächst sucht man die Partition aus, wo noch Platz ist unter /dev, dann führt man den Befehl 
+fdisk /dev/sda1 zum Beispiel aus. Dann geht man durch das Programm n -> 82 -> p -> w und man dann einen entsprechenden Eintrag. 
+
+
     
