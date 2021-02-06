@@ -52,6 +52,10 @@ S: Folgende Lösungen sind möglich, entweder über sudo oder root ausführen
         
  T     Exam's preparing &amp; test exam
 
+S: Prüfen Sie, ob das System eine SWAP Partition hat. Falls nicht, dann erstellen Sie eine SWAP Partition. Größe von RAM ist 1.5 GB. Vergewissern Sie sich, das die SWAP auch nach dem Neustart noch exisitert und aktiviert ist. 
+
+T: 
+
 Mit welche Befehl kann SWAP deaktiviert werden
 swapoff, /sbin/swapoff
 swapon -a alle makrierten SWAP Partitionen die in /etc/fstab entsprechend gekennzeichnet
