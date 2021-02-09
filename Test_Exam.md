@@ -56,9 +56,9 @@ S: Folgende Lösungen sind möglich, entweder über sudo oder root ausführen
 
 S: Prüfen Sie, ob das System eine SWAP Partition hat. Falls nicht, dann erstellen Sie eine SWAP Partition. Größe von RAM ist 1.5 GB. Vergewissern Sie sich, das die SWAP auch nach dem Neustart noch exisitert und aktiviert ist. 
 
-T: 
+T: Prüfen Sie, ob das System eine SWAP Partition hat. Falls nicht, dann erstellen Sie eine SWAP Partition. Größe von RAM ist 1.5 GB. Vergewissern Sie sich, das die SWAP auch nach dem Neustart noch exisitert und aktiviert ist.
 
-S: Prüfen Sie, ob das System eine SWAP Partition hat. Falls nicht, dann erstellen Sie eine SWAP Partition. Größe von RAM ist 1.5 GB. Vergewissern Sie sich, das die SWAP auch nach dem Neustart noch exisitert und aktiviert ist. 
+T: Angenommen das System hat zwei SWAP Partition S1 und S2. Prioierensieren die S2, damit Daten immer erst in S2 ausgelagert werden. --> Fstab
 
 T: 
 
