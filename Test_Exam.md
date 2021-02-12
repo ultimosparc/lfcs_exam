@@ -222,27 +222,45 @@ S: Mögliche Lösung wäre:
     
         Für den 10 Befehl sollte der Eintrag folgendes Format haben: UUID Mountpunt FS Settings 0 0
     
- T: _Kopieren Sie die Datei /etc/fstab nach /vat/tmp/fstab und machen Sie folgende Änderungen: Ändern Sie den Besitzer in root, ändern Sie die gruppe in root, es nicht für alle (other) ausführbar, User Andrew kann die Datei lesen und schreiben, Susan aber nicht, alle anderen User können die Datei lesen jetzt und in Zukunft_
+T: _Kopieren Sie die Datei /etc/fstab nach /var/tmp/fstab und machen Sie folgende Änderungen: Ändern Sie den Besitzer in root, ändern Sie die gruppe in root, es nicht für alle (other) ausführbar, User Andrew kann die Datei lesen und schreiben, Susan aber nicht, alle anderen User können die Datei lesen jetzt und in Zukunft_
 
 S: Mögliche Lösung wäre:
     
     1. cp /etc/fstab /var/tmp/fstab
-    2. //einfach den Anweisungen im Programm verfolgen
-    3. partprobe /dev/sdb       //Befehl prüft, ob alles Problemlos gelaufen ist
-    4. lsblk                    //Neue Parittion sollte sichtbar sein
-    5. mkfs.ext4 /dev/sdb1      //Partition erhält FS
-    6. mkdir /mnt/new           //Einhängepunkt generieren, falls noch nicht vorhanden
-    7. mount /dev/sdb1 /mnt/new //Partition einhängen in das primäre FS
-    8. df -h                    //Prüfen, ob das Einhängen funktioniert hat
-    9. blkid /dev/sdb1          //UUID bestimmen
-    10. vi /etc/fstab           //Änderung der Partitionstabelle permanent machen
+    2. ls -ld
+    3. chmod a-x /var/tmp/fstab
+    4. setfacl -m u:andrew:rw /var/tmp/fstab
+    5. setfacl -m u:susan:x /var/tmp/fstab
     
-        Für den 10 Befehl sollte der Eintrag folgendes Format haben: UUID Mountpunt FS Settings 0 0   
+T: _Geben Sie dem User Andrew folgende Rechte auf die Datei /opt/backup: read, write, execute_
+
+S: Mögliche Lösung wäre:
+    
+    1. getfacl /opt/backup //Schauen welche Rechte man hat
+    2. setfacl -m u:andrew:rwx /opt/backup
+    3. getfacl /opt/backup
+    
+T: _Generieren Sie folgende Users, Gruppen und Mitgliedschaften: Gruppe sysusers, User Andrew mit Mitglied in sysusers, Susan mit Mitglied sysusers, Brad mit keiner Shell zugriff, brad susan andrew haben Passwort passwort_
+
+S: Mögliche Lösung wäre:
+    
+    1. groupadd sysusers
+    2. useradd andrew -G sysusers
+    3. passwod andrew 
+    4  useradd susan -G sysusers
+    5. passwod susan
+    6. useradd brad -s/sbin/nologin
+    7. passwd brad
+    8. cat /etc/passwd //prüfen ob alles geklappt hat
+    9. grep sysusers /etc/group 
+    
+ T: _Generieren Sie einen geteilten Ordner für die Mitglieder des Teams. Folgende Einstellungen sollen erstellt werden: Gruppe sysusers, rwx für Gruppe aber nicht für andere, files in dem Ordner sollen gleiche gruppe haben mit Einstellungen_
+
+S: Mögliche Lösung wäre:
+    
+    1. 
     
     
     
     
-    
-       Ein Zeiteintrag kann mit Hilfe der Tabelle "more /etc/crontab" definiert werden (nur unter CentOS).
-    
-    
+        
