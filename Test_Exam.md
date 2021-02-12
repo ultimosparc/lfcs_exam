@@ -323,4 +323,14 @@ S: Mögliche Lösung wäre:
     
         Als Alternative wäre die Verkleinerung möglich als Aufgabe
     
+T: _Vergrößern Sie die SWAP Partition auf 3GB_
+
+S: Mögliche Lösung wäre:
+
+T: _Authenfiziere die Users vom LDAP_
+
+S: Mögliche Lösung wäre:
     
+    
+    
+         
