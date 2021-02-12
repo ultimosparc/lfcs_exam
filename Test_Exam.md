@@ -191,3 +191,58 @@ S: Mögliche Lösung wäre:
     3. chrontab -l
     
        Ein Zeiteintrag kann mit Hilfe der Tabelle "more /etc/crontab" definiert werden (nur unter CentOS).
+
+T: _Konfigurieren Sie die Ip-Adresse der virtuellen Maschine, folgende Werte sind zu setzen: IP 192.168.0.10, Gateway 192.168.0.254, server1.example.com_
+
+S: Mögliche Lösung wäre:
+    
+    1. ip a s   //Zeigt die aktuelle netzwerk-interne IP Adresse unter eth0 an
+    2. nmtui    //Terminal, grafisches Programm, um Netzwerkeinstellungen schnell und easy zu machen.
+    3. nmtui    //Neue Einstellungen aktivieren
+    4. sudo nmtui    //Hostname einstellen
+    5. reboot   //Prüfen ob die Einstellungen gemacht sind mit ip, hostnamectl usw. 
+    
+        nmtui ist ein terminal, grafische Programm, das verwendet werden kann, um die Änderungen
+        schnell und einfach zu machen. Falls vorhanden, auf denen Fall verwenden. 
+    
+T: _Erstellen Sie eine neue 500 MB Partition unter /mnt/new mit einem 500MB ext4 Datei-Struktur_
+
+S: Mögliche Lösung wäre:
+    
+    1. lsblk                    //Suche wo genug Platz ist, angenommen sdb
+    2. fdisk  /dev/sdb          //einfach den Anweisungen im Programm verfolgen
+    3. partprobe /dev/sdb       //Befehl prüft, ob alles Problemlos gelaufen ist
+    4. lsblk                    //Neue Parittion sollte sichtbar sein
+    5. mkfs.ext4 /dev/sdb1      //Partition erhält FS
+    6. mkdir /mnt/new           //Einhängepunkt generieren, falls noch nicht vorhanden
+    7. mount /dev/sdb1 /mnt/new //Partition einhängen in das primäre FS
+    8. df -h                    //Prüfen, ob das Einhängen funktioniert hat
+    9. blkid /dev/sdb1          //UUID bestimmen
+    10. vi /etc/fstab           //Änderung der Partitionstabelle permanent machen
+    
+        Für den 10 Befehl sollte der Eintrag folgendes Format haben: UUID Mountpunt FS Settings 0 0
+    
+ T: _Kopieren Sie die Datei /etc/fstab nach /vat/tmp/fstab und machen Sie folgende Änderungen: Ändern Sie den Besitzer in root, ändern Sie die gruppe in root, es nicht für alle (other) ausführbar, User Andrew kann die Datei lesen und schreiben, Susan aber nicht, alle anderen User können die Datei lesen jetzt und in Zukunft_
+
+S: Mögliche Lösung wäre:
+    
+    1. cp /etc/fstab /var/tmp/fstab
+    2. //einfach den Anweisungen im Programm verfolgen
+    3. partprobe /dev/sdb       //Befehl prüft, ob alles Problemlos gelaufen ist
+    4. lsblk                    //Neue Parittion sollte sichtbar sein
+    5. mkfs.ext4 /dev/sdb1      //Partition erhält FS
+    6. mkdir /mnt/new           //Einhängepunkt generieren, falls noch nicht vorhanden
+    7. mount /dev/sdb1 /mnt/new //Partition einhängen in das primäre FS
+    8. df -h                    //Prüfen, ob das Einhängen funktioniert hat
+    9. blkid /dev/sdb1          //UUID bestimmen
+    10. vi /etc/fstab           //Änderung der Partitionstabelle permanent machen
+    
+        Für den 10 Befehl sollte der Eintrag folgendes Format haben: UUID Mountpunt FS Settings 0 0   
+    
+    
+    
+    
+    
+       Ein Zeiteintrag kann mit Hilfe der Tabelle "more /etc/crontab" definiert werden (nur unter CentOS).
+    
+    
