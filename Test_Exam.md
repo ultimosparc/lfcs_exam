@@ -258,9 +258,69 @@ S: Mögliche Lösung wäre:
 
 S: Mögliche Lösung wäre:
     
-    1. 
+    1. mkdir -p /shared/sysusers
+    2. chgrp sysusers /shared/sysusers
+    3. chmod 770 /shared/sysusers
+    4. chmod g+s /shared/sysusers
+    
+T: _Suchen sie "root" in der Datei /et/passwd und speichern Sie die Zeilen in /file_
+
+S: Mögliche Lösung wäre:
+    
+    1. grep root /etc/passwd > /file
+
+T: _Ändern Sie die SELinux Einstellung von enforcing nach permissive_
+
+S: Mögliche Lösung wäre:
+    
+    1. setenforce 2
+    
+        Als Alternative gibt vim /etc/sysconfig/selinux, eine alternative Aufgabe wäre die Änderung des SELinuxtypes
+
+T: _Generieren Sie eine LVM Partition mit dem Namen /dev/development/engineering der Größe 32 MB_
+
+S: Mögliche Lösung wäre:
+    
+    1. fdisk /dev/sdb
+    2. pvcreate /dev/sdb3
+    3. pvs
+    4. vgcreate Development /dev/sdb3
+    5. vgs
+    6. lvcreate -L 32M -n engineering development
+    7. mk.xfs /dev/development/engineering
+    8. mkdir /engineering
+    9 mount /dev/development/engineering /engineering
+    10. blkid /dev/sdb3
+    11. vim /etc/fstab
+    
+T: _Finden Sie alle Dateien die dem User andrew gehören und speichern Sie die Resultate in /tmp/results ab_
+
+S: Mögliche Lösung wäre:
+    
+    find / -name andrew -exec cp -rvp {} /tmp/results
+    
+T: _Erstellen Sie einen Cronjob der alle 5 Minuten das Skript /etc/test ausführt_
+
+S: Mögliche Lösung wäre:
+    
+    1. crontab -e
+    2. */5 * * * * /etc/test eintragen
+    
+T: _Vergrößern Sie die LVM Partition auf 350 MB_
+
+S: Mögliche Lösung wäre:
+    
+    1. fdisk /dev/sdb //Neue Partition erstellen 
+    2. partprobe /dev/sdb
+    3. pvcreate /dev/sdb4
+    4. pvs
+    5. vgextend deveolpment /dev/sdb4
+    6. vgs
+    7. lvextend -L +265M /dev/development/engineering
+    8. lvs 
+    9. xfs_growfs /dev/development/engineering
+    10 lsblk
+    
+        Als Alternative wäre die Verkleinerung möglich als Aufgabe
     
     
-    
-    
-        
