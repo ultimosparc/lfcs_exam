@@ -11,7 +11,8 @@ Exam's preparing &amp; test exam
     zum beispiel festlegen von statischen Ips. DNS, FQDN und Gateways
     
     Weitere mögliche Aufgaben ist installieren 
-    
+Stellt sich die Frage, was ist die private IP Adresse und was ist die öffentliche IP Adresse
+Es zeigt sich, das Virtuelle Maschine die Bezeichnung eth0 für die Netzwerkkarte verwenden, dies dann private /interne IPaddresse zugeordnert bekommen, diese Docker und AWS. Tune2 ist dann die öffentliche IP Adresse
     Install the Apache Package
 Change the default directory to /web/html
 Create a file named index.html and place it in /web/html
