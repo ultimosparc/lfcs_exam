@@ -21,3 +21,4 @@
     19. https://github.com/karakays/lfcs
     20. https://www.nextop.de/lhb/node20.html
     21. https://www.tecmint.com/create-partitions-and-filesystems-in-linux/
+    22. https://github.com/ultimosparc/lfcs/blob/master/Networking.md
