@@ -34,6 +34,26 @@ T: _Legen Sie einen Chronjob an, der jede Minute das Skript /tmp/test.sh ausfüh
 ## 4. Service Configuration
 
 ## 5. Networking
+
+Kombinieren von Netzwerk speichern und den Zugriff darauf
+Install the Apache Package
+Change the default directory to /web/html
+Create a file named index.html and place it in /web/html
+Make sure that anyone on your local subnet can access index.html but no one else.
+
+Create a RAID 0 array using the two spare drives on (5GB) on this machine. 
+Size=2048MB
+Label=RAID_0
+Mount it persistently by Label at /storage
+Create a RAID 1 array using LVM using the two spare drives (5GB) on this machine
+size 1024MB
+Label=RAID_1
+Mount it persistently by UUID at /storage2
+Using the left over space on those one of those two drives, create a 1GB SWAP partition and add it to the existing SWAP pool - This SWAP space should mount at boot. 
+Assume that there is an NFS share somewhere on your network. Write the command you would use to mount the NFS share on /NFS_mount. Append your terminal code to a file named “network_mount.txt” and place it in the /root folder.
+The IP or DNS name for the share do not matter - Use whatever you would like. 
+Assume that there is an CIFS share somewhere on your network. Write the command you would use to mount the CIFS share on /CIFS_mount. Append your terminal code to a file named “network_mount.txt” and place it in the /root folder.
+The IP or DNS name for the share do not matter - Use whatever you would like.
 hostn
 Mögliche Aufgaben: 
 Mögliche Aufgaben wären, den statischen pretty icon, deployment umgebung(prodcution, staging developing usw zu geben), standar wert bei "" eingabe setzen, chassis types wofür werden diese verwendet, 
