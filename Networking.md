@@ -1,33 +1,35 @@
-# lfcs_exam
-Exam's preparing &amp; test exam
+# Networking 
 
-    Configure networking and hostname resolution (using hostnamectl)
-    Configure network services to start automatically at boot (using systemctl, read about systemd-networkd/systemd-resolved)
-    Start, stop, and check the status of network services
-    Implement packet filtering (iptables, no firewalld since it’s not related to RHEL)
-    Manipulate /etc/hosts file
+_Konfiguration des Hostname_ [19,22]
+
+Es kann sein, das in der Prüfung eine Aufgabe gibt den Hostname zu ändern. Es gibt zwei Möglichkeiten, dynamisch und statisch. Dynamisch kann der Hostname eines laufenden Systems geändert werden und statisch bedeutet, dass der Hostname permanent geändert wird, das nach Reboot das System immer noch den neuen Hostnamen hat. 
+Ein System hat drei verschiedene Hostnames. The high-level "pretty" hostname which might include all kinds of special characters (e.g. "Lennart's Laptop"), the static hostname which is used to initialize the kernel hostname at boot (e.g. "lennarts-laptop"), and the transient hostname which is a fallback value received from network configuration. If a static hostname is set, and is valid (something other than localhost), then the transient hostname is not used. 
+Note that the pretty hostname has little restrictions on the characters and length used, while the static and transient hostnames are limited to the usually accepted characters of Internet domain names, and 64 characters at maximum (the latter being a Linux limitation).
+In DNS, hostnames are appended with a dot and domain name to qualify FQDN, e.g. debian.karakays.com
+Statische und transient hostname unterliegen den Internet Regel bei der Namensgebung, also werden diese genommen um in Netzwerken die rechner bezeichnet
+Es gibt verschiedene Befehle zum Bearbeiten des Hostnames. Grundsätzlich aber kann der Befehl honstnamectl verwendet werden. Angenommen es soll der hostname gesetzt werden, dann kann der Befehl wie folgt aussehen: 
+
+    hostnamectl set-hostname "test" --pretty //--static -- transient 
     
-    Aufgabe wäre zuordnung von netwerk eigenschaften und servern
-    zum beispiel festlegen von statischen Ips. DNS, FQDN und Gateways
+aussehen. Grafische Oberflächen benutzten manchmal den Icon-Hostname, es kann zudem der Deployment-Name der Umgebung wie Staging, Production, Developing usw gesetzt werden mit selben Befehl gesetzt werden. 
+Der --pretty Hostname ist der Name, der im Terminal gesehen werden kann, wenn man sich über ssh anmeldet. Der --static Hostname ist der DNS Name und unterliegt somit dem DNS Namensregeln. Der --transient Hostname ist ein Backup Name, falls der statische Name nicht gesetzt ist oder nicht als DNS Name akzepziert wird. Auslesen kann man einen Hostname wie folgt: 
+
+    hostnamectl --static //--pretty --transient
     
-    Weitere mögliche Aufgaben ist installieren 
+Um permanent den Hostname zu ändern, muss der Eintrag der Datei /etc/hostname entsprechend angepasst werden. Als Alternative kann mit nmtui der Hostname geändert werden. 
+
+
+_Configure network services_ [19,22,23]
+
+packet filtering (iptables, no firewalld since it’s not related to RHEL)
+      
+festlegen von statischen Ips. DNS, FQDN und Gateways wäre möglich
+   ip as / nmtui   
+   
+to start automatically at boot (using systemctl   
+
+Start, stop, and check the status of network services
+
 Stellt sich die Frage, was ist die private IP Adresse und was ist die öffentliche IP Adresse
 Es zeigt sich, das Virtuelle Maschine die Bezeichnung eth0 für die Netzwerkkarte verwenden, dies dann private /interne IPaddresse zugeordnert bekommen, diese Docker und AWS. Tune2 ist dann die öffentliche IP Adresse
-    Install the Apache Package
-Change the default directory to /web/html
-Create a file named index.html and place it in /web/html
-Make sure that anyone on your local subnet can access index.html but no one else.
-
-Create a RAID 0 array using the two spare drives on (5GB) on this machine. 
-Size=2048MB
-Label=RAID_0
-Mount it persistently by Label at /storage
-Create a RAID 1 array using LVM using the two spare drives (5GB) on this machine
-size 1024MB
-Label=RAID_1
-Mount it persistently by UUID at /storage2
-Using the left over space on those one of those two drives, create a 1GB SWAP partition and add it to the existing SWAP pool - This SWAP space should mount at boot. 
-Assume that there is an NFS share somewhere on your network. Write the command you would use to mount the NFS share on /NFS_mount. Append your terminal code to a file named “network_mount.txt” and place it in the /root folder.
-The IP or DNS name for the share do not matter - Use whatever you would like. 
-Assume that there is an CIFS share somewhere on your network. Write the command you would use to mount the CIFS share on /CIFS_mount. Append your terminal code to a file named “network_mount.txt” and place it in the /root folder.
-The IP or DNS name for the share do not matter - Use whatever you would like.
+    
