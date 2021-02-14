@@ -34,6 +34,11 @@ T: _Legen Sie einen Chronjob an, der jede Minute das Skript /tmp/test.sh ausfüh
 ## 4. Service Configuration
 
 ## 5. Networking
+hostn
+Mögliche Aufgaben: 
+Mögliche Aufgaben wären, den statischen pretty icon, deployment umgebung(prodcution, staging developing usw zu geben), standar wert bei "" eingabe setzen, chassis types wofür werden diese verwendet, 
+Wo wird der statische Hostname verwendet, der direkt aus dem Kernel kommt. Man könnte ändern der bootlist im bootmenu, benutzt diese List den statischen hostname
+hostnamectl may be used to query and change the system hostname and related settings.
 
 Upon reboot, manually configure grub to boot into runlevel 3
 Upon booting, set the machine to permanently boot into runlevel 3
