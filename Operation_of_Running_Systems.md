@@ -107,3 +107,8 @@ Folgende Beispiele zeigen Zugriff auf Logs, um die Ausführung von Chronjobs zu 
         grep -ic cron /var/log/* | grep -v :0
         grep cron /etc/rsyslog.conf
         grep -i debian-sa1 syslog | tail -1
+
+jede inode enthält drei Zeiten: 
+mtime ->  the time the le was last modied
+ctime -> the time the le attributes were last modied
+atime ->  the time the le was last read
