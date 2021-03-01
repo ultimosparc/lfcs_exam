@@ -76,6 +76,7 @@ Um eine Partition anzulegen, muss neuer Speicherbereich festgelegt und in der Pa
 
 _Configuration of the SWAP Partition_ [21]
 
+
 Im Fall, der Arbeitsspeicher RAM eines Computersystems reicht nicht aus, UNIX benutzt ein Teil des Langzeitspeichers (SWAP Partition), um die operativen Prozesse auszuführen, um den Betrieb aufrechtzuhalten. D.h. nicht wichtige Daten werden in einer Auslagersdatei auf dem Langzeitspeicher wie eine Festplatte ziwschenzeitlich abgelegt. Swap should usually equal 2x physical RAM for up to 2 GB of physical RAM, and then an additional 1x physical RAM for any amount above 2 GB, but never less than 32 MB. 
 Gewöhnlich wird bereits beim AnlegenUm nun eine solche Auslagerungsdatei anzulegen müssen folgende Punkte bearbeitet werden
 pürfen ob schon swap Partitionen existieren
@@ -106,5 +107,22 @@ fdisk /dev/sda1 zum Beispiel aus. Dann geht man durch das Programm n -> 82 -> p 
     
 ausführen. 
 
+Die drei extra Bits. 
+set-user-id bit --> erlaubt Programme wie passwd mit superuserrechten auszustatten, programm wird mit root userid ausgeführt
+			anstatt der eigenen userid
+set-group-id bit --> programm mit diesem bit werden ausgeführt als root group z.B. write befehl
+sticky bit --> swap partition war eine extra disk wo prozessbilder ausgeswapt und wieder eingeswapt wurden um den multiprogramming level
+aufrecht zu erhalten, d.h. ausführbare code andere Daten wurden in der Swappartition gepackt, damit das schreiben und lesen schneller
+gemacht wurde programme die von vielen user jeden genutzt wurde wurden auf die swap partition gepackt als ganzes stück womit das Lesen und Schreiben
+schneller gemacht wurde, da man das programm nicht im normalen Speicher zusammen suchen muss. der gesetzte Stickybit wurde gesetzt um das 
+löschen des Programms auf der Swap partition zu vermeiden
+Auf File ebene wie oben beschrieben, auf Verzeichnis Ebene gesetzt, nur der Besitzer des Verzeichnis darf files löschen ansonst niemand
+beispiel /tmp order. schreibbar und ausführbar und lesbar für alle, nur nicht löschen
 
+Verzeichnisbaum ist eine Art von Interface 
+Dateien sind Squenzen von Bytes
+Verzeichnisse sind dateien mit besonderen Eigenschaften: 
+1. niemals leer wegen "." und ".."
+2. Können nicht durch unpriviligierte Programme manipuliert werden, nur durch Systemscalls
+3. enthalten nur Einträge der Form (name, inode #), Tabelle mit hashwerten
     
