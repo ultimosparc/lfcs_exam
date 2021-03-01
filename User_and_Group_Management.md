@@ -28,3 +28,18 @@ Ben_homework
 Give Bob (and only Bob) read and write access to /Homework/Bob_homework
 Give Tim (and only Tim) read and write access to /Homework/Tim_homework
 Give Ben (and only Ben) read and write access to /Homework/Ben_homework
+
+
+Die drei extra Bits. 
+set-user-id bit --> erlaubt Programme wie passwd mit superuserrechten auszustatten, programm wird mit root userid ausgeführt
+			anstatt der eigenen userid
+set-group-id bit --> programm mit diesem bit werden ausgeführt als root group z.B. write befehl
+sticky bit --> swap partition war eine extra disk wo prozessbilder ausgeswapt und wieder eingeswapt wurden um den multiprogramming level
+aufrecht zu erhalten, d.h. ausführbare code andere Daten wurden in der Swappartition gepackt, damit das schreiben und lesen schneller
+gemacht wurde programme die von vielen user jeden genutzt wurde wurden auf die swap partition gepackt als ganzes stück womit das Lesen und Schreiben
+schneller gemacht wurde, da man das programm nicht im normalen Speicher zusammen suchen muss. der gesetzte Stickybit wurde gesetzt um das 
+löschen des Programms auf der Swap partition zu vermeiden
+Auf File ebene wie oben beschrieben, auf Verzeichnis Ebene gesetzt, nur der Besitzer des Verzeichnis darf files löschen ansonst niemand
+beispiel /tmp order. schreibbar und ausführbar und lesbar für alle, nur nicht löschen
+
+
