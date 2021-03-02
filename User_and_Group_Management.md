@@ -1,33 +1,61 @@
-# lfcs_exam
-Exam's preparing &amp; test exam
+# User and Group Management
 
-    Create, delete, and modify local user accounts
+Create, delete, and modify local user accounts
     Create, delete, and modify local groups and group memberships
     Configure startup files (read about /etc/skel)
     Manage user privileges
     Configure custom environment paths for userh
-    
-    Create the following users with the following details - If the supplemental groups listed do not exist, create them. 
-Bob - Supplemental Group Engineering - PW: cent6
-Tim - Supplemental Group WebDev - PW: cent6
-Ben - Supplemental Group Chemical - PW: cent6
-All accounts created must expire one year from today. 
-Set Bob's default shell to zsh
-Set Tim's default home directory to /websites - if this directory does not exist, create it.
-Apply the same SELinux contexts and permissions to /websites that would be found on a user's /home directory such that Tim and only Tim will have access to /websites
-Give Ben complete Sudo access to the machine.
-Give Tim Sudo access to the following tool:
-iptables
+_Change User Privileges_ 
 
-Create a directory named /Homework
-Allow all users to read this directory. But nothing else. 
-Create three folders inside /Homework 
-Bob_homework
-Tim_homework
-Ben_homework
-Give Bob (and only Bob) read and write access to /Homework/Bob_homework
-Give Tim (and only Tim) read and write access to /Homework/Tim_homework
-Give Ben (and only Ben) read and write access to /Homework/Ben_homework
+Mit dem Befehl _visudo_ können nicht root Usern, also alle andere User, superuser rechten vergeben werden. Es gibt drei Möglichekeiten, Superuser rechte zu vergeben. Direkt  gebunden an einen User Account, über die Mitgliedschaft zu einer bestimmten Gruppe mit super user privilegien oder über spezielle Programme, die mit superuserrechten ausgestattet werden. 
+Mögliche Auszug aus der der Datei /etc/sudoers die durch den Befehl visudo bearbeitet wird: 
+
+	## The COMMANDS section may have other options added to it.
+	##
+	## Allow root to run any commands anywhere
+	root    ALL=(ALL)       ALL
+
+	## Allows members of the 'sys' group to run networking, software,
+	## service management apps and more.
+	# %sys ALL = NETWORKING, SOFTWARE, SERVICES, STORAGE, DELEGATING, PROCESSES, LOCATE, DRIVERS
+
+	## Allows people in group wheel to run all commands
+	%wheel  ALL=(ALL)       ALL
+
+	## Same thing without a password
+	# %wheel        ALL=(ALL)       NOPASSWD: ALL
+
+	## Allows members of the users group to mount and unmount the
+	## cdrom as root
+	# %users  ALL=/sbin/mount /mnt/cdrom, /sbin/umount /mnt/cdrom
+
+	## Allows members of the users group to shutdown this system
+	# %users  localhost=/sbin/shutdown -h now
+
+	## Read drop-in files from /etc/sudoers.d (the # here does not mean a comment)
+	#includedir /etc/sudoers.d
+	ec2-user        ALL=(ALL)       NOPASSWD: ALL
+
+The syntax to configure user privileges is as follows:
+
+	user_list host_list=effective_user_list tag_list command_list
+Where:
+
+	user_list – list of users or a user alias that has already been set.
+	host_list – list of hosts or a host alias on which users can run sudo.
+	effective_user_list – list of users they must be running as or a run as alias.
+	tag_list – list of tags such as NOPASSWD.
+	command_list – list of commands or a command alias to be run by user(s) using sudo.
+    
+Beispiele:
+	
+	aaronkilik ALL=(ALL) NOPASSWD: /bin/kill
+	%sys ALL=(ALL) NOPASSWD: /bin/kill, /bin/rm
+	
+
+
+
+
 
 
 Die drei extra Bits. 
