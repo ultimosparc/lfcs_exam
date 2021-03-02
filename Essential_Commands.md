@@ -2,6 +2,8 @@
 
 Essential Commands domain might appears more frequently than others in the exam. 
 
+
+
 _Archivieren von Dateien_ [9]
 
 Dateien können in Archiven verpackt werden. Das Tool dafür ist _tar_. 
@@ -58,6 +60,18 @@ Es existieren weitere Befehhle nach Dateien zu suchen.
     type – returns information about the command type and details based on how the command is related to the shell configuration.
     locate sucht wie find nach Datei, jedoch über eine interne Datenbank
  
+_Bearbeitung von Dateien_
+
+file, cat, less, more, head, tail, wc,  
+
+_Repitative Ausführung von Befehlen über die Historie des Terminals_
+
+history befehl wiederholen mit !26 !"26" klären was das genau bedeutet
+
+_Ausgabe und Manipulation des Datum und der Zeit_
+
+date cal und in diesem Zusammenhang das Format diskutieren
+
 _Creating Backups_ [9]
 
 Creating Backups:
