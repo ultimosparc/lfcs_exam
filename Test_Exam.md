@@ -23,7 +23,7 @@ T: _Erstellen Sie eine neue Gruppe "Verkäufer" und fügen Sie den User Peter hi
 
 T: _Erstellen Sie einen Unterordner "Haus" und ändern Sie die Gruppe zu "Verkäufer" und den Besitzer zu root_
 
-T: _Geben Sie dem neuen User Stefan das Recht ohne Passwordabfrage ls auszuführen, um das root verzeichnis auszulesen_
+T: _Ändern Sie die SU Rechte von Peter, sodass nur nur die Programme cat, tail ohne sudo ausgeführt werden kann_
 
 ## 3. Operation of Running Systems
 
@@ -380,10 +380,10 @@ Give Bob (and only Bob) read and write access to /Homework/Bob_homework
 Give Tim (and only Tim) read and write access to /Homework/Tim_homework
 Give Ben (and only Ben) read and write access to /Homework/Ben_homework
 
-T: _Geben Sie dem neuen User Stefan das Recht ohne Passwordabfrage ls auszuführen, um das root verzeichnis auszulesen_
+T: _Ändern Sie die SU Rechte von Peter, sodass nur nur die Programme cat, tail ohne sudo ausgeführt werden kann_
 
 S: Mögliche Lösung wäre: 
 
-    
+    Peter ALL=(ALL:ALL) cat, tail -> /etc/sudoers 
     
          
