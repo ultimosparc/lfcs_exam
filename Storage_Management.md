@@ -119,10 +119,11 @@ löschen des Programms auf der Swap partition zu vermeiden
 Auf File ebene wie oben beschrieben, auf Verzeichnis Ebene gesetzt, nur der Besitzer des Verzeichnis darf files löschen ansonst niemand
 beispiel /tmp order. schreibbar und ausführbar und lesbar für alle, nur nicht löschen
 
-Verzeichnisbaum ist eine Art von Interface 
-Dateien sind Squenzen von Bytes
-Verzeichnisse sind dateien mit besonderen Eigenschaften: 
-1. niemals leer wegen "." und ".."
-2. Können nicht durch unpriviligierte Programme manipuliert werden, nur durch Systemscalls
-3. enthalten nur Einträge der Form (name, inode #), Tabelle mit hashwerten
+_Struktur eines Linux Verzeichnisbaumes_
+
+Ein FS besteht aus einem Verzeichnisbaum. Dieses Interface besteht aus Ordnern und Dateien, wobei Ordner nur sDateien mit besonderen Eigenschaften sind: 
+
+	1. niemals leer wegen "." und ".."
+	2. Können nicht durch unpriviligierte Programme manipuliert werden, nur durch Systemscalls
+	3. enthalten nur Einträge der Form (name, inode #), Tabelle mit hashwerten
     
