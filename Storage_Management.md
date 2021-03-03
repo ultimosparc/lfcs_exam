@@ -177,7 +177,7 @@ Die veschiedenen Ordner eines Verzeichnisbaumes können nach den vier Typen eing
 	Daten werden 10 T aufbewahrt in diesem Ordner, in /var/tmp Daten werden 30 Tage aufbewahrt
 	
 	/etc 
-	Spezifische Dateien zur Konfiguration des Host Systems
+	Spezifische Dateien zur Konfiguration des Host Systems, ent/init.d enthält Skripte die beim Start ausgeführt werden
 	
 	/lib
 	Esentzielle geteilte Bibs und Kernelmodule
