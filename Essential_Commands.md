@@ -62,7 +62,9 @@ Es existieren weitere Befehhle nach Dateien zu suchen.
  
 _Bearbeitung von Dateien_
 
-file, cat, less, more, head, tail, wc,  
+Mit dem Befehl file kann man Information über den Typ der Datei bekommen. Zum Auslesen einer Datei gibt es mehrere Befehle wie cat, less, more, head, tail. 
+
+wc,  
 
 _Repitative Ausführung von Befehlen über die Historie des Terminals_
 
