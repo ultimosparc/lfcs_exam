@@ -119,7 +119,7 @@ löschen des Programms auf der Swap partition zu vermeiden
 Auf File ebene wie oben beschrieben, auf Verzeichnis Ebene gesetzt, nur der Besitzer des Verzeichnis darf files löschen ansonst niemand
 beispiel /tmp order. schreibbar und ausführbar und lesbar für alle, nur nicht löschen
 
-_Struktur eines Linux Verzeichnisbaumes_
+_Struktur eines Linux Verzeichnisbaumes_[19]
 
 Ein FS besteht aus einem Verzeichnisbaum. Dieses Interface besteht aus Ordnern und Dateien, wobei Ordner nur sDateien mit besonderen Eigenschaften sind: 
 
@@ -127,3 +127,52 @@ Ein FS besteht aus einem Verzeichnisbaum. Dieses Interface besteht aus Ordnern u
 	2. Können nicht durch unpriviligierte Programme manipuliert werden, nur durch Systemscalls
 	3. enthalten nur Einträge der Form (name, inode #), Tabelle mit hashwerten
     
+Im Verzeichnisbaum unterscheidet man 4 Typen von Inhalten: 
+
+	1. Statitscher Inhalt: belibet unverändert bis bearitet bzw. neu konfiguriert wird.
+	2. Dynamischer/Variabler Inhalt: kann von aktiven Prozessen geändert / ergänzt werden
+	3. persistenter Inhalt: bleib auch nach dem Neubooten erhalten
+	4. Laufzeit Inhalt: Prozess/systemspezifischer Inhalt wird nach dem Booten gelöscht. 
+
+Die veschiedenen Ordner eines Verzeichnisbaumes können nach den vier Typen eingeordnert werden. Die Struktur eines Verzeichnisbaumes hat sich leider über die Zeit verändert, es sind Ordner hinzugekommen, die andere Ordner ergänzen, und es sind Ordner aus dem Baum hinausgenommen worden. Zudem kommt hinzu, je nach Betriebssystem/Version von Linux gibt es Änderungen im Verzeichnisbaum. Folgende Übersicht gibt eine möglichen Aufbau des Verzeichnisbaums an: 
+
+	/bin
+	Essential binaries required when no other filesystems have yet been mounted.
+	Also in single userm ode or recover mode.
+
+	/sbin
+	System binaries for booting, recover or restore. Also capable of mounting /usr, /home etc.
+	
+	/usr
+	A secondary hierarchy that is not needed for system booting. It contains multi-user applications. 	  Package managers touch here. /usr/bin, /usr/lib, /usr/local, /usr/sbin, /usr/bin, /usr/share, 	/usr/src (kernel source), 
+	
+	/boot
+	Contains compressed kernel image, initrd, GRUB
+
+	/opt
+	Isolated installation directory (not scattered in multiple directories). Helpful for proprietary sw 	     or packages downloaded without package managers
+
+	/proc
+	Pseudo-fs. Persists only in memory for processes to keep internal state. Each process has its place 	    as a subdirectory
+
+        /root
+	Home of root user
+
+	/var
+	For variable data that changes frequently. Logs, spool directories (for mail and cron), transient 	  data for cache (e.g. packages) , lock files (linked to /run/lock), Datenbanken usw
+
+	/run
+	Pseudo-fs. For transient data that contains runtime information as lock files
+
+	/media
+	Mount filesystems for removable media such as USBs
+
+	/run
+	A temporary place to mount filesystems such as NFS
+	
+	/tmp
+	Daten werden 10 T aufbewahrt in diesem Ordner, in /var/tmp Daten werden 30 Tage aufbewahrt
+	
+	
+	
+	
