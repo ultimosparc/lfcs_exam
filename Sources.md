@@ -24,3 +24,4 @@
     22. https://github.com/ultimosparc/lfcs/blob/master/Networking.md
     23. https://www.youtube.com/watch?v=LvSAiKrg8j4
     24. https://askubuntu.com/questions/247625/what-is-the-loopback-device-and-how-do-i-use-it
+    25. https://www.geeksforgeeks.org/diff-command-linux-examples/
