@@ -138,7 +138,7 @@ Die veschiedenen Ordner eines Verzeichnisbaumes können nach den vier Typen eing
 
 	/bin
 	Essential binaries required when no other filesystems have yet been mounted.
-	Also in single userm ode or recover mode.
+	Also in single userm ode or recover mode. Basisbefehle für Users und Systemadminstratoren. 
 
 	/sbin
 	System binaries for booting, recover or restore. Also capable of mounting /usr, /home etc.
@@ -147,8 +147,11 @@ Die veschiedenen Ordner eines Verzeichnisbaumes können nach den vier Typen eing
 	A secondary hierarchy that is not needed for system booting. It contains multi-user applications. 	  Package managers touch here. /usr/bin, /usr/lib, /usr/local, /usr/sbin, /usr/bin, /usr/share, 	/usr/src (kernel source), 
 	
 	/boot
-	Contains compressed kernel image, initrd, GRUB
+	Contains compressed kernel image, initrd, GRUB (Statitischer Inhalt für das Booten)
 
+	/dev
+	Enthält die Dateien, die physische Geräte darstellen wie Partitionen, CD-Rom Laufwerke usw. (Geräte die permant angeschlossen sind)
+	
 	/opt
 	Isolated installation directory (not scattered in multiple directories). Helpful for proprietary sw 	     or packages downloaded without package managers
 
@@ -159,7 +162,7 @@ Die veschiedenen Ordner eines Verzeichnisbaumes können nach den vier Typen eing
 	Home of root user
 
 	/var
-	For variable data that changes frequently. Logs, spool directories (for mail and cron), transient 	  data for cache (e.g. packages) , lock files (linked to /run/lock), Datenbanken usw
+	For variable data that changes frequently. Logs, spool directories (for mail and cron), transient 	  data for cache (e.g. packages) , lock files (linked to /run/lock), Datenbanken , loffile usw
 
 	/run
 	Pseudo-fs. For transient data that contains runtime information as lock files
@@ -172,6 +175,18 @@ Die veschiedenen Ordner eines Verzeichnisbaumes können nach den vier Typen eing
 	
 	/tmp
 	Daten werden 10 T aufbewahrt in diesem Ordner, in /var/tmp Daten werden 30 Tage aufbewahrt
+	
+	/etc 
+	Spezifische Dateien zur Konfiguration des Host Systems
+	
+	/lib
+	Esentzielle geteilte Bibs und Kernelmodule
+	
+	/opt
+	Add-ons für Softwarepakete
+	
+	/srv
+	Daten von Services, die vom System generiert werden
 	
 	
 	
