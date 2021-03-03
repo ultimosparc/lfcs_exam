@@ -2,8 +2,6 @@
 
 Essential Commands domain might appears more frequently than others in the exam. 
 
-
-
 _Archivieren von Dateien_ [9]
 
 Dateien können in Archiven verpackt werden. Das Tool dafür ist _tar_. 
@@ -26,9 +24,11 @@ Wie im Beispiel beobachtet werden kann, das Archiv kann bis um das 10fache verkl
 Weitere Ooptionen: 
 
     -t Auflisten des Inhaltes des Archives
-    -r Erweitern des Archives
+    -r man fügt Dateien zu einem Archiv
     -d Löschen einzlner Dateien
-    -u Updaten von einzlnen Dateien 
+    -u Austauschen von einzlnen Dateien zw Update
+    -p man archiviert Dateien und den Rechten auf den Dateien
+    -f muss gesetzt werden, damit Grundbefehle we c,d ausgeführt werden kann
  
  
 _Suchen nach Dateien_ [10]
