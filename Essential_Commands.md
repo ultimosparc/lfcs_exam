@@ -59,7 +59,17 @@ Es existieren weitere Befehhle nach Dateien zu suchen.
     whereis – returns the location of the binary, source file, and man page, it can return multiple versions of command if they exist.
     type – returns information about the command type and details based on how the command is related to the shell configuration.
     locate sucht wie find nach Datei, jedoch über eine interne Datenbank
+    
+Ein weiteres Beispiel zeigt, wie man nach Dateien mit einer bestimmten Größe sucht.
+
+    find ~ -maxdepth 1 -type f -size -20c
+    
+ Sucht im Heimverzeichnis nach Dateien, keine Ordner, von der Größe kleiner oder gleich 20 Bytes. Dateien in Unterordner werden nicht durchsucht (maxdepth).
+ c steht für Bytes, es gibt noch: b für 512 Blocksize, w 2 Bytes, k Kilo Bytes, M für Megabytes, G Gigabytes. GroßKleinschreibung muss beachtet werden. Der Ausdruck "-20c" kann auch anders geschrieben werden. =20c Dateien der genauen Größe, +20c Dateien die größer sind 20c genau der größe. 
+ Nach rechten kann auch gesucht werden. Beispiel: 
  
+    find ~ -maxdepth 1 -type f -perm u=rw
+
 _Bearbeitung von Dateien_[25]
 
 Mit dem Befehl file kann man Information über den Typ der Datei bekommen. Zum Auslesen einer Datei gibt es mehrere Befehle wie cat, less, more, head, tail. 
