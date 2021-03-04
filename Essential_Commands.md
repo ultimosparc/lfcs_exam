@@ -400,15 +400,6 @@ _Login und SSH_
 
 Der Zugriff auf eine Maschine kann über Lokal oder Über Fernzugriff erfolgen. Entweder erfolgt der Zugriff über Command Line direkt oder über eine CL innerhalb einer GUI (X--Window System). Fernzugriff erfolgt über den Befehl ssh user@maschine (DNS Name oder IP). Erfolgt ein Zugriff auf die Maschine, dann öffnet sich ein Teletypewriter (TTY). Innerhalb dieses TTY wird eine virtuelle Konsole geöffnet. Innerhalb der Konsole wird dann eine Shell aktiviert, mit der auf das System zugriffen werden kann. Über Programme wie Docker werden dann ab und zu Shell in Shell geöffnet. 
 
- 
-
-_Wildcards_
-
-Viel man innerhalb einer Textdatei etwas suchen, jedoch man kennt den String nicht mehr genau, dann kann man über Wildcards nach potentiellen Strings suchen, die ählich dem String sind, den man sucht. 
-Folgende Wildcards existieren: 
-
-![IMG_8394](https://user-images.githubusercontent.com/15387251/109890380-7af15e80-7c87-11eb-8b30-960f9c798eb9.jpg)
-
 Mit dem Befehl who kann man sehen, wer gerade eingelogt ist in das System. Dabei struktiert sich die Ausgabe wie folgt: 
 
     |USER|TTY|FROM|LGOIN@|IDLE|....
@@ -418,7 +409,12 @@ Dabei ist USER der Login name des USers, tty steht für die virtuelle Konsolle, 
     -b wie lange das System schon aktiv ist
     -q Anzahl der User die eingelogt sind
     
+_Wildcards_
 
+Viel man innerhalb einer Textdatei etwas suchen, jedoch man kennt den String nicht mehr genau, dann kann man über Wildcards nach potentiellen Strings suchen, die ählich dem String sind, den man sucht. 
+Folgende Wildcards existieren: 
+
+![IMG_8394](https://user-images.githubusercontent.com/15387251/109890380-7af15e80-7c87-11eb-8b30-960f9c798eb9.jpg)
     
 
 _Creating Backups_ [9]
@@ -454,7 +450,9 @@ The questions were outcome based, i.e. Set up a mail server.
 
 You were free to use the tools you deemed right as assessment was proficiency based.
 
-I don't know how much has changed but practice was key. i.e. I set up various mail servers before finding an approach I was confident with.
+I don't know how much has changed but practice was key. i.e. I set up various mail servers before 
+
+ing an approach I was confident with.
 
 
 
