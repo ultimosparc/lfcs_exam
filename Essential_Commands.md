@@ -391,7 +391,7 @@ _Ausgabe und Manipulation des Datum und der Zeit_
 
 date cal und in diesem Zusammenhang das Format diskutieren
 
-_Standardausgabe und Weiterleitung_
+_Standardausgabe und Weiterleitung_[26]
 
 Es existieren drei inpit/output Channels: stdin (0), stdout (1), stderr (2), die eine Kommunikation zwischen den Programmen und der Umgebung etablieren. 
 Die Channels sind alle der Datei /dev/tty0 zugeordnet. Folgende Operatoren zur Weiterleitung existieren: 
