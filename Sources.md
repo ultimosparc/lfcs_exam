@@ -29,3 +29,4 @@
     27. https://www.tecmint.com/create-hard-and-symbolic-links-in-linux/
     28. https://szumigalski.com/2020/05/18/lfcs-admin-exam-preparation-guide-create-delete-copy-and-move-files-and-directories/
     29. https://chousensha.github.io/blog/2018/02/24/lfcs-prep-essential-commands/
+    30. https://www.appservgrid.com/paw92/index.php/2019/04/03/lfcs-linux-foundation-certified-sysadmin/
