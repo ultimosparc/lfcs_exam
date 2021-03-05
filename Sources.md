@@ -26,3 +26,4 @@
     24. https://askubuntu.com/questions/247625/what-is-the-loopback-device-and-how-do-i-use-it
     25. https://www.geeksforgeeks.org/diff-command-linux-examples/
     26. https://www.tecmint.com/linux-io-input-output-redirection-operators/
+    27. https://www.tecmint.com/create-hard-and-symbolic-links-in-linux/
