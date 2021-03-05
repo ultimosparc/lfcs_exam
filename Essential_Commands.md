@@ -444,6 +444,33 @@ Folgende Wildcards existieren:
 
 ![IMG_8394](https://user-images.githubusercontent.com/15387251/109890380-7af15e80-7c87-11eb-8b30-960f9c798eb9.jpg)
     
+_Hard and Soft Links_[27]
+
+ inode (a data structure that stores everything about a file apart from its name and actual content).
+
+$ ls -l
+$ ln topprocs.sh tp
+$ ls -l
+
+To make a hard link directly into a soft link, use the -P flag like this.
+
+$ ln -P topprocs.sh tp
+
+To make a soft link, look at the next example: 
+
+$ ln -s ~/bin/topprocs.sh topps.sh
+$ ls -l topps.sh
+
+If the symbolic link already exist, you may get an error, to force the operation (remove exiting symbolic link), use the -f option.
+
+$ ln -s ~/bin/topprocs.sh topps.sh
+$ ln -sf ~/bin/topprocs.sh topps.sh
+
+To enable verbose mode, add the -v flag to prints the name of each linked file in the output.
+
+$ ln -sfv ~/bin/topprocs.sh topps.sh
+$ $ls -l topps.sh
+
 
 _Creating Backups_ [9]
 
