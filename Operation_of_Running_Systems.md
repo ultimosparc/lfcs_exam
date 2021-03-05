@@ -255,3 +255,63 @@ Since all services are included in the listing it is possible to see only entrie
 Look into the man page for ‘journalctl’ to see more available options. Practice all of these commands, as well as their other parameters, to make sure you understand their capabilities.
 
 You most likely will get a listing of a lot of accounts that have ‘Never logged in’. Figure 1 shows a screenshot of the ‘lastlog’ command in CentOS. The same command is shown in Figure 2 for Ubuntu.
+
+_Limits of Processes_[31]
+
+How to Set Limits on User Running Processes in Linux. One of the Linux’s beauties is that you can control almost everything about it. This gives a system administrator a great control over his system and better utilization of the system resources.
+
+While some might have never thought about doing this, it is important to know that in Linux you can limit how much resource a single user may use and for how long.
+In this short topic, we will show you how to limit the number of processes started by user and how to check the current limits and modify them.
+
+Before we go any further there are two things we need to point:
+
+You need root access to your system to modify the user limits
+You must be extremely careful if you plan to modify these limits
+To setup user limits, we will need to edit the following file:
+/etc/security/limits.conf
+This file is used to apply ulimit created by the pam_module. 
+
+The file has the following syntax:
+
+<domain> <type> <item> <value>
+Here we will stop to discuss each of the options:
+
+Domain – this includes usernames, groups, guid ranges etc
+Type – soft and hard limits
+Item – the item that will be limited – core size, file size,  nproc etc
+Value – this is the value for the given limit
+A good sample for a limit is:
+
+@student          hard           nproc                20
+The above line sets a hard limit of maximum 20 processes on the "student" group.
+
+If you want to see the limits of a certain process has you can simply “cat” the limits file like this:
+
+# cat /proc/PID/limits
+Where PID is the actual process ID, you can find out process id by using ps command. For more detailed explanation, read our article that says – Find Running Linux Processes and Set Process Limits Per-User Level
+
+So here is an example:
+
+# cat /proc/2497/limits
+Sample Output
+Limit                     Soft Limit           Hard Limit           Units     
+Max cpu time              unlimited            unlimited            seconds   
+Max file size             unlimited            unlimited            bytes     
+Max data size             unlimited            unlimited            bytes     
+Max stack size            8388608              unlimited            bytes     
+Max core file size        0                    unlimited            bytes     
+Max resident set          unlimited            unlimited            bytes     
+Max processes             32042                32042                processes 
+Max open files            1024                 4096                 files     
+Max locked memory         65536                65536                bytes     
+Max address space         unlimited            unlimited            bytes     
+Max file locks            unlimited            unlimited            locks     
+Max pending signals       32042                32042                signals   
+Max msgqueue size         819200               819200               bytes     
+Max nice priority         0                    0                    
+Max realtime priority     0                    0                    
+Max realtime timeout      unlimited            unlimited            us   
+All of the lines are pretty much self explanatory. However if you want to find more the settings you can input in limits.conf file, you can have a look at the manual provided here.
+
+If you have any questions or comments, please do not hesitate to submit them in the comment section below.
+
