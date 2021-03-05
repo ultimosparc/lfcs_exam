@@ -27,3 +27,4 @@
     25. https://www.geeksforgeeks.org/diff-command-linux-examples/
     26. https://www.tecmint.com/linux-io-input-output-redirection-operators/
     27. https://www.tecmint.com/create-hard-and-symbolic-links-in-linux/
+    28. https://szumigalski.com/2020/05/18/lfcs-admin-exam-preparation-guide-create-delete-copy-and-move-files-and-directories/
