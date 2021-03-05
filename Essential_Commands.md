@@ -404,7 +404,25 @@ Die Channels sind alle der Datei /dev/tty0 zugeordnet. Folgende Operatoren zur W
     2>&1        stderr -> stdin  
 
 
-Jeder Kanal ist im Grunde eine eigene Textdatei mit Filedesriptor, der an jeder Datei hangt und die Metadaten enthält. 
+Jeder Kanal ist im Grunde eine eigene Textdatei mit Filedesriptor, der an jeder Datei hangt und die Metadaten enthält.
+
+Ein Beispiel für eine Pipe: 
+    
+    cat /var/log/syslog | less
+    
+How To Redirect Standard Output/ Error To One File
+
+    ls -l /root/ >ls-error.log 2>&1
+    
+Alternativ, die direkte Methode: 
+
+    $ ls -l /root/ &>ls-error.log 
+    
+Oftmals in Kombination mit dem Befehl xargs: 
+
+    $ echo /home/aaronkilik/test/ /home/aaronkilik/tmp | xargs -n 1 cp -v /home/aaronkilik/bin/sys_info.sh
+
+xargs which is used to build and execute command lines from standard input. Below is an example of a pipeline which uses xargs, this command is used to copy a file into multiple directories in Linux:
 
 _Login und SSH_
 
