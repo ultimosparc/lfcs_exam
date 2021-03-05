@@ -436,7 +436,88 @@ Dabei ist USER der Login name des USers, tty steht für die virtuelle Konsolle, 
 
     -b wie lange das System schon aktiv ist
     -q Anzahl der User die eingelogt sind
-    
+ 
+_CREATE, DELETE, COPY, AND MOVE FILES AND DIRECTORIES_[28] 
+
+touch command will create a zero bytes empty file. To create a directory, we can use the mkdir command, which stands for making a directory. cp – copy command, we can use this command to rename the file while copying it to the new location. There is scp command – secure copy – to copy files or directory between different Linux servers.
+Another command is the mv command which we can use to move the file or directory to a new location, similar we can use this command to rename a file to a different name. 
+Sometimes when we create a file or directory, we will like to delete it, we can do this with the help of rm command. rmdir is a command we can use to remove an empty directory if that directory contains anything inside the command will fail. We can use rm -r where -r stands for recursive this will remove the directory and its content. The rm command removes files or directory instantly; there is no bin or trash where we can retrieve what we deleted back. rm -rf, where f stands for force, is a very dangerous command because it will remove everything in the current working directory without warring.
+
+_MAN Pages_[29]
+
+an interface to the on-line reference manuals
+
+man -k print | head -n 5
+fmtmsg (3)           - print formatted error messages
+isprint (3)          - character classification routines
+iswprint (3)         - test for printing wide character
+netstat (8)          - Print network connections, routing tables, interface statistics, masquerade connections, and multicast memberships
+abrt-action-list-dsos (1) - Prints out DSO from mapped memory regions.
+
+whatis
+display manual page descriptions
+
+1
+2
+3
+whatis ip
+ip (7)               - Linux IPv4 protocol implementation
+ip (8)               - show / manipulate routing, devices, pol...
+
+apropos
+search the manual page names and descriptions
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+apropos network | tail
+teamnl (8)           - team network device Netlink interface tool
+tracepath (8)        - traces path to a network host discoveri...
+tracepath6 (8)       - traces path to a network host discoveri...
+traceroute (8)       - print the route packets trace to networ...
+traceroute6 (8)      - print the route packets trace to networ...
+tshark (1)           - Dump and analyze network traffic
+umount.nfs (8)       - unmount a Network File System
+usernetctl (8)       - allow a user to manipulate a network in...
+wget (1)             - The non-interactive network downloader.
+wireshark (1)        - Interactively dump and analyze network ...
+
+fmt
+simple optimal text formatter
+
+u # uniform spacing: one space between words, two after sentences
+1
+2
+3
+4
+[root@tron ~]# cat test.txt
+Test.     Next sentence.   This    doesn't   look       right
+[root@tron ~]# fmt -u test.txt
+Test.  Next sentence.  This doesn't look right
+nl
+number lines of files
+
+1
+2
+3
+4
+5
+6
+nl test.txt
+     1    First line
+
+     2    Second line
+
+     3    Third line
+
 _Wildcards_
 
 Viel man innerhalb einer Textdatei etwas suchen, jedoch man kennt den String nicht mehr genau, dann kann man über Wildcards nach potentiellen Strings suchen, die ählich dem String sind, den man sucht. 
