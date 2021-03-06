@@ -387,4 +387,9 @@ To set a new history file, use the new sub-command:
 We can find a complete information about YUM history command and several other commands in the yum man page:
 
 # man yum
-        
+ 
+_Boot Process_[33]
+
+![boot_porcess](https://user-images.githubusercontent.com/15387251/110189827-d30f9880-7e20-11eb-9d2b-dc42ebed3e38.png)
+
+
