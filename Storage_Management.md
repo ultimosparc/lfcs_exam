@@ -188,6 +188,6 @@ Die veschiedenen Ordner eines Verzeichnisbaumes können nach den vier Typen eing
 	/srv
 	Daten von Services, die vom System generiert werden
 	
-	
+![dirtree](https://user-images.githubusercontent.com/15387251/110190172-406ff900-7e22-11eb-9d4d-6534618d1671.jpg)
 	
 	
