@@ -450,3 +450,94 @@ When a process is in a so-called running state, it means it is either currently 
 However, sometimes processes go into what is called a sleep state, generally when they are waiting for something to happen before they can resume, perhaps for the user to type something. In this condition, a process is said to be sitting on a wait queue.
 
 There are some other less frequent process states, especially when a process is terminating. Sometimes, a child process completes, but its parent process has not asked about its state. Amusingly, such a process is said to be in a zombie state; it is not really alive, but still shows up in the system's list of processes.
+
+At any given time, there are always multiple processes being executed. The operating system keeps track of them by assigning each a unique process ID (PID) number. The PID is used to track process state, CPU usage, memory use, precisely where resources are located in memory, and other characteristics.
+
+New PIDs are usually assigned in ascending order as processes are born. Thus, PID 1 denotes the init process (initialization process), and succeeding processes are gradually assigned higher numbers.
+
+The table explains the PID types and their descriptions:
+
+ 
+
+ID Type	Description
+Process ID (PID)	Unique Process ID number
+Parent Process ID (PPID)	Process (Parent) that started this process. If the parent dies, the PPID will refer to an adoptive parent; on recent kernels, this is kthreadd which has PPID=2.
+Thread ID (TID)	Thread ID number. This is the same as the PID for single-threaded processes. For a multi-threaded process, each thread shares the same PID, but has a unique TID.
+
+At some point, one of your applications may stop working properly. How do you eliminate it?
+
+To terminate a process, you can type kill -SIGKILL <pid> or kill -9 <pid>.
+
+Note, however, you can only kill your own processes; those belonging to another user are off limits, unless you are root.
+
+The load average is the average of the load number for a given period of time. It takes into account processes that are:
+
+Actively running on a CPU
+Considered runnable, but waiting for a CPU to become available
+Sleeping: i.e. waiting for some kind of resource (typically, I/O) to become available.
+Note: Linux differs from other UNIX-like operating systems in that it includes the sleeping processes. Furthermore, it only includes so-called uninterruptible sleepers, those which cannot be awakened easily.
+
+The load average can be viewed by running w, top or uptime. We will explain the numbers on the next page.
+
+The load average is displayed using three numbers (0.45, 0.17, and 0.12) in the below screenshot. Assuming our system is a single-CPU system, the three load average numbers are interpreted as follows:
+
+0.45: For the last minute the system has been 45% utilized on average.
+0.17: For the last 5 minutes utilization has been 17%.
+0.12: For the last 15 minutes utilization has been 12%.
+If we saw a value of 1.00 in the second position, that would imply that the single-CPU system was 100% utilized, on average, over the past 5 minutes; this is good if we want to fully use a system. A value over 1.00 for a single-CPU system implies that the system was over-utilized: there were more processes needing CPU than CPU was available.
+
+If we had more than one CPU, say a quad-CPU system, we would divide the load average numbers by the number of CPUs. In this case, for example, seeing a 1 minute load average of 4.00 implies that the system as a whole was 100% (4.00/4) utilized during the last minute.
+
+Short-term increases are usually not a problem. A high peak you see is likely a burst of activity, not a new level. For example, at start up, many processes start and then activity settles down. If a high peak is seen in the 5 and 15 minute load averages, it may be cause for concern.
+
+ pstree displays the processes running on the system in the form of a tree diagram showing the relationship between a process and its parent process and any other processes that it created. Repeated entries of a process are not displayed, and threads are displayed in curly braces.
+ 
+ cp can only copy files to and from destinations on the local machine (unless you are copying to or from a filesystem mounted using NFS), but rsync can also be used to copy files from one machine to another. Locations are designated in the target:path form, where target can be in the form of someone@host. The someone@ part is optional and used if the remote user is different from the local user.
+
+rsync is very efficient when recursively copying one directory tree to another, because only the differences are transmitted over the network. One often synchronizes the destination directory tree with the origin, using the -r option to recursively walk down the directory tree copying all files and directories below the one listed as the source.
+
+rsync is a very powerful utility. For example, a very useful way to back up a project directory might be to use the following command:
+
+$ rsync -r project-X archive-machine:archives/project-X
+
+Note that rsync can be very destructive! Accidental misuse can do a lot of harm to data and programs, by inadvertently copying changes to where they are not wanted. Take care to specify the correct options and paths. It is highly recommended that you first test your rsync command using the -dry-run option to ensure that it provides the results that you want.
+
+To use rsync at the command prompt, type rsync sourcefile destinationfile, where either file can be on the local machine or on a networked machine; The contents of sourcefile will be copied to destinationfile.
+
+A good combination of options is shown in:
+
+$ rsync --progress -avrxH  --delete sourcedir destdir
+
+The dd program is very useful for making copies of raw disk space. For example, to back up your Master Boot Record (MBR) (the first 512-byte sector on the disk that contains a table describing the partitions on that disk), you might type:
+
+dd if=/dev/sda of=sda.mbr bs=512 count=1
+
+WARNING!
+
+Typing:
+
+dd if=/dev/sda of=/dev/sdb
+
+to make a copy of one disk onto another, will delete everything that previously existed on the second disk.
+
+An exact copy of the first disk device is created on the second disk device.
+
+The standard prescription is that when you first login to Linux, /etc/profile is read and evaluated, after which the following files are searched (if they exist) in the listed order:
+
+~/.bash_profile
+~/.bash_login
+~/.profile 
+where  ~/. denotes the user's home directory. The Linux login shell evaluates whatever startup file that it comes across first and ignores the rest. This means that if it finds ~/.bash_profile, it ignores ~/.bash_login and ~/.profile. Different distributions may use different startup files. 
+
+However, every time you create a new shell, or terminal window, etc., you do not perform a full system login; only a file named ~/.bashrc file is read and evaluated. Although this file is not read and evaluated along with the login shell, most distributions and/or users include the ~/.bashrc file from within one of the three user-owned startup files.
+
+Most commonly, users only fiddle with ~/.bashrc, as it is invoked every time a new command line shell initiates, or another program is launched from a terminal window, while the other files are read and executed only when the user first logs onto the system.
+
+Recent distributions sometimes do not even have .bash_profile  and/or .bash_login , and some just do little more than include .bashrc.
+
+ 
+
+Order of the Startup Files
+
+Order of the Startup Files
+
