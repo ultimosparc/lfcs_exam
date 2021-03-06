@@ -540,4 +540,120 @@ Recent distributions sometimes do not even have .bash_profile  and/or .bash_logi
 Order of the Startup Files
 
 Order of the Startup Files
+Environment variables are quantities that have specific values which may be utilized by the command shell, such as bash, or other utilities and applications. Some environment variables are given preset values by the system (which can usually be overridden), while others are set directly by the user, either at the command line or within startup and other scripts. 
+
+An environment variable is actually just a character string that contains information used by one or more applications. There are a number of ways to view the values of currently set environment variables; one can type set, env, or export. Depending on the state of your system, set may print out many more lines than the other two methods.
+
+By default, variables created within a script are only available to the current shell; child processes (sub-shells) will not have access to values that have been set or modified. Allowing child processes to see the values requires use of the export command.
+
+ 
+
+Task	Command
+Show the value of a specific variable	echo $SHELL
+Export a new variable value	export VARIABLE=value (or VARIABLE=value; export VARIABLE)
+Add a variable permanently	
+Edit ~/.bashrc and add the line export VARIABLE=value
+Type source ~/.bashrc or just . ~/.bashrc (dot ~/.bashrc); or just start a new shell by typing  bash
+ 
+
+You can also set environment variables to be fed as a one shot to a command as in:
+
+$ SDIRS=s_0* KROOT=/lib/modules/$(uname -r)/build make modules_install
+
+which feeds the values of the SDIRS and KROOT environment variables to the command make modules_install.
+
+Prompt Statement (PS) is used to customize your prompt string in your terminal windows to display the information you want. 
+
+PS1 is the primary prompt variable which controls what your command line prompt looks like. The following special characters can be included in PS1:
+
+\u - User name
+\h - Host name
+\w - Current working directory
+\! - History number of this command
+\d - Date
+
+They must be surrounded in single quotes when they are used, as in the following example:
+
+$ echo $PS1
+$
+$ export PS1='\u@\h:\w$ '
+student@example.com:~$ # new prompt
+
+To revert the changes:
+
+student@example.com:~$ export PS1='$ '
+$
+
+An even better practice would be to save the old prompt first and then restore, as in:
+
+$ OLD_PS1=$PS1
+
+change the prompt, and eventually change it back with:
+
+$ PS1=$OLD_PS1
+
+bash keeps track of previously entered commands and statements in a history buffer. You can recall previously used commands simply by using the Up and Down cursor keys. To view the list of previously executed commands, you can just type history at the command line.
+
+The list of commands is displayed with the most recent command appearing last in the list. This information is stored in ~/.bash_history. If you have multiple terminals open, the commands typed in each session are not saved until the session terminates.
+
+Several associated environment variables can be used to get information about the history file. 
+
+HISTFILE
+The location of the history file. 
+HISTFILESIZE
+The maximum number of lines in the history file (default 500). 
+HISTSIZE 
+The maximum number of commands in the history file. 
+HISTCONTROL
+How commands are stored. 
+HISTIGNORE
+Which command lines can be unsaved.
+For a complete description of the use of these environment variables, see man bash.
+
+Up/Down arrow keys	Browse through the list of commands previously executed
+!! (Pronounced as bang-bang)	Execute the previous command
+CTRL-R	Search previously used commands
+ 
+
+If you want to recall a command in the history list, but do not want to press the arrow key repeatedly, you can press CTRL-R to do a reverse intelligent search.
+
+As you start typing, the search goes back in reverse order to the first command that matches the letters you have typed. By typing more successive letters, you make the match more and more specific.
+
+The following is an example of how you can use the CTRL-R command to search through the command history:
+
+$ ^R                                                                      (This all happens on 1 line)
+(reverse-i-search)'s': sleep 1000   (Searched for 's'; matched "sleep")
+$ sleep 1000                                                   (Pressed Enter to execute the searched command)
+$
+
+The table describes the syntax used to execute previously used commands:
+
+ 
+
+Syntax	Task
+!	Start a history substitution
+!$	Refer to the last argument in a line
+!n	Refer to the nth command line
+!string	Refer to the most recent command starting with string
+ 
+
+All history substitutions start with !. When typing the command: ls -l /bin /etc will refer to /var, the last argument to the command.
+
+Here are more examples:
+
+$ history
+
+echo $SHELL
+echo $HOME
+echo $PS1
+ls -a
+ls -l /etc/ passwd
+sleep 1000
+history
+$ !1                                    (Execute command #1 above)
+echo $SHELL
+/bin/bash
+$ !sl                           (Execute the command beginning with "sl")
+sleep 1000
+$
 
