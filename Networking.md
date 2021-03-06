@@ -289,4 +289,68 @@ NTP
     server parameters are servers that are used as source of synchronization
     ntpq -p check current status of synchronization
 
+A 32-bit IPv4 address is divided into four 8-bit sections called octets.
+
+Example:
+IP address →            172  .          16  .          31  .         46
+Bit format →     10101100.00010000.00011111.00101110
+
+Note: Octet is just another word for byte.
+
+Network addresses are divided into five classes: A, B, C, D and E. Classes A, B and C are classified into two parts: Network addresses (Net ID) and Host address (Host ID). The Net ID is used to identify the network, while the Host ID is used to identify a host in the network. Class D is used for special multicast applications (information is broadcast to multiple computers simultaneously) and Class E is reserved for future use. In this section you will learn about classes A, B and C.
+
+ host domainname liefert von Webserver über das Netzwerk jeweils wertvolle informationen
+  Müssen es später nochmal nachinstallieren 
+  
+  Network configuration files are essential to ensure that interfaces function correctly. They are located in the /etc directory tree. However, the exact files used have historically been dependent on the particular Linux distribution and version being used.
+
+For Debian family configurations, the basic network configuration files could be found under /etc/network/, while for Fedora and SUSE family systems one needed to inspect /etc/sysconfig/network. 
+
+Modern systems emphasize the use of Network Manager, which we briefly discussed when we considered graphical system administration, rather than try to keep up with the vagaries of the files in /etc. While the graphical versions of Network Manager do look somewhat different in different distributions, the nmtui utility (shown in the screenshot) varies almost not at all, as does the even more sparse nmcli (command line interface) utility. If you are proficient in the use of the GUIs, by all means, use them. If you are working on a variety of systems, the lower level utilities may make life easier.
+
+ Network interfaces are a connection channel between a device and a network. Physically, network interfaces can proceed through a network interface card (NIC), or can be more abstractly implemented as software. You can have multiple network interfaces operating at once. Specific interfaces can be brought up (activated) or brought down (de-activated) at any time.
+
+Information about a particular network interface or all network interfaces can be reported by the ip and ifconfig utilities, which you may have to run as the superuser, or at least, give the full path, i.e. /sbin/ifconfig, on some distributions. ip is newer than ifconfig and has far more capabilities, but its output is uglier to the human eye. Some new Linux distributions do not install the older net-tools package to which ifconfig belongs, and  so you would have to install it if you want to use it.
+
+A network requires the connection of many nodes. Data moves from source to destination by passing through a series of routers and potentially across multiple networks. Servers maintain routing tables containing the addresses of each node in the network. The IP routing protocols enable routers to build up a forwarding table that correlates final destinations with the next hop addresses.
+
+traceroute is used to inspect the route which the data packet takes to reach the destination host, which makes it quite useful for troubleshooting network delays and errors. By using traceroute, you can isolate connectivity issues between hops, which helps resolve them faster.
+
+To print the route taken by the packet to reach the network host, at the command prompt, type traceroute <address>.
+    Networking Tools	Description
+ethtool	Queries network interfaces and can also set various parameters such as the speed
+netstat	Displays all active connections and routing tables. Useful for monitoring performance and troubleshooting
+nmap	Scans open ports on a network. Important for security analysis
+tcpdump	Dumps network traffic for analysis
+iptraf	Monitors network traffic in text mode
+mtr	Combines functionality of ping and traceroute and gives a continuously updated display
+dig	Tests DNS workings. A good replacement for host and nslookup
+    
+    Lynx
+Configurable text-based web browser; the earliest such browser and still in use
+ELinks
+Based on Lynx. It can display tables and frames
+w3m
+Another text-based web browser with many features.
+
+Sometimes, you need to download files and information, but a browser is not the best choice, either because you want to download multiple files and/or directories, or you want to perform the action from a command line or a script. wget is a command line utility that can capably handle the following types of downloads:
+
+Large file downloads
+Recursive downloads, where a web page refers to other web pages and all are downloaded at once
+Password-required downloads
+Multiple file downloads.
+To download a web page, you can simply type wget <url>, and then you can read the downloaded page as a local file using a graphical or non-graphical browser.
+    
+    Besides downloading, you may want to obtain information about a URL, such as the source code being used. curl can be used from the command line or a script to read such information. curl also allows you to save the contents of a web page to a file, as does wget.
+
+You can read a URL using curl <URL>. For example, if you want to read http://www.linuxfoundation.org, type curl http://www.linuxfoundation.org.
+
+To get the contents of a web page and store it to a file, type curl -o saved.html http://www.mysite.com. The contents of the main index file at the website will be saved in saved.html.
+
+When you are connected to a network, you may need to transfer files from one machine to another. File Transfer Protocol (FTP) is a well-known and popular method for transferring files between computers using the Internet. This method is built on a client-server model. FTP can be used within a browser or with stand-alone client programs.  
+
+FTP is one of the oldest methods of network data transfer, dating back to the early 1970s. As such, it is considered inadequate for modern needs, as well as being intrinsically insecure. However, it is still in use and when security is not a concern (such as with so-called anonymous FTP) it can make sense. However, many websites, such as kernel.org, have abandoned its use.
+
+To copy a local file to a remote system, at the command prompt, type scp <localfile> <user@remotesystem>:/home/user/ and press Enter.
+    
     
