@@ -55,6 +55,11 @@ Beispiele:
 
 Für alle Dateien gilt: es existiert mind eine Gruppe, die diese Datei zugeordnet ist. 
 
+Now, you need to create a configuration file to enable your user account to use sudo. Typically, this file is created in the /etc/sudoers.d/ directory with the name of the file the same as your username. For example, for this demo, let’s say your username is student. After doing step 1, you would then create the configuration file for student by doing this:
+# echo "student ALL=(ALL) ALL" > /etc/sudoers.d/student
+Finally, some Linux distributions will complain if you do not also change permissions on the file by doing:
+# chmod 440 /etc/sudoers.d/student
+
 Die Rechte von Dateien und Verzeichnissen innerhalb des Dateiverzeichniss werden über permission bits gesteuert. Man unterscheidet
 zwischen drei Schichten beim Rechtemanagement: Besitzer, Gruppe, Allgemein. 
 In jeder Schicht kann man eine Datei/Verzeichnis lesen, bearbeiten und ausführen. Die Steuerung der Rechte erfolgt über den Befehl
