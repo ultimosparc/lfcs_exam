@@ -437,6 +437,11 @@ Dabei ist USER der Login name des USers, tty steht für die virtuelle Konsolle, 
     -b wie lange das System schon aktiv ist
     -q Anzahl der User die eingelogt sind
  
+ One virtual terminal (usually number one or seven) is reserved for the graphical environment, and text logins are enabled on the unused VTs. Ubuntu uses VT 7, but CentOS/RHEL and openSUSE use VT 1 for the graphical display.
+
+An example of a situation where using VTs is helpful is when you run into problems with the graphical desktop. In this situation, you can switch to one of the text VTs and troubleshoot.
+
+To switch between VTs, press CTRL-ALT-function key for the VT. For example, press CTRL-ALT-F6 for VT 6. Actually, you only have to press the ALT-F6 key combination if you are in a VT and want to switch to another VT.
 _CREATE, DELETE, COPY, AND MOVE FILES AND DIRECTORIES_[28] 
 
 touch command will create a zero bytes empty file. To create a directory, we can use the mkdir command, which stands for making a directory. cp – copy command, we can use this command to rename the file while copying it to the new location. There is scp command – secure copy – to copy files or directory between different Linux servers.
