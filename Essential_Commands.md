@@ -33,7 +33,8 @@ Weitere Ooptionen:
  
 _Suchen nach Dateien_ [10]
 
-Es gibt verschiedene Befehle zum Suchen von Textdateien. Meist wird der Befehl _find_ genutzt. It can be used to search by name, file type, timestamp, owner, and many other attributes. Ein möglicher Befehl kann wie folgt aussehen:
+Es gibt verschiedene Befehle zum Suchen von Textdateien. Meist wird der Befehl _find_ genutzt. It can be u
+to search by name, file type, timestamp, owner, and many other attributes. Ein möglicher Befehl kann wie folgt aussehen:
 
     find <folder> -name <file>
     
@@ -57,7 +58,8 @@ Es existieren weitere Befehhle nach Dateien zu suchen.
 
     which – returns the location of the command base on the PATH settings
     whereis – returns the location of the binary, source file, and man page, it can return multiple versions of command if they exist.
-    type – returns information about the command type and details based on how the command is related to the shell configuration.
+    type – returns information about the command type and details ba
+    on how the command is related to the shell configuration.
     locate sucht wie find nach Datei, jedoch über eine interne Datenbank
     
 Ein weiteres Beispiel zeigt, wie man nach Dateien mit einer bestimmten Größe sucht.
@@ -333,6 +335,412 @@ sed OPTIONS... [SCRIPT] [INPUTFILE...]
 Example:
 Consider the below text file as an input.
 
+sed -e command <filename>
+
+Specify editing commands at the command line, operate on file and put the output on standard out (e.g. the terminal)
+sed -f scriptfile <filename>	Specify a scriptfile containing sed commands, operate on file and put output on standard out
+    
+Now that you know that you can perform multiple editing and filtering operations with sed, let’s explain some of them in more detail. The table explains some basic operations, where pattern is the current string and replace_string is the new string:
+
+ 
+
+Command	Usage
+sed s/pattern/replace_string/ file	Substitute first string occurrence in every line
+sed s/pattern/replace_string/g file	Substitute all string occurrences in every line
+sed 1,3s/pattern/replace_string/g file	Substitute all string occurrences in a range of lines
+sed -i s/pattern/replace_string/g file	Save changes for string substitution in the same file
+ 
+
+You must use the -i option with care, because the action is not reversible. It is always safer to use sed without the –i option and then replace the file yourself, as shown in the following example:
+
+$ sed s/pattern/replace_string/g file1 > file2
+
+The above command will replace all occurrences of pattern with replace_string in file1 and move the contents to file2. The contents of file2 can be viewed with cat file2. If you approve you can then overwrite the original file with mv file2 file1.
+
+Example: To convert 01/02/… to JAN/FEB/…
+
+sed -e 's/01/JAN/' -e 's/02/FEB/' -e 's/03/MAR/' -e 's/04/APR/' -e 's/05/MAY/' \
+    -e 's/06/JUN/' -e 's/07/JUL/' -e 's/08/AUG/' -e 's/09/SEP/' -e 's/10/OCT/' \
+    -e 's/11/NOV/' -e 's/12/DEC/'
+    
+AWK awk is used to extract and then print specific contents of a file and is often used to construct reports. It was created at Bell Labs in the 1970s and derived its name from the last names of its authors: Alfred Aho, Peter Weinberger, and Brian Kernighan.
+
+awk has the following features:
+
+It is a powerful utility and interpreted programming language.
+It is used to manipulate data files, retrieving, and processing text.
+It works well with fields (containing a single piece of data, essentially a column) and records (a collection of fields, essentially a line in a file).
+awk is invoked as shown in the following:
+
+As with sed, short awk commands can be specified directly at the command line, but a more complex script can be saved in a file that you can specify using the -f option.
+
+ 
+
+Command	Usage
+awk ‘command’  file	Specify a command directly at the command line
+awk -f scriptfile file	Specify a file that contains the script to be executed
+
+The table explains the basic tasks that can be performed using awk. The input file is read one line at a time, and, for each line, awk matches the given pattern in the given order and performs the requested action. The -F option allows you to specify a particular field separator character. For example, the /etc/passwd file uses ":" to separate the fields, so the -F: option is used with the /etc/passwd file.
+
+The command/action in awk needs to be surrounded with apostrophes (or single-quote (')). awk can be used as follows:
+
+ Suppose you have a file that contains the full name of all employees and another file that lists their phone numbers and Employee IDs. You want to create a new file that contains all the data listed in three columns: name, employee ID, and phone number. How can you do this effectively without investing too much time?
+
+paste can be used to create a single file containing all three columns. The different columns are identified based on delimiters (spacing used to separate two fields). For example, delimiters can be a blank space, a tab, or an Enter. In the image provided, a single space is used as the delimiter in all files.
+
+paste accepts the following options:
+
+-d delimiters, which specify a list of delimiters to be used instead of tabs for separating consecutive values on a single line. Each delimiter is used in turn; when the list has been exhausted, paste begins again at the first delimiter.
+-s, which causes paste to append the data in series rather than in parallel; that is, in a horizontal rather than vertical fashion.
+ 
+ paste can be used to combine fields (such as name or phone number) from different files, as well as combine lines from multiple files. For example, line one from file1 can be combined with line one of file2, line two from file1 can be combined with line two of file2, and so on.
+
+To paste contents from two files one can do:
+
+$ paste file1 file2
+
+The syntax to use a different delimiter is as follows:
+
+$ paste -d, file1 file2
+
+Common delimiters are 'space', 'tab', '|', 'comma', etc.
+
+Suppose you have two files with some similar columns. You have saved employees’ phone numbers in two files, one with their first name and the other with their last name. You want to combine the files without repeating the data of common columns. How do you achieve this?
+
+The above task can be achieved using join, which is essentially an enhanced version of paste. It first checks whether the files share common fields, such as names or phone numbers, and then joins the lines in two files based on a common field.
+
+split is used to break up (or split) a file into equal-sized segments for easier viewing and manipulation, and is generally used only on relatively large files. By default, split breaks up a file into 1000-line segments. The original file remains unchanged, and a set of new files with the same name plus an added prefix is created. By default, the x prefix is added. To split a file into segments, use the command split infile.
+
+To split a file into segments using a different prefix, use the command split infile <Prefix>.
+    
+    We will apply split to an American-English dictionary file of over 99,000 lines:
+
+$ wc -l american-english
+99171 american-english
+
+where we have used wc (word count, soon to be discussed) to report on the number of lines in the file. Then, typing:
+
+$ split american-english dictionary
+
+will split the American-English file into 100 equal-sized segments named dictionaryxx. The last one will of course be somewhat smaller.
+
+strings is used to extract all printable character strings found in the file or files given as arguments. It is useful in locating human-readable content embedded in binary files; for text files one can just use grep.
+
+For example, to search for the string my_string in a spreadsheet:
+
+$ strings book1.xls | grep my_string
+
+The screenshot shows a  search of a number of programs to see which ones have GPL licenses of various versions.
+
+The tr utility is used to translate specified characters into other characters or to delete them. The general syntax is as follows:
+
+$ tr [options] set1 [set2]
+
+The items in the square brackets are optional. tr requires at least one argument and accepts a maximum of two. The first, designated set1 in the example, lists the characters in the text to be replaced or removed. The second, set2, lists the characters that are to be substituted for the characters listed in the first argument. Sometimes these sets need to be surrounded by apostrophes (or single-quotes (')) in order to have the shell ignore that they mean something special to the shell. It is usually safe (and may be required) to use the single-quotes around each of the sets as you will see in the examples below.
+
+For example, suppose you have a file named city containing several lines of text in mixed case. To translate all lower case characters to upper case, at the command prompt type cat city | tr a-z A-Z and press the Enter key.
+
+ 
+
+Command	Usage
+tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ	Convert lower case to upper case
+tr '{}' '()' < inputfile > outputfile	Translate braces into parenthesis
+echo "This is for testing" | tr [:space:] '\t'	Translate white-space to tabs
+echo "This   is   for    testing" | tr -s [:space:]
+Squeeze repetition of characters using -s
+echo "the geek stuff" | tr -d 't'	Delete specified characters using -d option
+echo "my username is 432234" | tr -cd [:digit:]	Complement the sets using -c option
+tr -cd [:print:] < file.txt	Remove all non-printable character from a file
+tr -s '\n' ' ' < file.txt	Join all the lines in a file into a single line
+
+Here is the basic structure of the case statement:
+
+case expression in
+   pattern1) execute commands;;
+   pattern2) execute commands;;
+   pattern3) execute commands;;
+   pattern4) execute commands;;
+   * )       execute some default commands or nothing ;;
+esac
+
+You can run a bash script in debug mode either by doing bash –x ./script_file, or bracketing parts of the script with set -x and set +x. The debug mode helps identify the error because:
+
+It traces and prefixes each command with the + character.
+It displays each command before executing it.
+It can debug only selected parts of a script (if desired) with:
+
+set -x    # turns on debugging
+...
+set +x    # turns off debugging
+The screenshot shown here demonstrates a script which runs in debug mode if run with any argument on the command line.
+
+Consider a situation where you want to retrieve 100 records from a file with 10,000 records. You will need a place to store the extracted information, perhaps in a temporary file, while you do further processing on it.
+
+Temporary files (and directories) are meant to store data for a short time. Usually, one arranges it so that these files disappear when the program using them terminates. While you can also use touch to create a temporary file, in some circumstances this may make it easy for hackers to gain access to your data. This is particularly true if the name and the file location of the temporary file are predictable.
+
+The best practice is to create random and unpredictable filenames for temporary storage. One way to do this is with the mktemp utility, as in the following examples.
+
+The XXXXXXXX is replaced by mktemp with random characters to ensure the name of the temporary file cannot be easily predicted and is only known within your program.
+
+ 
+
+Command	Usage
+TEMP=$(mktemp /tmp/tempfile.XXXXXXXX)	To create a temporary file
+TEMPDIR=$(mktemp -d /t
+
+It is often useful to generate random numbers and other random data when performing tasks such as:
+
+Performing security-related tasks
+Reinitializing storage devices
+Erasing and/or obscuring existing data
+Generating meaningless data to be used for tests.
+Such random numbers can be generated by using the $RANDOM environment variable, which is derived from the Linux kernel’s built-in random number generator, or by the OpenSSL library function, which uses the FIPS140 (Federal Information Processing Standard) algorithm to generate random numbers for encryption
+
+To learn about FIPS140, read Wikipedia's "FIPS 140-2" article.
+
+The example shows you how to easily use the environmental variable method to generate random numbers.
+
+ 
+
+Some servers have hardware random number generators that take as input different types of noise signals, such as thermal noise and photoelectric effect. A transducer converts this noise into an electric signal, which is again converted into a digital number by an A-D converter. This number is considered random. However, most common computers do not contain such specialized hardware and, instead, rely on events created during booting to create the raw data needed.
+
+Regardless of which of these two sources is used, the system maintains a so-called entropy pool of these digital numbers/random bits. Random numbers are created from this entropy pool.
+
+The Linux kernel offers the /dev/random and /dev/urandom device nodes, which draw on the entropy pool to provide random numbers which are drawn from the estimated number of bits of noise in the entropy pool.
+
+/dev/random is used where very high quality randomness is required, such as one-time pad or key generation, but it is relatively slow to provide values. /dev/urandom is faster and suitable (good enough) for most cryptographic purposes.
+
+Furthermore, when the entropy pool is empty, /dev/random is blocked and does not generate any number until additional environmental noise (network traffic, mouse movement, etc.) is gathered, whereas /dev/urandom reuses the internal pool to produce more pseudo-random bits.
+
+ CUPS carries out the printing process with the help of its various components:
+
+Configuration Files
+Scheduler
+Job Files
+Log Files
+Filter
+Printer Drivers
+Backend.
+You will learn about each of these components on the next few pages.
+
+he print scheduler reads server settings from several configuration files, the two most important of which are cupsd.conf and printers.conf. These and all other CUPS related configuration files are stored under the /etc/cups/ directory.
+
+cupsd.conf is where most system-wide settings are located; it does not contain any printer-specific details. Most of the settings available in this file relate to network security, i.e. which systems can access CUPS network capabilities, how printers are advertised on the local network, what management features are offered, and so on.
+
+printers.conf is where you will find the printer-specific settings. For every printer connected to the system, a corresponding section describes the printer’s status and capabilities. This file is generated or modified only after adding a printer to the system, and should not be modified by hand.
+
+You can view the full list of configuration files by typing ls -lF /etc/cups.
+
+CUPS stores print requests as files under the /var/spool/cups directory (these can actually be accessed before a document is sent to a printer). Data files are prefixed with the letter d while control files are prefixed with the letter c.
+
+ After a printer successfully handles a job, data files are automatically removed. These data files belong to what is commonly known as the print queue.
+ 
+ Log files are placed in /var/log/cups and are used by the scheduler to record activities that have taken place. These files include access, error, and page records.
+
+To view what log files exist, type:
+
+$ sudo ls -l /var/log/cups
+
+CUPS uses filters to convert job file formats to printable formats. Printer drivers contain descriptions for currently connected and configured printers, and are usually stored under /etc/cups/ppd/. The print data is then sent to the printer through a filter, and via a backend that helps to locate devices connected to the system.
+
+So, in short, when you execute a print command, the scheduler validates the command and processes the print job, creating job files according to the settings specified in the configuration files. Simultaneously, the scheduler records activities in the log files. Job files are processed with the help of the filter, printer driver, and backend, and then sent to the printer.
+
+Assuming CUPS has been installed you'll need to start and manage the CUPS daemon so that CUPS is ready for configuring a printer. Managing the CUPS daemon is simple; all management features can be done with the systemctl utility:
+
+$ systemctl status cups
+
+$ sudo systemctl [enable|disable] cups
+
+$ sudo systemctl [start|stop|restart] cups
+
+Note: The next screen demonstrates this on Ubuntu, but is the same for all major current Linux distributions. 
+
+
+A fact that few people know is that CUPS also comes with its own web server, which makes a configuration interface available via a set of CGI scripts.
+
+This web interface allows you to:
+
+Add and remove local/remote printers
+Configure printers:
+– Local/remote printers
+– Share a printer as a CUPS server
+Control print jobs:
+– Monitor jobs
+– Show completed or pending jobs
+– Cancel or move jobs.
+The CUPS web interface is available on your browser at: http://localhost:631.
+
+Some pages require a username and password to perform certain actions, for example to add a printer. For most Linux distributions, you must use the root password to add, modify, or delete printers or classes.
+
+CUPS provides two command-line interfaces, descended from the System V and BSD flavors of UNIX. This means that you can use either lp (System V) or lpr (BSD) to print. You can use these commands to print text, PostScript, PDF, and image files.
+
+These commands are useful in cases where printing operations must be automated (from shell scripts, for instance, which contain multiple commands in one file). 
+
+lp is just a command line front-end to the lpr utility that passes input to lpr. Thus, we will discuss only lp in detail. In the example shown here, the task is to print  $HOME/.emacs .
+
+ lp and lpr accept command line options that help you perform all operations that the GUI can accomplish. lp is typically used with a file name as an argument.
+
+Some lp commands and other printing utilities you can use are listed in the table:
+
+ 
+
+Command	Usage
+lp <filename>	To print the file to default printer
+lp -d printer <filename>	To print to a specific printer (useful if multiple printers are available)
+program | lp
+echo string | lp	To print the output of a program
+lp -n number <filename>	To print multiple copies
+lpoptions -d printer	To set the default printer
+lpq -a	To show the queue status
+lpadmin
+    
+    lpoptions can be used to set printer options and defaults. Each printer has a set of tags associated with it, such as the default number of copies and authentication requirements. You can type lpoptions help to obtain a list of supported options. lpoptions can also be used to set system-wide values, such as the default printer.
+    
+    You send a file to the shared printer. But when you go there to collect the printout, you discover another user has just started a 200 page job that is not time sensitive. Your file cannot be printed until this print job is complete. What do you do now?
+
+In Linux, command line print job management commands allow you to monitor the job state as well as managing the listing of all printers and checking their status, and canceling or moving print jobs to another printer.
+
+Some of these commands are listed in the table. 
+
+ 
+
+Command	Usage
+lpstat -p -d	To get a list of available printers, along with their status
+lpstat -a	To check the status of all connected printers, including job numbers
+cancel job-id
+OR
+lprm job-id	To cancel a print job
+lpmove job-id newprinter	To move a print job to new printer
+
+PostScript is a standard  page description language. It effectively manages scaling of fonts and vector graphics to provide quality printouts. It is purely a text format that contains the data fed to a PostScript interpreter. The format itself is a language that was developed by Adobe in the early 1980s to enable the transfer of data to printers.
+
+Features of PostScript are:
+
+It can be used on any printer that is PostScript-compatible; i.e. any modern printer
+Any program that understands the PostScript specification can print to it
+Information about page appearance, etc. is embedded in the page.
+Postscript has been for the most part superseded by the PDF format (Portable Document Format) which produces far smaller files in a compressed format for which support has been integrated into many applications. However, one still has to deal with postscript documents, often as an intermediate format on the way to producing final documents.
+
+enscript is a tool that is used to convert a text file to PostScript and other formats. It also supports Rich Text Format (RTF) and HyperText Markup Language (HTML). For example, you can convert a text file to two columns (-2) formatted PostScript using the command:
+
+$ enscript -2 -r -p psfile.ps textfile.txt
+
+This command will also rotate (-r) the output to print so the width of the paper is greater than the height (aka landscape mode) thereby reducing the number of pages required for printing.
+
+The commands that can be used with enscript are listed in the table below (for a file called textfile.txt).
+
+ 
+
+Command	Usage
+enscript -p psfile.ps textfile.txt	Convert a text file to PostScript (saved to psfile.ps)
+enscript -n -p psfile.ps textfile.txt	Convert a text file to n columns where n=1-9 (saved in psfile.ps)
+enscript textfile.txt	Print a text file directly to the default printer
+
+Most users today are far more accustomed to working with files in PDF format, viewing them easily either on the Internet through their browser or locally on their machine. The PostScript format is still important for various technical reasons that the general user will rarely have to deal with.
+
+From time to time, you may need to convert files from one format to the other, and there are very simple utilities for accomplishing that task. ps2pdf and pdf2ps are part of the ghostscript package installed on or available on all Linux distributions. As an alternative, there are pstopdf and pdftops which are usually part of the poppler package, which may need to be added through your package manager. Unless you are doing a lot of conversions or need some of the fancier options (which you can read about in the man pages for these utilities), it really does not matter which ones you use.
+
+Another possibility is to use the very powerful convert program, which is part of the ImageMagick package. (Some newer distributions have replaced this with Graphics Magick, and the command to use is gm convert).
+
+Some usage examples:
+
+ 
+
+Command	Usage
+pdf2ps file.pdf	Converts file.pdf to file.ps
+ps2pdf file.ps	Converts file.ps to file.pdf
+pstopdf input.ps output.pdf	Converts input.ps to output.pdf
+pdftops input.pdf output.ps	Converts input.pdf to output.ps
+convert input.ps output.pdf	Converts input.ps to output.pdf
+convert input.pdf output.ps	Converts input.pdf to output.ps
+
+Linux has many standard programs that can read PDF files, as well as many applications that can easily create them, including all available office suites, such as LibreOffice.
+
+The most common Linux PDF readers are:
+
+evince is available on virtually all distributions and the most widely used program.
+okular is based on the older kpdf and available on any distribution that provides the KDE environment.
+ghostView is one of the first open source PDF readers and is universally available.
+xpdf is one of the oldest open source PDF readers and still has a good user base. 
+All of these open source PDF readers support and can read files following the PostScript standard unlike the proprietary Adobe Acrobat Reader, which was once widely used on Linux systems, but, with the growth of these excellent programs, very few Linux users use it today.
+
+At times, you may want to merge, split, or rotate PDF files; not all of these operations can be achieved while using a PDF viewer. Some of these operations include:
+
+Merging/splitting/rotating PDF documents
+Repairing corrupted PDF pages
+Pulling single pages from a file
+Encrypting and decrypting PDF files
+Adding, updating, and exporting a PDF’s metadata
+Exporting bookmarks to a text file
+Filling out PDF forms.
+In order to accomplish these tasks there are several programs available:
+
+qpdf
+pdftk
+ghostscript.
+qpdf is widely available on Linux distributions and is very full-featured. pdftk was once very popular but depends on an obsolete unmaintained package (libgcj) and a number of distributions have dropped it; thus we recommend avoiding it. Ghostscript (often invoked using gs) is widely available and well-maintained. However, its usage is a little complex.
+
+You can accomplish a wide variety of tasks using qpdf including:
+
+ 
+
+Command	Usage
+qpdf --empty --pages 1.pdf 2.pdf -- 12.pdf	Merge the two documents 1.pdf and 2.pdf. The output will be saved to 12.pdf.
+qpdf --empty --pages 1.pdf 1-2 -- new.pdf	Write only pages 1 and 2 of 1.pdf. The output will be saved to new.pdf.
+qpdf --rotate=+90:1 1.pdf 1r.pdf
+
+qpdf --rotate=+90:1-z 1.pdf 1r-all.pdf
+
+Rotate page 1 of 1.pdf 90 degrees clockwise and save to 1r.pdf
+
+Rotate all pages of 1.pdf 90 degrees clockwise and save to 1r-all.pdf
+
+qpdf --encrypt mypw mypw 128 -- public.pdf private.pdf	Encrypt with 128 bits public.pdf using as the passwd mypw with output as private.pdf
+qpdf --decrypt --password=mypw private.pdf file-decrypted.pdf	Decrypt private.pdf with output as file-decrypted.pdf. 
+
+If you’re working with PDF files that contain confidential information and you want to ensure that only certain people can view the PDF file, you can apply a password to it using the user_pw option. One can do this by issuing a command such as:
+
+$ pdftk public.pdf output private.pdf user_pw PROMPT
+
+When you run this command, you will receive a prompt to set the required password, which can have a maximum of 32 characters. A new file, private.pdf, will be created with the identical content as public.pdf, but anyone will need to type the password to be able to view it.
+
+Ghostscript is widely available as an interpreter for the Postscript and PDF languages. The executable program associated with it is abbreviated to gs.
+
+This utility can do most of the operations pdftk can, as well as many others; see man gs for details. Use is somewhat complicated by the rather long nature of the options. For example:
+
+Combine three PDF files into one:
+$ gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite  -sOutputFile=all.pdf file1.pdf file2.pdf file3.pdf
+Split pages 10 to 20 out of a PDF file:
+$ gs -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dDOPDFMARKS=false -dFirstPage=10 -dLastPage=20\
+-sOutputFile=split.pdf file.pdf
+
+ou can use other tools to work with PDF files, such as:
+
+pdfinfo 
+It can extract information about PDF files, especially when the files are very large or when a graphical interface is not available.
+flpsed 
+It can add data to a PostScript document. This tool is specifically useful for filling in forms or adding short comments into the document.
+pdfmod 
+It is a simple application that provides a graphical interface for modifying PDF documents. Using this tool, you can reorder, rotate, and remove pages; export images from a document; edit the title, subject, and author; add keywords; and combine documents using drag-and-drop action.
+For example, to collect the details of a document, you can use the following command:
+
+$ pdfinfo /usr/share/doc/readme.pdf
+
+Check to see if the enscript package has been installed on your system, and if not, install it.
+Using enscript, convert the text file /var/dmesg to PostScript format and name the result /tmp/dmesg.ps. As an alternative, you can use any large text file on your system. Make sure you can read the PostScript file (for example with evince) and compare to the original file.
+Note: On some systems, such as RHEL7/CentOS7, evince may have problems with the PostScript file, but the PDF file you produce from it will be fine for viewing.
+Convert the PostScript document to PDF format, using ps2pdf. Make sure you can read the resulting PDF file. Does it look identical to the PostScript version?
+Is there a way you can go straight to the PDF file without producing a PostScript file on the disk along the way?
+Using pdfinfo, determine what is the PDF version used to encode the file, the number of pages, the page size, and other metadata about the file. If you do not have pdfinfo you probably need to install the poppler-utils package.
+Click the link below to view a solution to the Lab exercise.
+
+
+
+Command	Usage
+awk '{ print $0 }' /etc/passwd	Print entire file
+awk -F: '{ print $1 }' /etc/passwd	Print first field (column) of every line, separated by a space
+awk -F: '{ print $1 $7 }' /etc/passwd	Print first and seventh field of every line
+    
 $cat > geekfile.txt
 unix is great os. unix is opensource. unix is free os.
 learn operating system.
