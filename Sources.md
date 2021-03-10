@@ -33,3 +33,4 @@
     31. https://www.tecmint.com/set-limits-on-user-processes-using-ulimit-in-linux/
     32. https://www.tecmint.com/view-yum-history-to-find-packages-info/
     33. https://learning.edx.org/course/course-v1:LinuxFoundationX+LFS101x+1T2020/home
+    34. https://ibm-learning.udemy.com/course/redhat-linux-administration-ll/learn/lecture/16499752#overview
