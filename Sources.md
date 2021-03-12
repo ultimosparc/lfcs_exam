@@ -42,3 +42,4 @@
     40. https://www.linkedin.com/learning/linux-foundation-cert-prep-essential-commands-ubuntu/welcome
     41. https://www.linkedin.com/learning/linux-foundation-cert-prep-networking-ubuntu/welcome
     42. https://www.linkedin.com/learning/linux-foundation-cert-prep-user-and-group-management-ubuntu/welcome
+    43. https://ravikirans.com/lfcs-linux-exam-study-guide/
