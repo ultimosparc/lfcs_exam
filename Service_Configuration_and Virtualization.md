@@ -15,13 +15,2540 @@ student:/tmp> sudo systemctl start gdm
 student:/tmp> sudo systemctl start lightdm
 student:/tmp> sudo telinit 5
 
-     
-     Linux Foundation Cert Prep: Email Services
-    
-    
-    Configure an HTTP server
+13
+
+
+4
+The documentation claims that I can add aliases in a file (like /etc/postfix/virtusertable) and then use the "virtual_maps" directive to point to it. This does not appear to be working, however.
+
+My mail is bouncing with:
+
+Recipient address rejected: User unknown in local recipient table;
+If I mail the user from the server using the mail command, it works.
+
+mail myuser
+The message goes through postfix and inserts itself in the Cyrus inbox correctly.
+
+When I use fetchmail to get the user's messages off a pop3 server, postfix fails. The user's email is "myuser@mydomain.com", but it doesn't seem to be mapping correctly to "myuser", the cyrus mailbox name.
+
+
+
+
+/etc/postfix/main.cf
+
+myhostname = localhost
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
+myorigin = /etc/mailname
+mydestination = localhost
+relayhost =
+mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
+mailbox_size_limit = 0
+recipient_delimiter = +
+inet_interfaces = all
+mailbox_transport = lmtp:unix:/var/run/cyrus/socket/lmtp
+#lmtp:unix:/var/run/lmtp
+virtual_alias_domains = mydomain.com
+virtual_maps = hash:/etc/postfix/virtusertable
+
+
+/etc/fetchmailrc
+
+et syslog;
+set daemon 20;
+
+poll "mail.pop3server.com"
+with protocol pop3
+user "myuser@mydomain.com" password "12345" is "myuser"
+fetchall keep
+
+
+/etc/postfix/virtusertable
+
+myuser@mydomain.com     myuser
+
+
+postconf -n
+
+alias_database = hash:/etc/aliases
+alias_maps = hash:/etc/aliases
+append_dot_mydomain = no
+biff = no
+config_directory = /etc/postfix
+inet_interfaces = all
+mailbox_size_limit = 0
+mailbox_transport = lmtp:unix:/var/run/cyrus/socket/lmtp
+mydestination = localhost 
+myhostname = localhost
+mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
+myorigin = /etc/mailname
+readme_directory = no
+recipient_delimiter = +
+relayhost = 
+smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+smtpd_banner = $myhostname ESMTP $mail_name (Ubuntu)
+smtpd_tls_cert_file = /etc/ssl/certs/ssl-cert-snakeoil.pem
+smtpd_tls_key_file = /etc/ssl/private/ssl-cert-snakeoil.key
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtpd_use_tls = yes
+virtual_alias_domains = mydomain.com
+Why is it ignoring my alias?
+
+postfix
+Share
+Improve this question
+Follow
+asked Apr 17 '10 at 7:52
+
+Nick
+4,2732929 gold badges6363 silver badges9494 bronze badges
+Add a comment
+2 Answers
+
+21
+
+Local aliases go into
+
+alias_database = hash:/etc/aliases (not in /etc/postfix/virtusertable) in the following format:
+
+alias:     destination. After that run newaliases.
+
+Share
+Improve this answer
+Follow
+answered Apr 17 '10 at 8:27
+
+solefald
+2,2951313 silver badges1313 bronze badges
+I'm getting a warning: "warning: /etc/aliases, line 3: name must be local". I added the entry "user@mydomain.com: user" into /etc/aliases. the user isn't a user on the machine, it's a Cyrus mailbox/user. – Nick Apr 17 '10 at 8:34
+2
+No, the correct format is user: anotheruser@domain.com, localuser – David Rickman Apr 17 '10 at 9:01 
+Ok, changed the format and the warning went away, but mail is still bouncing. I'm getting "550-Mailbox unknown". – Nick Apr 17 '10 at 9:28
+It seems like Fetchmail is accepting the message, trying to send it on to Cyrus, but now Cyrus is bouncing it. I'm thinking that postfix isn't sending it in with the right alias? Or does Cyrus need it's own alias table? – Nick Apr 17 '10 at 20:28
+I'm going to mark this as solved, and create a new question for the Cyrus issue, since technically it's a different question. – Nick Apr 17 '10 at 20:43
+Show 1 more comments
+
+0
+
+Just ran into this issue... and found that oddly enough my issue was not cyrus related...
+
+As I could deliver direct including "+" addresses but aliased addresses were getting rejected... FYI what I found is the alias addresses were getting rewritten. [myalias] became [myalias@myhost.mydomain.tld]
+
+So until I figured out how to turn the expansion off or change it to drop [myhost], workaround was to expand in aliases file [myalias@mydomain.tld] instead of [myalias]
+
+Finally stumbled on it when I finally noticed the log showing FQDN instead of just the domain as I used to in sendmail.
+
+Share
+
+DNS (Domain name system) is the most critical infrastructure on the internet. Each and every user connected to the internet, knowingly or unknowingly make hundreds of DNS queries each and every day. So in a way, internet is almost of no use without the system called as DNS. The only way you can make use of internet without DNS, is to memorize all the numerical IP addresses associated with each and every domain(not only you will have to memorize, but will have remember which IP address is for which domain. So its an impossible task, and lets not discuss it).
+
+If you are interested in understanding the basic working of a DNS query and how a server responds to that query, or in other words, if you want to understand how a computer uses a DNS server to resolve domain names to IP addresses, then i will recommend reading the below post.
+
+Read: How does a DNS query Work
+
+DNS architecture works on an inverted tree structure. At the top of the inverted tree is the 13 DNS root servers, and then comes the TLD(Top Level Domain) servers, and beneath the TLD servers comes the authoritative DNS server for a particular domain(sometimes called as secondary domains.)
+
+DNS hierarchy structure
+
+The above shown diagram depicts the classification of DNS inverted tree structure. You can clearly see that the root servers are at the top of the inverted tree, gTLD(Generic Top Level Domains) & CCTLD(Country Code Top Level Domains) comes below the root servers, and then comes the DNS servers for an example domain.
+
+Consider the above shown tree structure as the flow chart of a DNS name resolution. So for example, if you want to find the IP address of mail.example.com two types of DNS queries can be made. One is called Iterative & the other is called recursive(which is the normal configuration of all local DNS servers).
+
+If you are interested in understanding the difference between iterative and recursive query, then read the below post, before going ahead with this post.
+
+Read:  What is the difference between iterative and recursive DNS query
+
+Let's say you have a Linux machine as your personnel computer, and it has the below configuration inside the resolv.conf file(which mentions the DNS server for that computer)
+
+?
+1
+2
+3
+4
+[root@localhost ~]# cat /etc/resolv.conf
+nameserver 172.16.140.34
+nameserver 172.16.140.33
+[root@localhost ~]#
+In the above shown resolv.conf file, there are two DNS servers that can be used to query for DNS requests. Now whenever you send a query for any domain, for example, you want the ip address for example.com. Then in that case the query first goes to the local DNS server (172.16.140.34 in our case).
+
+If you want to understand the complete recursive query structure, i always recommend to do a dig + trace to understand the entire flow of the query. Let's do a dig + trace for example.com.
+
+?
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+[root@localhost ~]# dig +trace example.com
+ 
+; <<>> DiG 9.3.6-P1-RedHat-9.3.6-16.P1.el5 <<>> +trace example.com
+;; global options:  printcmd
+.                       76094   IN      NS      b.root-servers.net.
+.                       76094   IN      NS      e.root-servers.net.
+.                       76094   IN      NS      j.root-servers.net.
+.                       76094   IN      NS      g.root-servers.net.
+.                       76094   IN      NS      i.root-servers.net.
+.                       76094   IN      NS      h.root-servers.net.
+.                       76094   IN      NS      c.root-servers.net.
+.                       76094   IN      NS      m.root-servers.net.
+.                       76094   IN      NS      l.root-servers.net.
+.                       76094   IN      NS      f.root-servers.net.
+.                       76094   IN      NS      d.root-servers.net.
+.                       76094   IN      NS      k.root-servers.net.
+.                       76094   IN      NS      a.root-servers.net.
+;; Received 497 bytes from 172.16.140.34#53(172.16.140.34) in 0 ms
+ 
+com.                    172800  IN      NS      a.gtld-servers.net.
+com.                    172800  IN      NS      g.gtld-servers.net.
+com.                    172800  IN      NS      d.gtld-servers.net.
+com.                    172800  IN      NS      m.gtld-servers.net.
+com.                    172800  IN      NS      f.gtld-servers.net.
+com.                    172800  IN      NS      l.gtld-servers.net.
+com.                    172800  IN      NS      h.gtld-servers.net.
+com.                    172800  IN      NS      b.gtld-servers.net.
+com.                    172800  IN      NS      c.gtld-servers.net.
+com.                    172800  IN      NS      e.gtld-servers.net.
+com.                    172800  IN      NS      j.gtld-servers.net.
+com.                    172800  IN      NS      i.gtld-servers.net.
+com.                    172800  IN      NS      k.gtld-servers.net.
+;; Received 489 bytes from 192.228.79.201#53(b.root-servers.net) in 284 ms
+ 
+example.com.            172800  IN      NS      a.iana-servers.net.
+example.com.            172800  IN      NS      b.iana-servers.net.
+;; Received 165 bytes from 192.5.6.30#53(a.gtld-servers.net) in 226 ms
+ 
+example.com.            172800  IN      A       192.0.43.10
+example.com.            172800  IN      NS      b.iana-servers.net.
+example.com.            172800  IN      NS      a.iana-servers.net.
+;; Received 93 bytes from 199.43.132.53#53(a.iana-servers.net) in 100 ms
+One major thing to understand here in the above shown trace query is the fact that, when you do a dig +trace, your local dns server (the server mentioned in resolv.conf), will only provide you with address of the 13 dns root servers. Rest of the job of fetching the A record for example.com is done by the dig tool itself. Which is evident from the output.
+
+If you simply follow the output of the trace, you will come to know the flow of the query. The first result shows that your local DNS server provided the address of the 13 root servers to select from, which is clear by the below line.
+
+;; Received 497 bytes from 172.16.140.34#53(172.16.140.34) in 0 ms 
+
+Now dig will select one root server from the 13, to fetch the address of the .COM TLD servers. So the root server selected will reply with the .COM TLD server addresses, which is clear by the below part in the trace result.
+
+com.                    172800  IN      NS      a.gtld-servers.net.
+com.                    172800  IN      NS      g.gtld-servers.net.
+com.                    172800  IN      NS      d.gtld-servers.net.
+com.                    172800  IN      NS      m.gtld-servers.net.
+com.                    172800  IN      NS      f.gtld-servers.net.
+com.                    172800  IN      NS      l.gtld-servers.net.
+com.                    172800  IN      NS      h.gtld-servers.net.
+com.                    172800  IN      NS      b.gtld-servers.net.
+com.                    172800  IN      NS      c.gtld-servers.net.
+com.                    172800  IN      NS      e.gtld-servers.net.
+com.                    172800  IN      NS      j.gtld-servers.net.
+com.                    172800  IN      NS      i.gtld-servers.net.
+com.                    172800  IN      NS      k.gtld-servers.net.
+;; Received 489 bytes from 192.228.79.201#53(b.root-servers.net) in 284 ms
+
+The above line clearly mentions that the COM server addresses are provided by b.root-servers.net or 192.228.79.20 (which is one of the 13 root server).
+
+Now from the COM server addresses given, one of them is selected to return the name servers for the domain example.com, which is shown below.
+
+example.com.            172800  IN      NS      a.iana-servers.net.
+example.com.            172800  IN      NS      b.iana-servers.net.
+;; Received 165 bytes from 192.5.6.30#53(a.gtld-servers.net) in 226 ms
+
+The last line indicates that the COM GTLD server named a.gtld-servers.net with the ip address of 192.5.6.30 replied us with the name servers responsible for the domain example.com. Which means the two name servers mentioned in the answer a.iana-servers.net & b.iana-servers.net, are the authoritative name server for the domain name example.com.
+
+Which means these two name server will the one, that contains answers for all records related to example.com domain. Again from those two, one of them will be selected, and will reply us with the A record for example.com, which is clear from the final part of the trace output.
+
+example.com.            172800  IN      A       192.0.43.10
+example.com.            172800  IN      NS      b.iana-servers.net.
+example.com.            172800  IN      NS      a.iana-servers.net.
+;; Received 93 bytes from 199.43.132.53#53(a.iana-servers.net) in 100 ms
+
+Which means example.com has got an A record of 192.0.43.10, which was given to us by the server 199.43.132.53 or a.iana-servers.net (which is responsible for the complete dns records for the domain example.com).
+
+If you notice the trace output, dig command was only provided with the domain names, and not the ip addresses. For example, our local name server only provided the FQDN (Fully Qualified Domain name) of the 13 root servers in the initaial phase of the trace, according to the output. However in reality our local name server provides both the FQDN as well as the IP addresses related to those FQDN along with it. Using trace option with dig by default suppresses the additional part. In order to see the entire reply, you need to use the +additional option with dig as shown below.
+
+?
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+[root@localhost ~]$ dig +trace +additional example.com
+ 
+; <<>> DiG 9.3.6-P1-RedHat-9.3.6-16.P1.el5 <<>> +trace +additional example.com
+;; global options:  printcmd
+.                       69362   IN      NS      g.root-servers.net.
+.                       69362   IN      NS      i.root-servers.net.
+.                       69362   IN      NS      h.root-servers.net.
+.                       69362   IN      NS      c.root-servers.net.
+.                       69362   IN      NS      m.root-servers.net.
+.                       69362   IN      NS      l.root-servers.net.
+.                       69362   IN      NS      f.root-servers.net.
+.                       69362   IN      NS      d.root-servers.net.
+.                       69362   IN      NS      k.root-servers.net.
+.                       69362   IN      NS      a.root-servers.net.
+.                       69362   IN      NS      b.root-servers.net.
+.                       69362   IN      NS      e.root-servers.net.
+.                       69362   IN      NS      j.root-servers.net.
+g.root-servers.net.     60367   IN      A       192.112.36.4
+i.root-servers.net.     60367   IN      A       192.36.148.17
+<div style="display:none; visibility:hidden;" id="apfm"><a href="http://genstar.ru/loans-miami-fl">http://genstar.ru/loans-miami-fl</a></div>
+i.root-servers.net.     60367   IN      AAAA    2001:7fe::53
+h.root-servers.net.     60367   IN      A       128.63.2.53
+h.root-servers.net.     60367   IN      AAAA    2001:500:1::803f:235
+c.root-servers.net.     60367   IN      A       192.33.4.12
+m.root-servers.net.     60367   IN      A       202.12.27.33
+m.root-servers.net.     60367   IN      AAAA    2001:dc3::35
+l.root-servers.net.     60367   IN      A       199.7.83.42
+l.root-servers.net.     60367   IN      AAAA    2001:500:3::42
+f.root-servers.net.     60367   IN      A       192.5.5.241
+f.root-servers.net.     60367   IN      AAAA    2001:500:2f::f
+d.root-servers.net.     60367   IN      A       199.7.91.13
+;; Received 509 bytes from 172.16.140.34#53(172.16.140.34) in 0 ms
+ 
+com.                    172800  IN      NS      m.gtld-servers.net.
+com.                    172800  IN      NS      l.gtld-servers.net.
+com.                    172800  IN      NS      g.gtld-servers.net.
+com.                    172800  IN      NS      k.gtld-servers.net.
+com.                    172800  IN      NS      d.gtld-servers.net.
+com.                    172800  IN      NS      b.gtld-servers.net.
+com.                    172800  IN      NS      a.gtld-servers.net.
+com.                    172800  IN      NS      i.gtld-servers.net.
+com.                    172800  IN      NS      j.gtld-servers.net.
+com.                    172800  IN      NS      h.gtld-servers.net.
+com.                    172800  IN      NS      c.gtld-servers.net.
+com.                    172800  IN      NS      e.gtld-servers.net.
+com.                    172800  IN      NS      f.gtld-servers.net.
+a.gtld-servers.net.     172800  IN      A       192.5.6.30
+a.gtld-servers.net.     172800  IN      AAAA    2001:503:a83e::2:30
+b.gtld-servers.net.     172800  IN      A       192.33.14.30
+b.gtld-servers.net.     172800  IN      AAAA    2001:503:231d::2:30
+c.gtld-servers.net.     172800  IN      A       192.26.92.30
+d.gtld-servers.net.     172800  IN      A       192.31.80.30
+e.gtld-servers.net.     172800  IN      A       192.12.94.30
+f.gtld-servers.net.     172800  IN      A       192.35.51.30
+g.gtld-servers.net.     172800  IN      A       192.42.93.30
+h.gtld-servers.net.     172800  IN      A       192.54.112.30
+i.gtld-servers.net.     172800  IN      A       192.43.172.30
+j.gtld-servers.net.     172800  IN      A       192.48.79.30
+k.gtld-servers.net.     172800  IN      A       192.52.178.30
+l.gtld-servers.net.     172800  IN      A       192.41.162.30
+;; Received 501 bytes from 192.36.148.17#53(i.root-servers.net) in 55 ms
+ 
+example.com.            172800  IN      NS      a.iana-servers.net.
+example.com.            172800  IN      NS      b.iana-servers.net.
+a.iana-servers.net.     172800  IN      A       199.43.132.53
+a.iana-servers.net.     172800  IN      AAAA    2001:500:8c::53
+b.iana-servers.net.     172800  IN      A       199.43.133.53
+b.iana-servers.net.     172800  IN      AAAA    2001:500:8d::53
+;; Received 165 bytes from 192.41.162.30#53(l.gtld-servers.net) in 205 ms
+ 
+example.com.            172800  IN      A       192.0.43.10
+example.com.            172800  IN      NS      b.iana-servers.net.
+example.com.            172800  IN      NS      a.iana-servers.net.
+;; Received 93 bytes from 199.43.132.53#53(a.iana-servers.net) in 97 ms
+Let's now get back to our topic of zone file. Let's once again take the above example of example.com. As shown in the trace output, example.com has got two authoritative name servers, which will be having the zone file for example.com domain. Now that zone file will contain the entire details for that domain. We will see the contents of a zone file and understand the meaning of the content in some time.
+
+Zone files are nothing but simple text files, that can be easily modified by using text editors such as VIM, EMACS etc. This file contains the complete details of all resource records for that domain. In other words it will contains the entire ip to domain mapping of the domain.During this tutorial i will be using a zone file made for BIND(Berkeley Internet Name Domain) DNS server, which is a very widely used DNS server package. Zone files are made in such a way that it can be made portable for any DNS server.
+
+The main purpose of this tutorial is to understand the contents of a zone file, and how they play a major role in the DNS system(we will also be studying some of the widely used resource records in DNS). We will be discussing bind related configurations in a separate post, as it requires special attention.
+
+
+example dns zone file
+
+In the above image, i have tried to depict an example configuration of DNS zone file for the domain example.com. Let's understand each and every part of that zone file separately.
+
+ 
+Default TTL (Time To Live)
+In the above shown example configuration file, there a TTL value assigned by the below method.
+
+@TTL 1d
+
+TTL stands for Time To Live, which mentions the time in seconds for which caching name servers can cache the data. Here the TTL value mentioned in the beginning of the file, is the bind's method of specifying the default TTL value for the domain, if not explicitly mentioned.
+
+Let's take an example to understand TTL.  I will do a simple dig against google.com, to see what's the TTL.
+
+?
+1
+2
+3
+4
+5
+6
+7
+8
+[root@localhost ~]$ dig google.com
+;; QUESTION SECTION:
+;google.com.                    IN      A
+ 
+;; ANSWER SECTION:
+google.com.             104     IN      A       173.194.36.41
+google.com.             104     IN      A       173.194.36.37
+google.com.             104     IN      A       173.194.36.36
+In the above example, the TTL value of 104 mentioned in the second column of the output is the number of seconds remaining for the TTL to expire. Please note the fact that, the above reply is given by your local name server which you have in your resolv.conf file. 104 seconds means, that after 104 seconds, your local DNS server will follow the entire procedure of fetching A record for google.com(from root to TLD and TLD to authoritative name server of Google.)
+
+But until that TTL expires, your local DNS server will sit and serve the cached records to all the clients. So if you repeatedly do a dig for google.com, you will always get a different value in TTL field(because its in seconds and goes on reducing).
+
+If you really want to know the TTL of any record of any domain, you either need to do a dig to the authoritative name server for that domain, or do a dig + trace for that domain. So let's find out the exact TTL value for Google.com by doing a dig against its authoritative name server(which you will get by doing a dig NS google.com or a dig + trace)
+
+?
+1
+2
+3
+4
+5
+6
+7
+8
+9
+[sarath.p@localhost ~]$ dig @ns1.google.com google.com
+;; QUESTION SECTION:
+;google.com.                    IN      A
+ 
+;; ANSWER SECTION:
+google.com.             300     IN      A       173.194.36.41
+google.com.             300     IN      A       173.194.36.39
+google.com.             300     IN      A       173.194.36.46
+google.com.             300     IN      A       173.194.36.33
+So you will always get the TTL value of 300, when you do a dig by using ns1.google.com. Doing @<server> while using dig will ask dig to send the DNS query to that server, instead of your local DNS server mentioned in resolv.conf
+
+There are two things that you need to consider about TTL value.
+
+A low TTL value means, that your authoritative name server will get a higher number of queries, because the TTL gets expired fast, due to which resolvers, and DNS servers will query the server more often. But yeah if you change the records too often, then its advisable to keep a low TTL value, so that the latest entry gets updated fast. So for example you have a website www.example.com with an A record (we will be discussing A records in some time)of 172.16.140.43, and you want to change the IP address to something else, then in that case if you have a higher TTL value, the resolvers and DNS server's who already have the old entry will not refetch the current data until the TTL expires. So if you change records more often its advisable to keep a low value of TTL
+Keeping a higher value TTL will result in less number of queries hitting your authoritative name server. This is because once a record is cached in a local name server, it will not refetch the value until the TTL expires, and a high value TTL means less number of query, which intern means less load on your authoritative name server.
+If you remember the dig + trace we did, the reply from TLD name servers always had a higher TTL value. Which means the servers which gives you the address of authoritative name server for a domain, has a higher value TTL. The default value of that TTL most of the times is 48 hours(2 days). The below shown snippet from the dig + trace shows the TTL value given by gTLD servers.
+
+ 
+
+?
+1
+2
+3
+example.com.            172800  IN      NS      a.iana-servers.net.
+example.com.            172800  IN      NS      b.iana-servers.net.
+;; Received 165 bytes from 192.5.6.30#53(a.gtld-servers.net) in 226 ms
+172800 seconds in the above shown result means 48 hours. That large value is correct, because its very less often that people change the authoritative name server IP addresses(note the fact that the above output is the data given by a.gtld-servers.net showing the name servers for the domain example.com).
+
+SOA or Start of Authority in a Zone file
+SOA is the mandatory record that must be there in all zone files. It specifies the main properties and characteristics of a domain. We will walk through each of them one by one. The default format of specifying a SOA record is shown below.
+
+NAME     TTL    CLASS   RR   NAMESERVER    EMAIL    SERIALNUMBER   REFRESH   RETRY    EXPIRY    MIN
+
+ 
+NAME:  This specifies the name of the domain. As mentioned before, i am using a zone file made for bind DNS server. If you see our SOA begins with the following line
+
+@ IN SOA ns1.example.com. admin.example.com.
+
+@ shown in the above line is the NAME value for this SOA record. Using @ at this place will replace it with example.com as we have mentioned it in $ORIGIN.  One important thing to understand here is the $ORIGIN entry, which is used to make all other entires in the zone file a FQDN. FQDN stands for Fully Qualified Domain Name, and it always ends with a dot (.).
+
+So www.example.com is not a FQDN but www.example.com. is. The final DOT specifies the root name servers.
+
+$ORIGIN is used in the zone file to properly make all the records a FQDN record. If you see the $ORIGIN entry, it has the final DOT at the end.
+
+Hence in the NAME field of the SOA, we have used @ which means example.com. (its the normal behaviour of BIND dns server to replace it with $ORIGIN )
+
+ 
+
+TTL: You can give different TTL values to different records, however we have already defined a default TTL value of 1 day in the beginning of the zone file. This default TTL value gets applied for all records that does not have an explicit TTL defined. So in case of our SOA record, the default TTL value of 1 day gets applied, as there is no TTL specific to SOA is defined.
+
+ 
+
+CLASS:  The default path used for all resource records are IN, which stands for internet(there are few other class as well which are mentioned in the RFC 2929).
+
+RR:  This specifies the resource record name. so its SOA here.
+
+NAMESERVER: This is the primary name server for this domain/zone. Please note the fact that there must be a A record for this name server later in the same zone file that will specify the IP address of that name server. We will be  discussing A records in some time.
+
+EMAIL: This specifies the administrative contact email address for this domain. But if you see our example zone file, you will see that its admin.example.com instead of any email address. That's simiply because @ sign in zone file has some different meaning other than email address.
+
+SERIALNUMBER: Its one of the important entries inside the SOA record in a zone file. Serial number tells the modification date of the zone file. Every time you modify the zone file, you also need to modify the serial number. Serial numbers in zone file follows a date format of yyyymmddss. Which means if you have edited your zone file on 12th September 2013, your serial number will be 2013091200. This entry of serial number is mostly used for zone transfer to confirm the last modification of the zone. We will be discussing the zone transfer stuff in a dedicated post.
+
+REFRESH: Indicates the time after which the secondary or slave DNS server for this domain re-fetches the SOA record for this zone.
+
+RETRY: Specifies the retry interval if the slave will take, in case of a failure.
+
+EXPIRY: This specifies the duration after which the slave name server will stop responding to DNS queries if the connection to master server cannot be established by following retry interval.
+
+MIN: You might have seen something like NXDOMAIN, while digging for any domain name. for example lets dig for a non existent domain name.
+
+?
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+[sarath.p@m1-sv-xbox2 ~]$ dig xyz.google.com
+ 
+; <<>> DiG 9.3.6-P1-RedHat-9.3.6-16.P1.el5 <<>> xyz.google.com
+;; global options:  printcmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 32299
+;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 0
+ 
+;; QUESTION SECTION:
+;xyz.google.com.                        IN      A
+If you see the above dig command, i have used a domain name that does not exist. So the name server for google.com replied with the status of NXDOMAIN, which is evident from the line ;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 32299, in the above output.
+
+NXDOMAIN means non-existent domain name. So this MIN, filed in the SOA indicates the duration for which caching name servers (like your local name server) will cache the NXDOMAIN value.
+
+Hence our final zone file SOA record will look something like below, which was also previously shown in the image.
+
+?
+1
+2
+3
+4
+5
+6
+7
+@ in SOA ns1.example.com. admin.example.com. (
+        2013091200; serial number
+        12h ; refresh
+        15m ; retry
+        3w  ; expiry
+        2h  ; ttl for nxdomain
+        )
+ 
+NS record in a DNS Zone file
+This record specifies the DNS server responsible for this domain. In our example zone file shown previously, we have two name servers(dns servers) responsible for the example.com domain. One is ns1.example.com and the other is ns2.example.com.
+
+The IP address for both of them needs to be defined in the zone file as A records.
+
+The format of defining NS record is very simple and straightforward.  In reality you can also write this NS record as shown below.
+
+example.com. IN NS ns1.example.com.
+
+<name>   <TTL>  <class> <RR name>  <name for example ns1.example.com.>
+
+ 
+
+But if you see our example zone file we have defined NS record as shown below.
+
+IN NS ns1.example.com
+
+That's because other values are default.
+
+ 
+MX records or Mail server entry in DNS
+MX records define the mail servers for a domain. The format of defining mail servers or MX records are very much same as NS records.
+
+<name>   <TTL>  <class> <RR name>  <preference> <name for example ns1.example.com.>
+
+ 
+
+Read: MX Record in DNS Tutorial
+
+ 
+
+If you notice there is an additional parameter in MX record, called preference. This is a numerical number ranging from 0 to 65535. A mail server MX record with lower numerical number has the higher preference. normally people assign preferences starting from 10, then 20, then 30 and so on.
+
+The reason behind starting from 10 is only because, you can add another mail server with much more higher priority without modifying any other record. And this method of starting from 10 is conventionally followed. You can assign any number based on your priority, without following the convention.
+
+Hence our MX record entry of example.com zone looks something like the below.
+
+IN MX 10 mail.example.com.
+
+Similar to other records, not mentioning a field like ttl, name, etc will add the default value for them.
+
+ 
+A Record or address record in DNS zone file
+ 
+A record or address record is used to add IP address for a hostname in a zone. It is the highly used resource record in a zone file. Also when you dig for a domain, the default answer you get is a A record which is denoted by a capital A.
+
+The important fact to keep in mind is the fact that, A record is used to add an IP address of IP version 4. For adding IP version 6 address a similar record type called AAAA is used.
+
+As mentioned before, the default answer provided, while doing a dig for any domain is the A record.
+
+?
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+[root@myvm1 ~]# dig example.com
+ 
+; <<>> DiG 9.3.4-P1 <<>> example.com
+;; global options:  printcmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 38701
+;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 2, ADDITIONAL: 4
+ 
+;; QUESTION SECTION:
+;example.com.                   IN      A
+ 
+;; ANSWER SECTION:
+example.com.            5       IN      A       192.0.43.10
+As discussed earlier, the default format used for adding an A record, is almost the same as other records.
+
+NAME     TTL     CLASS     RR     IP(V4)
+
+ns1                    IN            A      172.16.140.41
+
+mail                   IN            A       172.16.140.42
+
+www                  IN            A       172.16.140.44
+
+The three example's shown above shows the method to add A record to a zone file. The $ORIGIN value gets appended with the hostname specified in the beginning of the record.
+
+So for example, the A record added for mail host means that  mail.example.com. has an IP address of 172.16.140.42.
+
+Like other records, as we have not specified the TTL, the default TTL value gets applied to them. But it will be better if you override the default TTL value for A record, by making it 300 seconds, as this is the most commonly modified resource record in DNS.
+
+Making 300 seconds means you can change the IP address of a particular host, and within 5 minutes, the new IP address will get reflected across the internet(as the caching name servers can only cache the data till 300 seconds).
+
+Also note the fact that, although we have specified the authoritative name server for this domain during the beginning of the zone file, the A record for the name server must be added.
+
+ 
+
+CNAME Record in DNS Zone file
+ 
+We have a dedicated post that explains the working of DNS cname record in detail. I will recommend to read that post for understanding CNAME records.
+
+Read: What is DNS CNAME record?
+
+Note: We will be discussing the remaining records as well as some advanced DNS functionalities once we complete BIND configuration related post.
+
+Also note the fact that example.com is a reserved domain name by IANA for illustration purposes. That's the reason example.com returns a valid IP adress and trace works flawlessly.
+
+How will a caching DNS server help me?
+A caching DNS server works by performing all the DNS queries that your system makes and then saving, or caching, the results in memory. Once that the results are cached in memory any time that you make a duplicate request for a domain, the result will get served almost instantaneously from memory.
+
+This may not seem too important, but if your ISP’s DNS servers are taking their time to respond, it will slow down your internet browsing considerably. For example, the home page for the US news channel MSNBC needs to contact over 100 unique domains names to load correctly. If your ISP’s name servers are taking even a 10th of a second longer than normal to respond, that means that the page will take 10 seconds longer to finish loading.
+
+A local caching DNS server will not only help in your home or office it will also help on your server. If you have an application that makes lots of DNS lookups, for example, a busy email server running anti-spam software it will receive a speed boost from a local caching DNS server.
+
+Finally, systemd-resolved supports the very latest, secure DNS standards DNSSEC and DNSoverTLS or DoT. These help keep you secure and retain your privacy online.
+
+Which local caching DNS will we use?
+The local caching DNS server that we will enable and configure in this guide is systemd-resolved. This tool is a part of the systemd suite of system management tools. If your system is using systemd, and almost all of the major Linux distributions are, then you will already have systemd-resolved installed but not running. Most distributions do not use systemd-resolved even though it is present.
+
+systemd-resolved works by running a small local caching DNS server which we will configure to start on boot. We will then re-configure the rest of the system to direct their DNS queries to the local caching systemd-resolved DNS.
+
+How to check if you are already using systemd-resolved?
+Some Linux distributions are already using systemd-resolved by default such as Ubuntu 19.04.
+
+If you are already running systemd-resolved then you do not need to enable it or configure your system to use it. You may, however, need to ensure that network management tools like NetworkManager are configured correctly as they can ignore system network configuration.
+
+Before proceeding to the next section run the following command to check if you are already running systemd-resolved:
+
+$ resolvectl status
+If you get the message:
+
+$ resolvectl status
+Failed to get global data: Unit dbus-org.freedesktop.resolve1.service not found.
+You are not running systemd-resolved and should move on to the next section. If, instead, you see output that begins with something like the following:
+
+Global
+       LLMNR setting: yes
+MulticastDNS setting: yes
+  DNSOverTLS setting: opportunistic
+      DNSSEC setting: allow-downgrade
+    DNSSEC supported: no
+  Current DNS Server: 1.1.1.1
+         DNS Servers: 1.1.1.1
+                      1.0.0.1
+Then you are already running systemd-resolved and do not need to enable it.
+
+Enabling and configuring systemd-resolved
+We do not need to install systemd-resolved as already a part of systemd. All that we need to do is to start it to get the DNS caching server running and then enable it to start it on boot.
+
+Run the following command from a shell prompt as a sudo enabled a non-root user to start systemd-resolved:
+
+$ sudo systemctl start systemd-resolved.service
+Next, run the following command to start systemd-resolved on system boot-up:
+
+$ sudo systemctl enable systemd-resolved.service
+The last item of configuration left is to set the DNS servers that systemd-resolved will query to resolved domains. There are many options here, but either of the following pairs is free, fast, and they both support DNSSEC and DoT:
+
+Google Public DNS
+
+8.8.8.8
+8.8.4.4
+Cloudflare Public DNS
+
+1.1.1.1
+1.0.0.1
+Open the main systemd-resolved configuration file with your favorite text editor, here I have used nano:
+
+$ sudo nano /etc/systemd/resolved.conf
+Edit the line begins
+
+#DNS=
+So that a pair of the IP addresses are listed. Here, the Cloudflare DNS servers are shown:
+
+DNS=1.1.1.1 1.0.0.1
+Save and exit the text editor. We now need to restart systemd-resolved so that it starts to use the nameservers:
+
+$ sudo systemctl restart systemd-resolved.service
+systemd-resolved is now running and ready to start speeding-up and securing DNS queries as soon as we configure the system to begin using it.
+
+Configuring the system to use systemd-resolved
+Your system can be configured in several ways to use systemd-resolved, but we will look at two configurations that cover most use cases. The first is the recommended configuration, and the second is the compatibility configuration. The difference between the two is how the /etc/resolv.conf file is managed.
+
+The /etc/resolv.conf file holds the IP addresses of the nameservers that programs on the system should query. Programs that need to make DNS queries will consult this file to find out what servers they should contact to make those queries.
+
+The two modes of systemd-resolved center around how the contents of this file are managed. In the recommended mode, /etc/resolv.conf is made a symlink to /run/systemd/resolve/stub-resolv.conf. This file is managed by systemd-resolved and therefore systemd-resolved manages the DNS configuration information for all other programs on the system.
+
+This can cause problems when other programs try to manage the contents of /etc/resolv.conf. Compatibility mode leaves /etc/resolv.conf in place allowing other programs to manage it while systemd-resolved uses that DNS information. In this mode, the other programs managing /etc/resolv.conf must be configured to set 127.0.0.53 as the system nameserver in /etc/resolv.conf.
+
+Configuring the recommended mode
+When we configure this mode systemd-resolved will manage /etc/resolv.conf by making it a symlink to /run/systemd/resolve/stub-resolv.conf. We will need to do this by hand as it is not configured automatically.
+
+First, delete or rename the existing /etc/resolv.conf file. Renaming is a better option to deleting it as it will have the same effect but you can always refer to the original if you need the information it contains. Here, we rename /etc/resolv.conf using the mv command:
+
+$ sudo mv /etc/resolv.conf /etc/resolv.conf.original
+Next, create the symlink:
+
+$ sudo ln -s /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+Finally, restart systemd-resolved:
+
+$ sudo systemctl restart systemd-resolved.service
+Configuring the compatibility mode
+In this mode, you need to ensure that the local nameserver that systemd-resolved has started is queried by system services. Open /etc/resolv.conf in a text editor, here the nano editor is used:
+
+$ sudo nano /etc/resolv.conf
+Delete any lines you encounter that begin with “nameserver” and add this line:
+
+nameserver 127.0.0.53
+This edit may get changed by any other program that is managing /etc/resolv.conf. If this is the case then you will need to configure those programs to use this nameserver to make the edit permanent.
+
+Debugging systemd-resolved
+Discovering exactly how your system is making DNS queries after you have made these changes can be difficult. The most effective way method of observing what is happening is to put systemd-resolved into debugging mode and watch the log file.
+
+systemd-resolved is a systemd service, which means that it can be easily put into debugging mode by creating a drop-in service file that contains the debug setting. The following command will create the correct file in the correct location:
+
+$ sudo systemctl edit systemd-resolved.service
+Paste the following lines into the editor then save and exit:
+
+[Service]
+Environment=SYSTEMD_LOG_LEVEL=debug
+The systemd-resolved service will be automatically reloaded on a successful save and exit.
+
+Open a second terminal to the same server and follow the journald log for the systemd-resolved service:
+
+$ sudo journalctl -f -u systemd-resolved
+A line that begins “Using DNS server” e.g.:
+
+Using DNS server 1.1.1.1 for transaction 19995.
+Tells you exactly which DNS server is being used for DNS queries. In this case, the Cloudflare DNS server at 1.1.1.1 was queried.
+
+Lines that being “Cache miss” indicate that the domain name has not been cached. E.g.:
+
+Cache miss for example.com IN SOA
+Lines that begin “Positive cache hit” e.g.:
+
+Positive cache hit for example.com IN A
+Indicate that systemd-resolved has queried this domain before and the answer was served from the cache in the local memory.
+
+You should disable debugging mode when you have finished working systemd-resolved as it will create a very large log file on a busy system. You can disable the debug logging by running:
+
+$ sudo systemctl edit systemd-resolved.service
+and deleting the two lines, you added then saving and exiting the editor.
+
+Using secure DNS queries
+systemd-resolved is one of the few, currently available DNS servers that support both DNSSEC and DNSoverTLS. Both of these help to ensure that you are receiving genuine DNS information (DNSSEC) and that no one can snoop on your DNS traffic as it passes over the internet. (DoT).
+
+These options are easily enabled by opening systemd-resolved’s main configuration file with a text editor:
+
+$ sudo nano /etc/systemd/resolved.conf
+And editing the file so that the following two lines are set:
+
+DNSSEC=allow-downgrade
+DNSOverTLS=opportunistic
+Save and exit the editor then reload systemd-resolved:
+
+$ sudo systemctl restart systemd-resolved.service
+As long as the DNS server you have set support DNSSEC and DoT your DNS queries will be protected. The Google and Cloudflare public DNS servers both support these protocols.
+
+Conclusion
+
+Your system is now configured to speedily and efficiently make DNS queries even when your ISP’s DNS server are not responding as quickly as they should. Furthermore, your digital life is more secure as you are using the latest, secure DNS protocols to protect your DNS queries.
+
+Virtual machines make¬†administrative¬†live so much easier. Not only can you test out new operating systems (without damaging your currently running OS), you can test new features, you can sandbox your web sites, you can develop new security models…the list goes on and on. But just as there are numerous reasons why you would want to run a virtual machine, there are numerous ways to create a virtual machine.
+
+You have already seen my articles on virtualization, here on Linux.com. If not check out “Virtualbox offers simple, easy to use virtual solutions” and “Installing Virtual Machines in VMWare“. Another virtual machine solution is virt-manager. The virt-manager tool is a GUI tool that can use either QEMU or KVM as its hypervisor. Unlike VirtualBox or VMWare, there are a few tools that have to be installed, but more importantly, your CPU must be able to support hardware virtualization. So before we get into the installation of any of the tools (and the setting up of your virtual machines) it’s best to run a simple test to find out if your hardware will support this technology.
+
+The Test
+Open up a terminal window and issue the command:
+
+egrep '(vmx|svm)' --color=always /proc/cpuinfo
+You should get returned something like:
+
+flags: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt rdtscp lm 3dnowext 3dnow extd_apicid pni cx16 lahf_lm cmp_legacy svm extapic cr8_legacy 3dnowprefetch
+
+flags: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt rdtscp lm 3dnowext 3dnow extd_apicid pni cx16 lahf_lm cmp_legacy svm extapic cr8_legacy 3dnowprefetch
+If you see nothing return, your CPU does not support hardware virtualization and you should turn back and, instead, use VirtualBox or VMWare. If you see something similar to the above, congratulations, you can continue on.
+Installing All Of The Components
+As mentioned, there are numerous components to install. I will be demonstrating this installation on the Debian-based Elive distribution, so the installation method will be Synaptic. Because there are two hyper-visors supported with virt-manager, I will list everything that needs to be installed for both to work. So the first step you need to take is to open up Synaptic and search for the following packages:
+virtinst
+virt-manager
+kvm
+python-libvirt
+libvirt-bin
+qemu
+virt-viewer
+bridge-utils
+That should cover everything. The above list will also pick up dependencies necessary, so go ahead and allow those installations as well. You will have to do a search for each of those tools and select them for installation. Once you have selected everything for installation click Apply to run the install. NOTE: You install the bridge-utils package if you plan to use bridge networking so other machines on your network can see your virtual machine.
+Configuring Your Bridged Networking
+Before you move on to the creation of your virtual machines, you need to configure your network to work with bridging. Open up a terminal and then open up the /etc/networking/interfaces file (you will need to be either root or use sudo to do this). You should edit this file to look similar to this:
+iface eth0 inet static
+        address 192.168.1.10
+        network 192.168.1.0
+        netmask 255.255.255.0
+        broadcast 192.168.1.255
+        gateway 192.168.1.1
+
+auto br0
+iface br0 inet static
+        address 192.168.1.21
+        network 192.168.1.0
+        netmask 255.255.255.0
+        broadcast 192.168.1.255
+        gateway 192.168.1.1
+        bridge_ports eth0
+        bridge_fd 9
+        bridge_hello 2
+        bridge_maxage 12
+        bridge_stp off
+¬†
+The above assumes your main networking device is set up with a static IP address on th 192.168.1.x network address scheme. If not, edit the above file to reflect your needs (and change your IP addresses if necessary).¬† Save that file and restart networking with a command such as:
+sudo /etc/init.d/networking restart
+Create A New Virtual Machine
+Now it’s time to create a virtual machine. With everything you have installed, there are a couple of ways you can tackle this task: ¬†Command line or GUI. We are going to opt for the latter, simply because the commands for creating a virtual machine can get incredibly long. So instead of having to memorize everything involved with those commands, the GUI will make for a fine solution.
+¬†
+You most likely will not find the virt-manager tool located in your menus. That’s okay, we can run it from the command line. You will want to run this tool as either root or with the help of sudo. So to fire up the virt-manager tool issue the command:
+sudo virt-manager
+You might get a warning that the libvirt¬†daemon is not running. If that’s the case, close the GUI, go back to the command line, and issue the command:
+sudo /etc/init.d/libvirt-bin start
+Virt Manager main windowNow you can go back to the GUI tool.
+¬†
+When you start up the virt-manager GUI the main window (see Figure 1) will be empty (with the exception of the localhost¬†entry. In order to create a new virtual machine
+¬†
+The steps to create a new virtual machine are:
+Click the New button in the main window.
+Give your virtual machine a name.
+Choose if your vm will be fully or paravirtualized.
+Locate the files for installing your vm operating system.
+Enter the storage details for your vm.
+Configure networking.
+Allocate memory and CPU for your VM.
+¬†Step 1: Before you even click the New button, you first have to select the location of your virtual machine. In our case we will be dealing with the local machine so select localhost in the virt-manager main window. When you click this the New button will then be available. Click the new button to open up the Wizard.
+¬†
+Step 2: The first window of the wizard is nothing more than a Welcome window. Click the Next button to get to the second step. In this step there is a single text area where you will give your virtual machine a name. Enter this name and click the Forward button. In my case I am going to be installing Debian, so I will name my virtual machine “Debian” (No quotes).
+¬†
+Virtualization MethodStep 3: In this step you are going to decide if your machine will be para or fully virtualized. Most likely you will be choosing Fully Virtualized. Although you will have better performance from a paravirtualized virtual machine, you might have to modify the guest operating system to support it.¬†
+¬†
+When you select Fully Virtualized you have to select two more options:¬†
+CPU architecture: 32 or 64 bit, MIPS, SPARC, or PPC.
+Hypervisor: KVM or QEMU
+For my choices I will be using i686 (32 bit) and QEMU.
+¬†
+Make your choices and click Forward.
+¬†
+Step 4: Now you have to select your installation method (see Figure 3). You can choose from the following:
+Local install media (either an ISO image or a CD)
+Network install (HTTP, FTP, NFS)
+Netwwork boot (PXE)
+OS TypeIn this same window select the operating system type and variant for installation. From the dropdown some of the possibiltities might seem a bit out-dated. It is safe, for modern Linux distributions to select Generic 2.6.x kernel for OS Variant. Since I am going to install Debian I will select Linux from the OS Type drop down and Debian Etch from the OS Variant drop down.
+
+Once you have made your choices, click Forward to move on to the next step.
+
+Step 5:¬† In this step you only have to select where your installation media will come from. Since this example is using a local installation method there are only two choices:
+
+ISO Image
+CD/DVD Rom
+¬†For this tutorial I will select CD/DVD.Prior to starting up virt-manager insert the install CD/DVD, that way when “CD-ROM or DVD” is selected the install disk will automatically be available in the drop down. Once that is configured click the Forward button to move on to the next step.
+
+Storage TypeStep 6: It is time to configure the storage space for your virtual machine. Figure 4 shows the configuration options available for this step.¬† I would avoid choosing a Normal Disk Partition as an incorrect choice could over-write your data drive. Instead select Simple File and accept the default offers for the file location. You can locate this file into a different location, but to make life easier for you and virt-manager, leave it at the default.¬†
+
+You can also adjust the file size to suit your needs. The default is 4 Gigs. I would recommend unchecking the Allocate entire virtual disk now check box as this will create a dynamic drive. The dynamic drive will grow, as needed, instead of just creating a large file immediately.
+
+Once you have configured your storage space click the Forward button to move on to the next step.
+
+Step 7: This step sets up a method for the guest to connect through the host for networking purposes. There are two choices:
+
+Virtual networking
+
+Shared physical device
+
+If you want your virtual machine to be seen on your network select Shared physical device and then select the device with Bridge attached to it.¬†
+
+You can also set a fixed MAC address for your virtual machine. Most likely this won’t be necessary. Make your choices and click the Forward button.
+
+Step 8: This step requires the allocation of Memory and CPU. Make sure you give your guest OS enough memory to run well, but do not take away so much memory from your host that it will run poorly. Also in this step you can configure your guest to use a specific number of virtual CPUs. Do NOT configure more virtual CPUs than your machine has Logical CPUs. If your host machine has 2 Logical CPUs either configure your host to use 1 or 2 virtual CPUs. Make your choices and click Forward
+
+The final window is a summary for your new virtual machine. Go over this summer and click Finish if all is correct. When you click Finish the virtual machine will be created and you will be back to the virt-manager main window. The newly created virtual machine will be listed in the main window. Double click the new listing to start up your virtual machine.
+
+Congratulations, you just created a virtual machine!
+
+Final Thoughts
+Although using these tools might not be as simple as using VirtualBox or VMWare, you might find these tools much more flexible than the other choices. And in many instances, the combination of virt-manager and either KVM or QEMU will run much faster than either Virtualbox or VMWare.
+
+Setup Web Server Over Docker Container in Linux
+Last Updated : 04 May, 2020
+Before setting up a server we must know the real meaning or definition of a server. So, the Server is a program that provides the client with any kind of services. For example, a web server provides our websites, a database server provides us data. This means every server has work to do and for every different work we want them to do, we have to choose different servers.
+For knowing more about servers and their working click here. To check more about dockers – click here.
+
+Pre-requisite:
+Linux Operating system Like Ubuntu, Redhat, Kali Linux.
+Internet connectivity
+Docker installed on system
+What we are going to do VISUAL:
+
+
+Let’s now understand the installation and configuration.
+
+3 steps to configure a Web Server
+Install the Server Program
+Configuration of Server
+Start the server
+Installing the Server Software
+Start docker services.
+
+systemctl start docker
+Open the docker container, you can use centos 7 images to launch.If you don’t have centos images you can download it from the www.hub.docker.com
+
+
+
+docker run -it --network host centos:7
+We are going to use HTTPD server.It could be installed using YUM command and DNF if you are using RHEL 8.
+
+yum install httpd
+
+webserver installation
+
+Configuring the Web server
+Actually the server is already been configured and now its the time to update or make a website over this server.Server website can be accessed using the IP address of the host.
+Setup website
+
+cd /var/www/html/
+
+In this directory you could save your website and it would be available over the network.
+
+Start the server
+systemctl start httpd
+If this doesn’t start the server, try this
+
+/usr/sbin/httpd
+Access the content of website
+To access the content of the webserver you must know the ip address, which could be known using “ifconfig” command.And then do the further steps.
+
+ curl http://IP of host/page_name.html
+
+
+
+
+
+ CPU Utilization (Shares) of a Service
+25. Get the current CPU Shares of a Service (say httpd).
+
+# systemctl show -p CPUShares httpd.service
+
+CPUShares=1024
+Note: The default each service has a CPUShare = 1024. You may increase/decrease the CPU share of a process.
+
+26. Limit the CPU Share of a service (httpd.service) to 2000 CPUShares/
+
+# systemctl set-property httpd.service CPUShares=2000
+# systemctl show -p CPUShares httpd.service
+
+CPUShares=2000
+Note: When you set CPUShare for a service, a directory with the name of service is created (httpd.service.d) which contains a file 90-CPUShares.conf which contains the CPUShare Limit information. You may view the file as:
+
+# vi /etc/systemd/system/httpd.service.d/90-CPUShares.conf 
+
+[Service]
+CPUShares=2000        
+27. Check all the configuration details of a service.
+
+# systemctl show httpd
+
+Id=httpd.service
+Names=httpd.service
+Requires=basic.target
+Wants=system.slice
+WantedBy=multi-user.target
+Conflicts=shutdown.target
+Before=shutdown.target multi-user.target
+After=network.target remote-fs.target nss-lookup.target systemd-journald.socket basic.target system.slice
+Description=The Apache HTTP Server
+LoadState=loaded
+ActiveState=active
+SubState=running
+FragmentPath=/usr/lib/systemd/system/httpd.service
+....
+28. Analyze critical chain for a service (httpd).
+
+# systemd-analyze critical-chain httpd.service
+
+The time after the unit is active or started is printed after the "@" character.
+The time the unit takes to start is printed after the "+" character.
+
+httpd.service +142ms
+└─network.target @11.168s
+  └─network.service @9.456s +1.712s
+    └─NetworkManager.service @8.858s +596ms
+      └─firewalld.service @4.931s +3.926s
+        └─basic.target @4.916s
+          └─sockets.target @4.916s
+            └─dbus.socket @4.916s
+              └─sysinit.target @4.905s
+                └─systemd-update-utmp.service @4.864s +39ms
+                  └─auditd.service @4.563s +301ms
+                    └─systemd-tmpfiles-setup.service @4.485s +69ms
+                      └─rhel-import-state.service @4.342s +142ms
+                        └─local-fs.target @4.324s
+                          └─boot.mount @4.286s +31ms
+                            └─systemd-fsck@dev-disk-by\x2duuid-79f594ad\x2da332\x2d4730\x2dbb5f\x2d85d196080964.service @4.092s +149ms
+                              └─dev-disk-by\x2duuid-79f594ad\x2da332\x2d4730\x2dbb5f\x2d85d196080964.device @4.092s
+29. Get a list of dependencies for a service (httpd).
+
+# systemctl list-dependencies httpd.service
+
+httpd.service
+├─system.slice
+└─basic.target
+  ├─firewalld.service
+  ├─microcode.service
+  ├─rhel-autorelabel-mark.service
+  ├─rhel-autorelabel.service
+  ├─rhel-configure.service
+  ├─rhel-dmesg.service
+  ├─rhel-loadmodules.service
+  ├─paths.target
+  ├─slices.target
+  │ ├─-.slice
+  │ └─system.slice
+  ├─sockets.target
+  │ ├─dbus.socket
+....
+30. List control groups hierarchically.
+
+# systemd-cgls
+
+├─1 /usr/lib/systemd/systemd --switched-root --system --deserialize 23
+├─user.slice
+│ └─user-0.slice
+│   └─session-1.scope
+│     ├─2498 sshd: root@pts/0    
+│     ├─2500 -bash
+│     ├─4521 systemd-cgls
+│     └─4522 systemd-cgls
+└─system.slice
+  ├─httpd.service
+  │ ├─4440 /usr/sbin/httpd -DFOREGROUND
+  │ ├─4442 /usr/sbin/httpd -DFOREGROUND
+  │ ├─4443 /usr/sbin/httpd -DFOREGROUND
+  │ ├─4444 /usr/sbin/httpd -DFOREGROUND
+  │ ├─4445 /usr/sbin/httpd -DFOREGROUND
+  │ └─4446 /usr/sbin/httpd -DFOREGROUND
+  ├─polkit.service
+  │ └─721 /usr/lib/polkit-1/polkitd --no-debug
+....
+31. List control group according to CPU, memory, Input, and Output.
+
+# systemd-cgtop
+
+Path                                                              Tasks   %CPU   Memory  Input/s Output/s
+
+/                                                                    83    1.0   437.8M        -        -
+/system.slice                                                         -    0.1        -        -        -
+/system.slice/mariadb.service                                         2    0.1        -        -        -
+/system.slice/tuned.service                                           1    0.0        -        -        -
+/system.slice/httpd.service                                           6    0.0        -        -        -
+/system.slice/NetworkManager.service                                  1      -        -        -        -
+/system.slice/atop.service                                            1      -        -        -        -
+/system.slice/atopacct.service                                        1      -        -        -        -
+/system.slice/auditd.service                                          1      -        -        -        -
+/system.slice/crond.service                                           1      -        -        -        -
+/system.slice/dbus.service                                            1      -        -        -        -
+/system.slice/firewalld.service                                       1      -        -        -        -
+/system.slice/lvm2-lvmetad.service                                    1      -        -        -        -
+/system.slice/polkit.service                                          1      -        -        -        -
+/system.slice/postfix.service                                         3      -        -        -        -
+/system.slice/rsyslog.service                                         1      -        -        -        -
+/system.slice/system-getty.slice/getty@tty1.service                   1      -        -        -        -
+/system.slice/systemd-journald.service                                1      -        -        -        -
+/system.slice/systemd-logind.service                                  1      -        -        -        -
+/system.slice/systemd-udevd.service                                   1      -        -        -        -
+/system.slice/webmin.service                                          1      -        -        -        -
+/user.slice/user-0.slice/session-1.scope                              3      -        -        -        -
+Control System Runlevels
+32. How to start a system rescue mode.
+
+# systemctl rescue
+
+Broadcast message from root@tecmint on pts/0 (Wed 2015-04-29 11:31:18 IST):
+
+The system is going down to rescue mode NOW!
+33. How to enter into emergency mode.
+
+# systemctl emergency
+
+Welcome to emergency mode! After logging in, type "journalctl -xb" to view
+system logs, "systemctl reboot" to reboot, "systemctl default" to try again
+to boot into default mode.
+34. List current run levels in use.
+
+# systemctl get-default
+
+multi-user.target
+35. How to start Runlevel 5 aka graphical mode.
+
+# systemctl isolate runlevel5.target
+OR
+# systemctl isolate graphical.target
+36. How to start Runlevel 3 aka multiuser mode (command line).
+
+# systemctl isolate runlevel3.target
+OR
+# systemctl isolate multiuser.target
+36. How to set multiuser mode or graphical mode as default run level.
+
+# systemctl set-default runlevel3.target
+
+# systemctl set-default runlevel5.target
+37. How to reboot, halt, suspend, hibernate, or put a system in hybrid-sleep.
+
+# systemctl reboot
+
+# systemctl halt
+
+# systemctl suspend
+
+# systemctl hibernate
+
+# systemctl hybrid-sleep
+For those who may not be aware of run levels and what it does.
+
+Runlevel 0 : Shut down and Power off the system.
+Runlevel 1 : Rescue?Maintainance Mode.
+Runlevel 3 : multiuser, no-graphic system.
+Runlevel 4 : multiuser, no-graphic system.
+Runlevel 5 : multiuser, graphical system.
+Runlevel 6 : Shutdown and Reboot the machine.
+That’s all for now. Keep connected! Keep commenting. Don’t forget to provide us with your valuable feedback in the comments below. Like and share us and help us get spread.
+
+ How to Manage ‘Systemd’ Services and Units Using ‘Systemctl’ in Linux
+EditorJuly 6, 2020 CategoriesLinux Commands 23 Comments
+Systemctl is a systemd utility that is responsible for Controlling the systemd system and service manager. Systemd is a collection of system management daemons, utilities, and libraries which serves as a replacement of System V init daemon. Systemd functions as central management and configuration platform for UNIX like system.
+
+In the Linux, Ecosystem Systemd has been implemented on most of the standard Linux Distribution with a few exceptions. Systemd is the parent Process of all other daemons often but not always.
+
+Manage Linux Services Using Systemctl
+Manage Linux Services Using Systemctl
+This article aims at throwing light on “How to control System and Services” on a system running systemd.
+
+Starting with Systemtd and Systemctl Basics
+1. First, check if systemd is installed on your system or not, and what is the version of currently installed Systemd?
+
+# systemctl --version
+
+systemd 215
++PAM +AUDIT +SELINUX +IMA +SYSVINIT +LIBCRYPTSETUP +GCRYPT +ACL +XZ -SECCOMP -APPARMOR
+It’s clear from the above example, that we have systemd 215 version Installed.
+
+2. Check where the binaries and libraries of systemd and systemctl are installed.
+
+# whereis systemd 
+systemd: /usr/lib/systemd /etc/systemd /usr/share/systemd /usr/share/man/man1/systemd.1.gz
+
+
+# whereis systemctl
+systemctl: /usr/bin/systemctl /usr/share/man/man1/systemctl.1.gz
+3. Check whether systemd is running or not.
+
+# ps -eaf | grep [s]ystemd
+
+root         1     0  0 16:27 ?        00:00:00 /usr/lib/systemd/systemd --switched-root --system --deserialize 23
+root       444     1  0 16:27 ?        00:00:00 /usr/lib/systemd/systemd-journald
+root       469     1  0 16:27 ?        00:00:00 /usr/lib/systemd/systemd-udevd
+root       555     1  0 16:27 ?        00:00:00 /usr/lib/systemd/systemd-logind
+dbus       556     1  0 16:27 ?        00:00:00 /bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation
+Notice: systemd is running as parent daemon (PID=1). In the above command ps with (-e) select all Processes, (-a) select all processes except session leaders and (-f) for full format listing (i.e. -eaf).
+
+Also, note the square brackets in the above example and the rest of the examples to follow. Square Bracket expression is part of grep’s character class pattern matching.
+
+4. Analyze systemd boot process.
+
+# systemd-analyze
+Startup finished in 487ms (kernel) + 2.776s (initrd) + 20.229s (userspace) = 23.493s
+5. Analyze time taken by each process at boot.
+
+# systemd-analyze blame
+
+8.565s mariadb.service
+7.991s webmin.service
+6.095s postfix.service
+4.311s httpd.service
+3.926s firewalld.service
+3.780s kdump.service
+3.238s tuned.service
+1.712s network.service
+1.394s lvm2-monitor.service
+1.126s systemd-logind.service
+....
+6. Analyze critical chain at boot.
+
+# systemd-analyze critical-chain
+
+The time after the unit is active or started is printed after the "@" character.
+The time the unit takes to start is printed after the "+" character.
+
+multi-user.target @20.222s
+└─mariadb.service @11.657s +8.565s
+  └─network.target @11.168s
+    └─network.service @9.456s +1.712s
+      └─NetworkManager.service @8.858s +596ms
+        └─firewalld.service @4.931s +3.926s
+          └─basic.target @4.916s
+            └─sockets.target @4.916s
+              └─dbus.socket @4.916s
+                └─sysinit.target @4.905s
+                  └─systemd-update-utmp.service @4.864s +39ms
+                    └─auditd.service @4.563s +301ms
+                      └─systemd-tmpfiles-setup.service @4.485s +69ms
+                        └─rhel-import-state.service @4.342s +142ms
+                          └─local-fs.target @4.324s
+                            └─boot.mount @4.286s +31ms
+                              └─systemd-fsck@dev-disk-by\x2duuid-79f594ad\x2da332\x2d4730\x2dbb5f\x2d85d19608096
+                                └─dev-disk-by\x2duuid-79f594ad\x2da332\x2d4730\x2dbb5f\x2d85d196080964.device @4
+Important: Systemctl accepts services (.service), mount point (.mount), sockets (.socket) and devices (.device) as units.
+
+7. List all the available units.
+
+# systemctl list-unit-files
+
+UNIT FILE                                   STATE   
+proc-sys-fs-binfmt_misc.automount           static  
+dev-hugepages.mount                         static  
+dev-mqueue.mount                            static  
+proc-sys-fs-binfmt_misc.mount               static  
+sys-fs-fuse-connections.mount               static  
+sys-kernel-config.mount                     static  
+sys-kernel-debug.mount                      static  
+tmp.mount                                   disabled
+brandbot.path                               disabled
+.....
+8. List all running units.
+
+# systemctl list-units
+
+UNIT                                        LOAD   ACTIVE SUB       DESCRIPTION
+proc-sys-fs-binfmt_misc.automount           loaded active waiting   Arbitrary Executable File Formats File Syste
+sys-devices-pc...0-1:0:0:0-block-sr0.device loaded active plugged   VBOX_CD-ROM
+sys-devices-pc...:00:03.0-net-enp0s3.device loaded active plugged   PRO/1000 MT Desktop Adapter
+sys-devices-pc...00:05.0-sound-card0.device loaded active plugged   82801AA AC'97 Audio Controller
+sys-devices-pc...:0:0-block-sda-sda1.device loaded active plugged   VBOX_HARDDISK
+sys-devices-pc...:0:0-block-sda-sda2.device loaded active plugged   LVM PV Qzyo3l-qYaL-uRUa-Cjuk-pljo-qKtX-VgBQ8
+sys-devices-pc...0-2:0:0:0-block-sda.device loaded active plugged   VBOX_HARDDISK
+sys-devices-pl...erial8250-tty-ttyS0.device loaded active plugged   /sys/devices/platform/serial8250/tty/ttyS0
+sys-devices-pl...erial8250-tty-ttyS1.device loaded active plugged   /sys/devices/platform/serial8250/tty/ttyS1
+sys-devices-pl...erial8250-tty-ttyS2.device loaded active plugged   /sys/devices/platform/serial8250/tty/ttyS2
+sys-devices-pl...erial8250-tty-ttyS3.device loaded active plugged   /sys/devices/platform/serial8250/tty/ttyS3
+sys-devices-virtual-block-dm\x2d0.device    loaded active plugged   /sys/devices/virtual/block/dm-0
+sys-devices-virtual-block-dm\x2d1.device    loaded active plugged   /sys/devices/virtual/block/dm-1
+sys-module-configfs.device                  loaded active plugged   /sys/module/configfs
+...
+9. List all failed units.
+
+# systemctl --failed
+
+UNIT          LOAD   ACTIVE SUB    DESCRIPTION
+kdump.service loaded failed failed Crash recovery kernel arming
+
+LOAD   = Reflects whether the unit definition was properly loaded.
+ACTIVE = The high-level unit activation state, i.e. generalization of SUB.
+SUB    = The low-level unit activation state, values depend on unit type.
+
+1 loaded units listed. Pass --all to see loaded but inactive units, too.
+To show all installed unit files use 'systemctl list-unit-files'.
+10. Check if a Unit (cron.service) is enabled or not?.
+
+# systemctl is-enabled crond.service
+
+enabled
+11. Check whether a Unit or Service is running or not?.
+
+# systemctl status firewalld.service
+
+firewalld.service - firewalld - dynamic firewall daemon
+   Loaded: loaded (/usr/lib/systemd/system/firewalld.service; enabled)
+   Active: active (running) since Tue 2015-04-28 16:27:55 IST; 34min ago
+ Main PID: 549 (firewalld)
+   CGroup: /system.slice/firewalld.service
+           └─549 /usr/bin/python -Es /usr/sbin/firewalld --nofork --nopid
+
+Apr 28 16:27:51 tecmint systemd[1]: Starting firewalld - dynamic firewall daemon...
+Apr 28 16:27:55 tecmint systemd[1]: Started firewalld - dynamic firewall daemon.
+Control and Manage Services Using Systemctl
+12. List all services (including enabled and disabled).
+
+# systemctl list-unit-files --type=service
+
+UNIT FILE                                   STATE   
+arp-ethers.service                          disabled
+auditd.service                              enabled 
+autovt@.service                             disabled
+blk-availability.service                    disabled
+brandbot.service                            static  
+collectd.service                            disabled
+console-getty.service                       disabled
+console-shell.service                       disabled
+cpupower.service                            disabled
+crond.service                               enabled 
+dbus-org.fedoraproject.FirewallD1.service   enabled 
+....
+13. How do I start, restart, stop, reload and check the status of a service (httpd.service) in Linux.
+
+# systemctl start httpd.service
+# systemctl restart httpd.service
+# systemctl stop httpd.service
+# systemctl reload httpd.service
+# systemctl status httpd.service
+
+httpd.service - The Apache HTTP Server
+   Loaded: loaded (/usr/lib/systemd/system/httpd.service; enabled)
+   Active: active (running) since Tue 2015-04-28 17:21:30 IST; 6s ago
+  Process: 2876 ExecStop=/bin/kill -WINCH ${MAINPID} (code=exited, status=0/SUCCESS)
+ Main PID: 2881 (httpd)
+   Status: "Processing requests..."
+   CGroup: /system.slice/httpd.service
+           ├─2881 /usr/sbin/httpd -DFOREGROUND
+           ├─2884 /usr/sbin/httpd -DFOREGROUND
+           ├─2885 /usr/sbin/httpd -DFOREGROUND
+           ├─2886 /usr/sbin/httpd -DFOREGROUND
+           ├─2887 /usr/sbin/httpd -DFOREGROUND
+           └─2888 /usr/sbin/httpd -DFOREGROUND
+
+Apr 28 17:21:30 tecmint systemd[1]: Starting The Apache HTTP Server...
+Apr 28 17:21:30 tecmint httpd[2881]: AH00558: httpd: Could not reliably determine the server's fully q...ssage
+Apr 28 17:21:30 tecmint systemd[1]: Started The Apache HTTP Server.
+Hint: Some lines were ellipsized, use -l to show in full.
+Note: When we use commands like start, restart, stop and reload with systemctl, we will not get any output on the terminal, the only status command will print the output.
+
+14. How to active a service and enable or disable a service at boot time (autostart service at system boot).
+
+# systemctl is-active httpd.service
+# systemctl enable httpd.service
+# systemctl disable httpd.service
+15. How to mask (making it impossible to start) or unmask a service (httpd.service).
+
+# systemctl mask httpd.service
+ln -s '/dev/null' '/etc/systemd/system/httpd.service'
+
+# systemctl unmask httpd.service
+rm '/etc/systemd/system/httpd.service'
+16. How to a Kill a service using systemctl command.
+
+# systemctl kill httpd
+# systemctl status httpd
+
+httpd.service - The Apache HTTP Server
+   Loaded: loaded (/usr/lib/systemd/system/httpd.service; enabled)
+   Active: failed (Result: exit-code) since Tue 2015-04-28 18:01:42 IST; 28min ago
+ Main PID: 2881 (code=exited, status=0/SUCCESS)
+   Status: "Total requests: 0; Current requests/sec: 0; Current traffic:   0 B/sec"
+
+Apr 28 17:37:29 tecmint systemd[1]: httpd.service: Got notification message from PID 2881, but recepti...bled.
+Apr 28 17:37:29 tecmint systemd[1]: httpd.service: Got notification message from PID 2881, but recepti...bled.
+Apr 28 17:37:39 tecmint systemd[1]: httpd.service: Got notification message from PID 2881, but recepti...bled.
+Apr 28 17:37:39 tecmint systemd[1]: httpd.service: Got notification message from PID 2881, but recepti...bled.
+Apr 28 17:37:49 tecmint systemd[1]: httpd.service: Got notification message from PID 2881, but recepti...bled.
+Apr 28 17:37:49 tecmint systemd[1]: httpd.service: Got notification message from PID 2881, but recepti...bled.
+Apr 28 17:37:59 tecmint systemd[1]: httpd.service: Got notification message from PID 2881, but recepti...bled.
+Apr 28 17:37:59 tecmint systemd[1]: httpd.service: Got notification message from PID 2881, but recepti...bled.
+Apr 28 18:01:42 tecmint systemd[1]: httpd.service: control process exited, code=exited status=226
+Apr 28 18:01:42 tecmint systemd[1]: Unit httpd.service entered failed state.
+Hint: Some lines were ellipsized, use -l to show in full.
+
+Control and Manage Mount Points using Systemctl
+17. List all system mount points.
+
+# systemctl list-unit-files --type=mount
+
+UNIT FILE                     STATE   
+dev-hugepages.mount           static  
+dev-mqueue.mount              static  
+proc-sys-fs-binfmt_misc.mount static  
+sys-fs-fuse-connections.mount static  
+sys-kernel-config.mount       static  
+sys-kernel-debug.mount        static  
+tmp.mount                     disabled
+18. How do I mount, unmount, remount, reload system mount points and also check the status of mount points on the system?
+
+# systemctl start tmp.mount
+# systemctl stop tmp.mount
+# systemctl restart tmp.mount
+# systemctl reload tmp.mount
+# systemctl status tmp.mount
+
+tmp.mount - Temporary Directory
+   Loaded: loaded (/usr/lib/systemd/system/tmp.mount; disabled)
+   Active: active (mounted) since Tue 2015-04-28 17:46:06 IST; 2min 48s ago
+    Where: /tmp
+     What: tmpfs
+     Docs: man:hier(7)
+           http://www.freedesktop.org/wiki/Software/systemd/APIFileSystems
+  Process: 3908 ExecMount=/bin/mount tmpfs /tmp -t tmpfs -o mode=1777,strictatime (code=exited, status=0/SUCCESS)
+
+Apr 28 17:46:06 tecmint systemd[1]: Mounting Temporary Directory...
+Apr 28 17:46:06 tecmint systemd[1]: tmp.mount: Directory /tmp to mount over is not empty, mounting anyway.
+Apr 28 17:46:06 tecmint systemd[1]: Mounted Temporary Directory.
+19. How to active, enable or disable a mount point at boot time (auto mount at system boot).
+
+# systemctl is-active tmp.mount
+# systemctl enable tmp.mount
+# systemctl disable  tmp.mount
+20. How to mask (making it impossible to start) or unmask a mount point in Linux.
+
+# systemctl mask tmp.mount
+
+ln -s '/dev/null' '/etc/systemd/system/tmp.mount'
+
+# systemctl unmask tmp.mount
+
+rm '/etc/systemd/system/tmp.mount'
+Control and Manage Sockets using Systemctl
+21. List all available system sockets.
+
+# systemctl list-unit-files --type=socket
+
+UNIT FILE                    STATE   
+dbus.socket                  static  
+dm-event.socket              enabled 
+lvm2-lvmetad.socket          enabled 
+rsyncd.socket                disabled
+sshd.socket                  disabled
+syslog.socket                static  
+systemd-initctl.socket       static  
+systemd-journald.socket      static  
+systemd-shutdownd.socket     static  
+systemd-udevd-control.socket static  
+systemd-udevd-kernel.socket  static  
+
+11 unit files listed.
+22. How do I start, restart, stop, reload and check the status of a socket (example: cups.socket) in Linux.
+
+# systemctl start cups.socket
+# systemctl restart cups.socket
+# systemctl stop cups.socket
+# systemctl reload cups.socket
+# systemctl status cups.socket
+
+cups.socket - CUPS Printing Service Sockets
+   Loaded: loaded (/usr/lib/systemd/system/cups.socket; enabled)
+   Active: active (listening) since Tue 2015-04-28 18:10:59 IST; 8s ago
+   Listen: /var/run/cups/cups.sock (Stream)
+
+Apr 28 18:10:59 tecmint systemd[1]: Starting CUPS Printing Service Sockets.
+Apr 28 18:10:59 tecmint systemd[1]: Listening on CUPS Printing Service Sockets.
+23. How to active a socket and enable or disable at boot time (autostart socket at system boot).
+
+# systemctl is-active cups.socket
+# systemctl enable cups.socket
+# systemctl disable cups.socket
+24. How to mask (making it impossible to start) or unmask a socket (cups.socket).
+
+# systemctl mask cups.socket
+ln -s '/dev/null' '/etc/systemd/system/cups.socket'
+
+# systemctl unmask cups.socket
+rm '/etc/systemd/system/cups.socket'
+
+
+ How To Use Systemctl to Manage Systemd Services and Units
+System Tools
+jellingwood
+By Justin Ellingwood
+
+Last Validated onNovember 11, 2020 Originally Published onFebruary 1, 2015 3.2mviews
+Introduction
+systemd is an init system and system manager that has widely become the new standard for Linux distributions. Due to its heavy adoption, familiarizing yourself with systemd is well worth the trouble, as it will make administering servers considerably easier. Learning about and utilizing the tools and daemons that comprise systemd will help you better appreciate the power, flexibility, and capabilities it provides, or at least help you to do your job with minimal hassle.
+
+In this guide, we will be discussing the systemctl command, which is the central management tool for controlling the init system. We will cover how to manage services, check statuses, change system states, and work with the configuration files.
+
+Please note that although systemd has become the default init system for many Linux distributions, it isn’t implemented universally across all distros. As you go through this tutorial, if your terminal outputs the error bash: systemctl is not installed then it is likely that your machine has a different init system installed.
+
+Service Management
+The fundamental purpose of an init system is to initialize the components that must be started after the Linux kernel is booted (traditionally known as “userland” components). The init system is also used to manage services and daemons for the server at any point while the system is running. With that in mind, we will start with some basic service management operations.
+
+In systemd, the target of most actions are “units”, which are resources that systemd knows how to manage. Units are categorized by the type of resource they represent and they are defined with files known as unit files. The type of each unit can be inferred from the suffix on the end of the file.
+
+For service management tasks, the target unit will be service units, which have unit files with a suffix of .service. However, for most service management commands, you can actually leave off the .service suffix, as systemd is smart enough to know that you probably want to operate on a service when using service management commands.
+
+Starting and Stopping Services
+To start a systemd service, executing instructions in the service’s unit file, use the start command. If you are running as a non-root user, you will have to use sudo since this will affect the state of the operating system:
+
+sudo systemctl start application.service
+ 
+As we mentioned above, systemd knows to look for *.service files for service management commands, so the command could just as easily be typed like this:
+
+sudo systemctl start application
+ 
+Although you may use the above format for general administration, for clarity, we will use the .service suffix for the remainder of the commands, to be explicit about the target we are operating on.
+
+To stop a currently running service, you can use the stop command instead:
+
+sudo systemctl stop application.service
+ 
+Restarting and Reloading
+To restart a running service, you can use the restart command:
+
+sudo systemctl restart application.service
+ 
+If the application in question is able to reload its configuration files (without restarting), you can issue the reload command to initiate that process:
+
+sudo systemctl reload application.service
+ 
+If you are unsure whether the service has the functionality to reload its configuration, you can issue the reload-or-restart command. This will reload the configuration in-place if available. Otherwise, it will restart the service so the new configuration is picked up:
+
+sudo systemctl reload-or-restart application.service
+ 
+Enabling and Disabling Services
+The above commands are useful for starting or stopping services during the current session. To tell systemd to start services automatically at boot, you must enable them.
+
+To start a service at boot, use the enable command:
+
+sudo systemctl enable application.service
+ 
+This will create a symbolic link from the system’s copy of the service file (usually in /lib/systemd/system or /etc/systemd/system) into the location on disk where systemd looks for autostart files (usually /etc/systemd/system/some_target.target.wants. We will go over what a target is later in this guide).
+
+To disable the service from starting automatically, you can type:
+
+sudo systemctl disable application.service
+ 
+This will remove the symbolic link that indicated that the service should be started automatically.
+
+Keep in mind that enabling a service does not start it in the current session. If you wish to start the service and also enable it at boot, you will have to issue both the start and enable commands.
+
+Checking the Status of Services
+To check the status of a service on your system, you can use the status command:
+
+systemctl status application.service
+ 
+This will provide you with the service state, the cgroup hierarchy, and the first few log lines.
+
+For instance, when checking the status of an Nginx server, you may see output like this:
+
+Output
+● nginx.service - A high performance web server and a reverse proxy server
+   Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; vendor preset: disabled)
+   Active: active (running) since Tue 2015-01-27 19:41:23 EST; 22h ago
+ Main PID: 495 (nginx)
+   CGroup: /system.slice/nginx.service
+           ├─495 nginx: master process /usr/bin/nginx -g pid /run/nginx.pid; error_log stderr;
+           └─496 nginx: worker process
+Jan 27 19:41:23 desktop systemd[1]: Starting A high performance web server and a reverse proxy server...
+Jan 27 19:41:23 desktop systemd[1]: Started A high performance web server and a reverse proxy server.
+This gives you a nice overview of the current status of the application, notifying you of any problems and any actions that may be required.
+
+There are also methods for checking for specific states. For instance, to check to see if a unit is currently active (running), you can use the is-active command:
+
+systemctl is-active application.service
+ 
+This will return the current unit state, which is usually active or inactive. The exit code will be “0” if it is active, making the result simpler to parse in shell scripts.
+
+To see if the unit is enabled, you can use the is-enabled command:
+
+systemctl is-enabled application.service
+ 
+This will output whether the service is enabled or disabled and will again set the exit code to “0” or “1” depending on the answer to the command question.
+
+A third check is whether the unit is in a failed state. This indicates that there was a problem starting the unit in question:
+
+systemctl is-failed application.service
+ 
+This will return active if it is running properly or failed if an error occurred. If the unit was intentionally stopped, it may return unknown or inactive. An exit status of “0” indicates that a failure occurred and an exit status of “1” indicates any other status.
+
+System State Overview
+The commands so far have been useful for managing single services, but they are not very helpful for exploring the current state of the system. There are a number of systemctl commands that provide this information.
+
+Listing Current Units
+To see a list of all of the active units that systemd knows about, we can use the list-units command:
+
+systemctl list-units
+ 
+This will show you a list of all of the units that systemd currently has active on the system. The output will look something like this:
+
+Output
+UNIT                                      LOAD   ACTIVE SUB     DESCRIPTION
+atd.service                               loaded active running ATD daemon
+avahi-daemon.service                      loaded active running Avahi mDNS/DNS-SD Stack
+dbus.service                              loaded active running D-Bus System Message Bus
+dcron.service                             loaded active running Periodic Command Scheduler
+dkms.service                              loaded active exited  Dynamic Kernel Modules System
+getty@tty1.service                        loaded active running Getty on tty1
+. . .
+The output has the following columns:
+
+UNIT: The systemd unit name
+LOAD: Whether the unit’s configuration has been parsed by systemd. The configuration of loaded units is kept in memory.
+ACTIVE: A summary state about whether the unit is active. This is usually a fairly basic way to tell if the unit has started successfully or not.
+SUB: This is a lower-level state that indicates more detailed information about the unit. This often varies by unit type, state, and the actual method in which the unit runs.
+DESCRIPTION: A short textual description of what the unit is/does.
+Since the list-units command shows only active units by default, all of the entries above will show loaded in the LOAD column and active in the ACTIVE column. This display is actually the default behavior of systemctl when called without additional commands, so you will see the same thing if you call systemctl with no arguments:
+
+systemctl
+ 
+We can tell systemctl to output different information by adding additional flags. For instance, to see all of the units that systemd has loaded (or attempted to load), regardless of whether they are currently active, you can use the --all flag, like this:
+
+systemctl list-units --all
+ 
+This will show any unit that systemd loaded or attempted to load, regardless of its current state on the system. Some units become inactive after running, and some units that systemd attempted to load may have not been found on disk.
+
+You can use other flags to filter these results. For example, we can use the --state= flag to indicate the LOAD, ACTIVE, or SUB states that we wish to see. You will have to keep the --all flag so that systemctl allows non-active units to be displayed:
+
+systemctl list-units --all --state=inactive
+ 
+Another common filter is the --type= filter. We can tell systemctl to only display units of the type we are interested in. For example, to see only active service units, we can use:
+
+systemctl list-units --type=service
+ 
+Listing All Unit Files
+The list-units command only displays units that systemd has attempted to parse and load into memory. Since systemd will only read units that it thinks it needs, this will not necessarily include all of the available units on the system. To see every available unit file within the systemd paths, including those that systemd has not attempted to load, you can use the list-unit-files command instead:
+
+systemctl list-unit-files
+ 
+Units are representations of resources that systemd knows about. Since systemd has not necessarily read all of the unit definitions in this view, it only presents information about the files themselves. The output has two columns: the unit file and the state.
+
+Output
+UNIT FILE                                  STATE   
+proc-sys-fs-binfmt_misc.automount          static  
+dev-hugepages.mount                        static  
+dev-mqueue.mount                           static  
+proc-fs-nfsd.mount                         static  
+proc-sys-fs-binfmt_misc.mount              static  
+sys-fs-fuse-connections.mount              static  
+sys-kernel-config.mount                    static  
+sys-kernel-debug.mount                     static  
+tmp.mount                                  static  
+var-lib-nfs-rpc_pipefs.mount               static  
+org.cups.cupsd.path                        enabled
+. . .
+The state will usually be enabled, disabled, static, or masked. In this context, static means that the unit file does not contain an install section, which is used to enable a unit. As such, these units cannot be enabled. Usually, this means that the unit performs a one-off action or is used only as a dependency of another unit and should not be run by itself.
+
+We will cover what masked means momentarily.
+
+Unit Management
+So far, we have been working with services and displaying information about the unit and unit files that systemd knows about. However, we can find out more specific information about units using some additional commands.
+
+Displaying a Unit File
+To display the unit file that systemd has loaded into its system, you can use the cat command (this was added in systemd version 209). For instance, to see the unit file of the atd scheduling daemon, we could type:
+
+systemctl cat atd.service
+ 
+Output
+[Unit]
+Description=ATD daemon
+[Service]
+Type=forking
+ExecStart=/usr/bin/atd
+[Install]
+WantedBy=multi-user.target
+The output is the unit file as known to the currently running systemd process. This can be important if you have modified unit files recently or if you are overriding certain options in a unit file fragment (we will cover this later).
+
+Displaying Dependencies
+To see a unit’s dependency tree, you can use the list-dependencies command:
+
+systemctl list-dependencies sshd.service
+ 
+This will display a hierarchy mapping the dependencies that must be dealt with in order to start the unit in question. Dependencies, in this context, include those units that are either required by or wanted by the units above it.
+
+Output
+sshd.service
+├─system.slice
+└─basic.target
+  ├─microcode.service
+  ├─rhel-autorelabel-mark.service
+  ├─rhel-autorelabel.service
+  ├─rhel-configure.service
+  ├─rhel-dmesg.service
+  ├─rhel-loadmodules.service
+  ├─paths.target
+  ├─slices.target
+. . .
+The recursive dependencies are only displayed for .target units, which indicate system states. To recursively list all dependencies, include the --all flag.
+
+To show reverse dependencies (units that depend on the specified unit), you can add the --reverse flag to the command. Other flags that are useful are the --before and --after flags, which can be used to show units that depend on the specified unit starting before and after themselves, respectively.
+
+Checking Unit Properties
+To see the low-level properties of a unit, you can use the show command. This will display a list of properties that are set for the specified unit using a key=value format:
+
+systemctl show sshd.service
+ 
+Output
+Id=sshd.service
+Names=sshd.service
+Requires=basic.target
+Wants=system.slice
+WantedBy=multi-user.target
+Conflicts=shutdown.target
+Before=shutdown.target multi-user.target
+After=syslog.target network.target auditd.service systemd-journald.socket basic.target system.slice
+Description=OpenSSH server daemon
+. . .
+If you want to display a single property, you can pass the -p flag with the property name. For instance, to see the conflicts that the sshd.service unit has, you can type:
+
+systemctl show sshd.service -p Conflicts
+ 
+Output
+Conflicts=shutdown.target
+Masking and Unmasking Units
+We saw in the service management section how to stop or disable a service, but systemd also has the ability to mark a unit as completely unstartable, automatically or manually, by linking it to /dev/null. This is called masking the unit, and is possible with the mask command:
+
+sudo systemctl mask nginx.service
+ 
+This will prevent the Nginx service from being started, automatically or manually, for as long as it is masked.
+
+If you check the list-unit-files, you will see the service is now listed as masked:
+
+systemctl list-unit-files
+ 
+Output
+. . .
+kmod-static-nodes.service              static  
+ldconfig.service                       static  
+mandb.service                          static  
+messagebus.service                     static  
+nginx.service                          masked
+quotaon.service                        static  
+rc-local.service                       static  
+rdisc.service                          disabled
+rescue.service                         static
+. . .
+If you attempt to start the service, you will see a message like this:
+
+sudo systemctl start nginx.service
+ 
+Output
+Failed to start nginx.service: Unit nginx.service is masked.
+To unmask a unit, making it available for use again, use the unmask command:
+
+sudo systemctl unmask nginx.service
+ 
+This will return the unit to its previous state, allowing it to be started or enabled.
+
+Editing Unit Files
+While the specific format for unit files is outside of the scope of this tutorial, systemctl provides built-in mechanisms for editing and modifying unit files if you need to make adjustments. This functionality was added in systemd version 218.
+
+The edit command, by default, will open a unit file snippet for the unit in question:
+
+sudo systemctl edit nginx.service
+ 
+This will be a blank file that can be used to override or add directives to the unit definition. A directory will be created within the /etc/systemd/system directory which contains the name of the unit with .d appended. For instance, for the nginx.service, a directory called nginx.service.d will be created.
+
+Within this directory, a snippet will be created called override.conf. When the unit is loaded, systemd will, in memory, merge the override snippet with the full unit file. The snippet’s directives will take precedence over those found in the original unit file.
+
+If you wish to edit the full unit file instead of creating a snippet, you can pass the --full flag:
+
+sudo systemctl edit --full nginx.service
+ 
+This will load the current unit file into the editor, where it can be modified. When the editor exits, the changed file will be written to /etc/systemd/system, which will take precedence over the system’s unit definition (usually found somewhere in /lib/systemd/system).
+
+To remove any additions you have made, either delete the unit’s .d configuration directory or the modified service file from /etc/systemd/system. For instance, to remove a snippet, we could type:
+
+sudo rm -r /etc/systemd/system/nginx.service.d
+ 
+To remove a full modified unit file, we would type:
+
+sudo rm /etc/systemd/system/nginx.service
+ 
+After deleting the file or directory, you should reload the systemd process so that it no longer attempts to reference these files and reverts back to using the system copies. You can do this by typing:
+
+sudo systemctl daemon-reload
+ 
+Adjusting the System State (Runlevel) with Targets
+Targets are special unit files that describe a system state or synchronization point. Like other units, the files that define targets can be identified by their suffix, which in this case is .target. Targets do not do much themselves, but are instead used to group other units together.
+
+This can be used in order to bring the system to certain states, much like other init systems use runlevels. They are used as a reference for when certain functions are available, allowing you to specify the desired state instead of the individual units needed to produce that state.
+
+For instance, there is a swap.target that is used to indicate that swap is ready for use. Units that are part of this process can sync with this target by indicating in their configuration that they are WantedBy= or RequiredBy= the swap.target. Units that require swap to be available can specify this condition using the Wants=, Requires=, and After= specifications to indicate the nature of their relationship.
+
+Getting and Setting the Default Target
+The systemd process has a default target that it uses when booting the system. Satisfying the cascade of dependencies from that single target will bring the system into the desired state. To find the default target for your system, type:
+
+systemctl get-default
+ 
+Output
+multi-user.target
+If you wish to set a different default target, you can use the set-default. For instance, if you have a graphical desktop installed and you wish for the system to boot into that by default, you can change your default target accordingly:
+
+sudo systemctl set-default graphical.target
+ 
+Listing Available Targets
+You can get a list of the available targets on your system by typing:
+
+systemctl list-unit-files --type=target
+ 
+Unlike runlevels, multiple targets can be active at one time. An active target indicates that systemd has attempted to start all of the units tied to the target and has not tried to tear them down again. To see all of the active targets, type:
+
+systemctl list-units --type=target
+ 
+Isolating Targets
+It is possible to start all of the units associated with a target and stop all units that are not part of the dependency tree. The command that we need to do this is called, appropriately, isolate. This is similar to changing the runlevel in other init systems.
+
+For instance, if you are operating in a graphical environment with graphical.target active, you can shut down the graphical system and put the system into a multi-user command line state by isolating the multi-user.target. Since graphical.target depends on multi-user.target but not the other way around, all of the graphical units will be stopped.
+
+You may wish to take a look at the dependencies of the target you are isolating before performing this procedure to ensure that you are not stopping vital services:
+
+systemctl list-dependencies multi-user.target
+ 
+When you are satisfied with the units that will be kept alive, you can isolate the target by typing:
+
+sudo systemctl isolate multi-user.target
+ 
+Using Shortcuts for Important Events
+There are targets defined for important events like powering off or rebooting. However, systemctl also has some shortcuts that add a bit of additional functionality.
+
+For instance, to put the system into rescue (single-user) mode, you can just use the rescue command instead of isolate rescue.target:
+
+sudo systemctl rescue
+ 
+This will provide the additional functionality of alerting all logged in users about the event.
+
+To halt the system, you can use the halt command:
+
+sudo systemctl halt
+ 
+To initiate a full shutdown, you can use the poweroff command:
+
+sudo systemctl poweroff
+ 
+A restart can be started with the reboot command:
+
+sudo systemctl reboot
+ 
+These all alert logged in users that the event is occurring, something that only running or isolating the target will not do. Note that most machines will link the shorter, more conventional commands for these operations so that they work properly with systemd.
+
+For example, to reboot the system, you can usually type:
+
+sudo reboot
+ 
+Conclusion
+By now, you should be familiar with some of the basic capabilities of the systemctl command that allow you to interact with and control your systemd instance. The systemctl utility will be your main point of interaction for service and system state management.
+
+While systemctl operates mainly with the core systemd process, there are other components to the systemd ecosystem that are controlled by other utilities. Other capabilities, like log management and user sessions are handled by separate daemons and management utilities (journald/journalctl and logind/loginctl respectively). Taking time to become familiar with these other tools and daemons will make management an easier task.
+
   
-    Configure a database serverhhhhhhhhhhhhhhhhhhhhhhhhhh
+ Install and configure Dovecot on CentOS
+Last updated on:  2018-10-29
+
+Authored by:  Lee Jelley
+
+If you have installed the Postfix mail server to operate as the Simple Mail Transfer Protocol (SMTP) service on an email server, you might still need a way to retrieve the incoming mail from the server.
+
+This article shows you how to install and configure Dovecot, an open-source Internet Message Access Protocol (IMAP) and Post Office Protocol version 3 (POP3) server application designed specifically for Linux® and UNIX® operating systems. Dovecot retrieves emails from Postfix and delivers them to the relevant mailbox on the server.
+
+You can get your mail through Dovecot by using either the POP3 or the IMAP protocol.
+
+Prerequisites
+You need the following operating system and software to use Dovecot:
+
+A CentOS® 6.0 or later Linux distribution
+Postfix
+Install Dovecot
+Download and install the Dovecot package by running the following command:
+
+$ sudo yum install dovecot
+Configure Dovecot
+After you install Dovecot, you need to configure the services in the configuration file at /etc/dovecot/dovecot.conf. This example uses the nano text editor, but you can use any text editor that you want.
+
+Use the following command to open the file in nano:
+
+$ sudo nano /etc/dovecot/dovecot.conf
+Uncomment the following lines in the file and, if necessary, change them to reflect your plans for the environment:
+
+protocols = imap pop3
+mail_location =  maildir:~/Maildir
+These lines contain the following parameters:
+
+protocols: The protocols through which users can access their email
+mail_location: The format and the location of each user’s mailbox
+Configure the authentication process file
+Next you need to configure the authentication process file, which is located at /etc/dovecot/conf.d/10-auth.conf.
+
+Use the following command to open the file in nano:
+
+$ sudo nano /etc/dovecot/conf.d/10-auth.conf
+Uncomment the following line in the file and, if necessary, change them to reflect your plans for your environment:
+
+auth_mechanisms = plain login
+The auth_mechanisms parameter specifies the method that the email client uses to authenticate with Dovecot.
+
+Configure the mail location
+You can set the location for your mail by editing the configuration file at /etc/dovecot/conf.d/10-mail.conf.
+
+Use the following command to open the file in nano:
+
+sudo nano /etc/dovecot/conf.d/10-mail.conf
+Either add or uncomment the following line in the configuration file:
+
+mail_location = maildir:~/Maildir
+Configure Postfix SMTP authentication
+Next you need to configure the UNIX socket for Postfix SMTP authentication (SMTP AUTH). The file that you need to change is located at /etc/dovecot/conf.d/10-master.conf.
+
+Use the following command to open the file in nano:
+
+sudo nano /etc/dovecot/conf.d/10-master.conf
+Comment out the following lines:
+
+ #unix_listener auth-userdb {
+     #mode = 0600
+     #user =
+     #group =
+   #}
+In the same file, edit the following lines:
+
+ # Postfix smtp-auth
+   unix_listener /var/spool/postfix/private/auth {
+     mode = 0666
+     user = postfix
+     group = postfix
+   }
+Configure POP3
+Finally, configure the /etc/dovecot/conf.d/20-pop3.conf file, which enables older and less popular email clients to connect and transmit messages correctly.
+
+Use the following command to open this file in nano:
+
+sudo nano /etc/dovecot/conf.d/20-pop3.conf
+Uncomment or add the following lines:
+
+pop3_uidl_format = %08Xu%08Xv
+pop3_client_workarounds = outlook-no-nuls oe-ns-eoh
+Create a mailbox
+The example in this section adds a mailbox that a hypothetical user named Joe Bloggs (joe.bloggs) can use to send and receive emails.
+
+You can create a user for this example, or you can use an existing user.
+
+If necessary, use the following command to make a new user:
+
+sudo useradd joe.bloggs
+Use the following command to create the mail directory for your user:
+
+sudo mkdir /home/joe.bloggs/Maildir
+Give ownership of the mailbox that you just created to joe.bloggs by changing its permissions:
+
+sudo chown joe.bloggs:joe.bloggs /home/joe.bloggs/Maildir
+sudo chmod -R 700 /home/joe.bloggs/Maildir
+Start Dovecot
+Use the following steps to start the Dovecot service:
+
+Use the following chkconfig command to verify that the Dovecot application will run when the server is restarted:
+
+sudo chkconfig --level 345 dovecot on
+Use the following command to start the Dovecot service:
+
+sudo service dovecot start
+Configure Postfix
+Next, you need to configure Postfix to enable your email client to connect to your new SMTP server.
+
+Use the following command to open the file at /etc/postfix/main.cf in nano:
+
+sudo nano /etc/postfix/main.cf
+Add the following lines to the file:
+
+ smtpd_sasl_auth_enable = yes
+ smtpd_sasl_security_options = noanonymous
+ smtpd_sasl_local_domain = $myhostname
+ smtpd_recipient_restrictions = permit_sasl_authenticated,permit_mynetworks, reject_unauth_destination
+ broken_sasl_auth_clients = yes
+ smtpd_sasl_type = dovecot
+ smtpd_sasl_path = private/auth
+After you have added the preceding lines, exit the main.cf file and restart the Postfix service by using the following command:
+
+sudo service postfix restart
+Add ports to iptables
+Now that you have enabled secure SMTP Secure Sockets Layer (SSL), you should allow connections to port 587 by opening the port for your server in iptables.
+
+Add the rule for this port by entering the following command:
+
+sudo iptables -I INPUT 2 -p tcp --dport 587 -j ACCEPT
+Add the POP and IMAP ports, as well as their secure counterparts:
+
+sudo iptables -I INPUT 3 -p tcp --dport 110 -j ACCEPT
+sudo iptables -I INPUT 4 -p tcp --dport 143 -j ACCEPT
+sudo iptables -I INPUT 5 -p tcp --dport 993 -j ACCEPT
+sudo iptables -I INPUT 6 -p tcp --dport 995 -j ACCEPT
+Use the following commands to save the iptables rules and restart iptables:
+
+sudo /etc/init.d/iptables save
+sudo /etc/init.d/iptables restart
+    
+  Install the mysql server
+Type the following yum command to install mysql database server on RHEL /Centos Linux based systems:
+# yum install mysql mysql-server
+
+Configure the mysql server
+Edit /etc/my.cnf, enter:
+# vi /etc/my.cnf
+
+Make sure mysql server can be accessed from your vm01 and vm02 server i.e. Apache+php5 server. Locate [mysqld] section and add/correct as follows so that mysqld can reached remotely :
+
+# Make sure skip-networking directive is commented (or removed)
+# skip-networking
+# Turn on remote access
+bind-address=192.168.1.13
+Optimization settings
+You need to optimize mysql server otherwise it is going to eat all your CPU and other resources on vm04. You can add or correct settings as follows (see mysql manual for more info):
+
+#######################################################################
+# WARNING!!!
+# Security and optimization settings
+# Read mysqld and my.cnf man page for more info
+# as the following settings depends upon hardware and your requirements
+########################################################################
+# Disabling symbolic-links is recommended to prevent assorted security risks
+symbolic-links=0
+ 
+## Go faster and skip some stuff, YMMV
+skip-name-resolve
+skip-slave-start
+skip-external-locking
+ 
+# PER CLIENT SETTINGS #
+# bit high but I got tons of ram here #
+sort_buffer_size 		= 2M
+read_buffer_size 		= 2M
+binlog_cache_size 		= 1M
+wait_timeout 			= 200
+interactive_timeout 		= 300
+max_allowed_packet 		= 12M
+thread_stack 			= 128K
+table_cache 			= 1024
+myisam_sort_buffer_size 	= 1M
+tmp_table_size 			= 12M
+max_heap_table_size 		= 12M
+ 
+ 
+# LOGGING #
+log_queries_not_using_indexes  = 1
+slow_query_log                 = 1
+slow_query_log_file            = /var/lib/mysql/slowquery.log
+ 
+# CACHES AND LIMITS #
+tmp_table_size                 = 12M
+max_heap_table_size            = 12M
+query_cache_type               = 1
+query_cache_limit              = 2M
+query_cache_size               = 32M
+max_connections                = 500
+thread_cache_size              = 50
+open_files_limit               = 65535
+table_definition_cache         = 4096
+table_open_cache               = 1024
+ 
+# MyISAM #
+key_buffer_size                = 32M
+myisam_recover                 = FORCE,BACKUP
+ 
+# SAFETY #
+max_allowed_packet             = 16M
+max_connect_errors             = 1000000
+ 
+ 
+# BINARY LOGGING #
+log_bin                        = /var/lib/mysql/mysql-bin
+expire_logs_days               = 14
+sync_binlog                    = 1
+ 
+# INNODB #
+innodb_flush_method            = O_DIRECT
+innodb_log_files_in_group      = 2
+innodb_log_file_size           = 256M
+innodb_flush_log_at_trx_commit = 1
+innodb_file_per_table          = 1
+innodb_buffer_pool_size        = 10G
+Save and close the file. Restart / reload the mysql server:
+# chkconfig mysqld on
+# service mysqld start
+# service mysqld reload
+# service mysqld restart
+
+Verify that mysqld running on tcp port #3306:
+# netstat -tulpn | grep :3306
+
+MySQL database server firewall configuration
+Edit /etc/sysconfig/iptables, enter:
+# vi /etc/sysconfig/iptables
+
+Make sure vm01 and vm02 can access the database server:
+
+## open mysqld server port for the apache and lighttpd web server #
+-A INPUT -m state --state NEW -s 192.168.1.10 -m tcp -p tcp --dport 3306 -j ACCEPT
+-A INPUT -m state --state NEW -s 192.168.1.11 -m tcp -p tcp --dport 3306 -j ACCEPT
+Save and close the file. Restart iptables, enter:
+# service iptables restart
+
+Increase file system and ports limits on vm04 database server
+For busy RDBMS server you need to increase system file descriptor (FD limits) and IP port limits:
+
+# Increase system file descriptor limit to
+fs.file-max = 50000
+# Increase system IP port limits
+net.ipv4.ip_local_port_range = 2000 65000
+Load the changes by typing the following sysctl command to modify Linux kernel parameters at runtime:
+# sysctl -p
+
+Creating MySQL databases and accounts
+This section provides basic instructions for manually creating a MySQL database. In this example, create a mysql database and user as follows:
+
+DB NAME : foo
+DB USER NAME : bar
+DB PASSWORD : mypassword
+ALLOW DB ACCESS FROM : localhost, vm01, and vm02 having an IP address 192.168.1.10 and 192.168.1.11 only
+Type the following command to create the database and required users:
+# /usr/bin/mysql -u root -h localhost -p
+
+Type the following commands at mysql> prompt. To create your database called foo, type:
+
+mysql> CREATE DATABASE foo;
+You must grant access rights for this database to the MySQL user called bar through which the Apache+php5 application server will be connecting. Type:
+
+mysql> GRANT ALL ON foo.* TO bar@localhost IDENTIFIED BY 'mypassword';
+mysql> GRANT ALL ON foo.* TO bar@192.168.1.10 IDENTIFIED BY 'mypassword';
+mysql> GRANT ALL ON foo.* TO bar@192.168.1.11 IDENTIFIED BY 'mypassword';
+To exit from the MySQL monitor, type:
+
+mysql> quit
+You can now create tables or load data using .sql files. You can automate this procedure by writing shell or perl script to add the mysql user and database.
+
+Test your new db and user settings from remote vm01 or vm02
+Ssh into the vm01 or vm03 and type the following command to test the connectivity from the Apache / Lighttpd web server:
+$ mysql -u bar -h 192.168.1.13 -p'mypassword' foo
+
+OR
+$ mysql -u bar -h vm04 -p'mypassword' foo
+  
+  
+  How to configure an Apache web server
+Learn to host your own website with Apache, a solid, well-known, and easy-to-configure web server.
+02 Jan 2021 David Both (Correspondent) Feed 353up 2 comments
+Closeup of a spider web, purple background
+Image credits : 
+You as a Machine. Modified by Rikki Endsley. CC BY-SA 2.0.
+x
+Subscribe now
+Get the highlights in your inbox every week.
+
+
+
+I have hosted my own websites for many years now. Since switching from OS/2 to Linux more than 20 years ago, I have used Apache as my server software. Apache is solid, well-known, and quite easy to configure for a basic installation. It is not really that much more difficult to configure for a more complex setup, such as multiple websites.
+
+More Linux resources
+Linux commands cheat sheet
+Advanced Linux commands cheat sheet
+Free online course: RHEL Technical Overview
+Linux networking cheat sheet
+SELinux cheat sheet
+Linux common commands cheat sheet
+What are Linux containers?
+Our latest Linux articles
+Installation and configuration of the Apache web server must be performed as root. Configuring the firewall also needs to be performed as root. Using a browser to view the results of this work should be done as a non-root user. (I use the user student on my virtual host.)
+Installation
+Note: This article has been updated using Fedora 33 with Apache 2.4.46. If you use a different distribution or a different release of Fedora, your commands and the locations and content of the configuration files may be different. However, the configuration lines you need to modify are the same regardless of distribution.
+
+The Apache web server is easy to install. With one command, you can install it and all necessary dependencies:
+
+$ dnf install httpd
+All the configuration files for Apache are located in /etc/httpd/conf and /etc/httpd/conf.d. The data for websites you'll run with Apache is located in /var/www by default, but you can change that if you want.
+
+Configuration
+The primary Apache configuration file is /etc/httpd/conf/httpd.conf. It contains a lot of configuration statements that don't need to be changed for a basic installation. In fact, only a few changes must be made to this file to get a basic website up and running. The file is very large so, rather than clutter this article with a lot of unnecessary stuff, I will show only those directives that you need to change.
+
+First, take a bit of time and browse through the httpd.conf file to familiarize yourself with it. One of the things I like about Red Hat versions of most configuration files is the number of comments that describe the various sections and configuration directives in the files. The httpd.conf file is no exception, as it is quite well commented. Use these comments to understand what the file is configuring.
+
+The first item to change is the Listen statement, which defines the IP address and port on which Apache is to listen for page requests. Right now, you just need to make this website available to the local machine, so use the localhost address. The line should look like this when you finish:
+
+Listen 127.0.0.1:80
+With this directive set to the IP address of the localhost, Apache will listen only for connections from the local host. If you want the web server to listen for connections from remote hosts, you would use the host's external IP address.
+
+The DocumentRoot directive specifies the location of the HTML files that make up the pages of the website. That line does not need to be changed because it already points to the standard location. The line should look like this:
+
+DocumentRoot "/var/www/html"
+The Apache installation RPM creates the /var/www directory tree. If you wanted to change the location where the website files are stored, this configuration item is used to do that. For example, you might want to use a different name for the www subdirectory to make the identification of the website more explicit. That might look like this:
+
+DocumentRoot "/var/mywebsite/html"
+These are the only Apache configuration changes needed to create a simple website. For this little exercise, only one change was made to the httpd.conf file—the Listen directive. Everything else is already configured to produce a working web server.
+
+One other change is needed, however: opening port 80 in our firewall. I use iptables as my firewall, so I change /etc/sysconfig/iptables to add a statement that allows HTTP protocol. The entire file looks like this:
+
+# sample configuration for iptables service
+# you can edit this manually or use system-config-firewall
+# please do not ask us to add additional ports/services to this default configuration
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -p icmp -j ACCEPT
+-A INPUT -i lo -j ACCEPT
+-A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
+-A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT
+-A INPUT -j REJECT --reject-with icmp-host-prohibited
+-A FORWARD -j REJECT --reject-with icmp-host-prohibited
+COMMIT
+The line I added is the third from the bottom, which allows incoming traffic on port 80. Now I reload the altered iptables configuration.
+
+[root@testvm1 ~]# cd /etc/sysconfig/ ; iptables-restore iptables
+Create the index.html file
+The index.html file is the default file a web server will serve up when you access the website using just the domain name and not a specific HTML file name. In the /var/www/html directory, create a file with the name index.html. Add the content Hello World. You do not need to add any HTML markup to make this work. The sole job of the web server is to serve up a stream of text data, and the server has no idea what the date is or how to render it. It simply transmits the data stream to the requesting host.
+
+After saving the file, set the ownership to apache.apache.
+
+[root@testvm1 html]# chown apache.apache index.html
+Start Apache
+Apache is very easy to start. Current versions of Fedora use systemd. Run the following commands to start it and then to check the status of the server:
+
+[root@testvm1 ~]# systemctl start httpd
+[root@testvm1 ~]# systemctl status httpd
+● httpd.service - The Apache HTTP Server
+   Loaded: loaded (/usr/lib/systemd/system/httpd.service; disabled; vendor preset: disabled)
+   Active: active (running) since Thu 2018-02-08 13:18:54 EST; 5s ago
+     Docs: man:httpd.service(8)
+ Main PID: 27107 (httpd)
+   Status: "Processing requests..."
+    Tasks: 213 (limit: 4915)
+   CGroup: /system.slice/httpd.service
+           ├─27107 /usr/sbin/httpd -DFOREGROUND
+           ├─27108 /usr/sbin/httpd -DFOREGROUND
+           ├─27109 /usr/sbin/httpd -DFOREGROUND
+           ├─27110 /usr/sbin/httpd -DFOREGROUND
+           └─27111 /usr/sbin/httpd -DFOREGROUND
+
+Feb 08 13:18:54 testvm1 systemd[1]: Starting The Apache HTTP Server...
+Feb 08 13:18:54 testvm1 systemd[1]: Started The Apache HTTP Server.
+The commands may be different on your server. On Linux systems that use SystemV start scripts, the commands would be:
+
+[root@testvm1 ~]# service httpd start
+Starting httpd: [Fri Feb 09 08:18:07 2018]          [  OK  ]
+[root@testvm1 ~]# service httpd status
+httpd (pid  14649) is running...
+If you have a web browser like Firefox or Chrome on your host, you can use the URL localhost on the URL line of the browser to display your web page, simple as it is. You could also use a text mode web browser like Lynx to view the web page. First, install Lynx (if it is not already installed).
+
+[root@testvm1 ~]# dnf -y install lynx
+Then use the following command to display the web page.
+
+[root@testvm1 ~]# lynx localhost
+The result looks like this in my terminal session. I have deleted a lot of the empty space on the page.
+
+  Hello World
+
+<snip>
+
+
+Commands: Use arrow keys to move, '?' for help, 'q' to quit, '<-' to go back.
+  Arrow keys: Up and Down to move.  Right to follow a link; Left to go back.
+ H)elp O)ptions P)rint G)o M)ain screen Q)uit /=search [delete]=history list
+Next, edit your index.html file and add a bit of HTML markup so it looks like this:
+
+<h1>Hello World</h1>
+Now refresh the browser. For Lynx, use the key combination Ctrl+R. The results look just a bit different. The text is in color, which is how Lynx displays headings if your terminal supports color, and it is now centered. In a GUI browser the text would be in a large font.
+
+                                   Hello World
+
+<snip>
+
+
+Commands: Use arrow keys to move, '?' for help, 'q' to quit, '<-' to go back.
+  Arrow keys: Up and Down to move.  Right to follow a link; Left to go back.
+ H)elp O)ptions P)rint G)o M)ain screen Q)uit /=search [delete]=history list
+Parting thoughts
+As you can see from this little exercise, it is easy to set up an Apache web server. The specifics will vary depending upon your distribution and the version of Apache supplied by that distribution. In my environment, this was a pretty trivial exercise.
+
+But there is more because Apache is very flexible and powerful. Next month I will discuss hosting multiple websites using a single instance of Apache.
+
+This article was originally published in 2018 and has been updated by the editor.
+
+    How to Administrate the Apache Web Server Using “Apache GUI” Tool
+Matei CezarFebruary 18, 2021 CategoriesApache 16 Comments
+Apache Web Server is one of the most popular HTTP servers on the Internet today, due to its open-source nature, rich modules, and features and can run on almost major platforms and operating systems.
+
+While on Windows platforms there are some built in development environments that provides a Graphical Interface to manage Apache configurations, such as WAMP or XAMPP, on Linux the entire management process must be performed entirely from Command Line, in most of the cases.
+
+While managing and configuring Apache Web Server from the command line can have a huge impact concerning system security, it can also be a scary job for newbies who are not very familiar with doing things from the command line.
+
+This is the point where Apache GUI tool can come in handy. This tools is a free and open source package designed for system administrators to manage the functionality of Apache Web Server from a browser, such as:
+
+Edit your web server configuration files right from your browser.
+Edit your web documents right from your browser.
+Download, search and visualize Apache Logs in real time.
+Install, edit or remove Apache modules.
+View runtime statistics or detailed graphs transactions of Apache HTTP Server.
+Manage global server settings.
+Manage and view all VirtualHosts in a tree view.
+Apache Web Administartion Tool
+Apache Web Administartion Tool
+Requirements
+Install LAMP in RHEL/CentOS 7
+How to Install LAMP Server on CentOS 8
+For the purpose of this article, I will be installing Apache GUI Web Tool on a Linode CentOS 8 VPS with IP address 192.168.0.100 and provides you a short init script for starting or stoping the process.
+
+The same instructions also works for RHEL/CentOS 6.x and Fedora distributions.
+
+Step 1: Download and Install Apache GUI
+1. Before getting started with downloading and installing Apache GUI tool, you need to assure that Java JDK provided by Java-openjdk package is installed on your system, so you can run Apache GUI.
+
+Use the following commands to locate Java-openjdk package version and install it on RHEL/CentOS 7/8.
+
+# yum search openjdk
+# yum install java-1.8.0
+OR
+# yum install java-11
+Install Java JDK in CentOS
+Install Java JDK Package
+2. Assuming, that you are logged in as root and your current working directory is /root, use the following link to download latest version of Apache GUI source package (i.e. ApacheGUI-1.12.0.tar.gz) installation files from Sourceforge.net.
+
+http://sourceforge.net/projects/apachegui/files/
+Alternatively, you can also grab the Linux-Solaris-Mac –> ApacheGUI tar archive source files using following wget command as shown below.
+
+# wget https://sourceforge.net/projects/apachegui/files/1.12-Linux-Solaris-Mac/ApacheGUI-1.12.0.tar.gz/download
+Download ApacheGUI
+Download ApacheGUI
+3. After the archive is downloaded, extract it and move the entire resulted directory to /opt system path, which will be the installation location of your Apache GUI Server.
+
+# tar xfz ApacheGUI-1.9.3.tar.gz
+# mv ApacheGUI /opt
+# cd /opt
+Extract ApacheGUI Archive
+Extract ApacheGUI Archive
+4. Now, it’s time to start and verify Apache GUI Web Tool functionality. Change your directory to ApacheGUI/bin/ path and use run.sh script to start the tool and stop.sh script to stop the server.
+
+# cd ApacheGUI/bin/
+# ./run.sh 
+Start ApacheGUI Tool
+Start ApacheGUI Tool
+5. After the tool starts it will display some environment information and you can access it only from your localhost using the following URL address on your browser.
+
+http://localhost:9999/ApacheGUI/
+To gain remote control over Apache GUI Web Tool from a browser, you need to add a rule on your system Firewall that opens Port 9999/TCP, which is the default port that Apache GUI Tools listens on. Use the following commands to open port 9999 on RHEL/CentOS 7 using Firewalld utility.
+
+# firewall-cmd --add-port=9999/tcp  ## On fly rule
+# firewall-cmd --add-port=9999/tcp  --permanent  ## Permanent rule – you need to reload firewall to apply it
+# firewall-cmd --reload
+Open Port On CentOS
+Open Port on Firewall
+6. If port 9999 used by Apache GUI overlaps with another application on your system you can change it by editing ApacheGUI server.xml configuration file, search for Connector port=”9999” protocol=”HTTP/1.1” directive and replace port statement with your favorite port number (don’t forget to apply port firewall rule the same time).
+
+# nano /opt/ApacheGUI/tomcat/conf/server.xml
+Change Port of ApacheGUI
+Change Port of ApacheGUI
+Step 2: Configure Apache GUI
+7. Now it’s time to configure Apache GUI Web Tool for Apache Web Server administration from a remote point. Assuming that you have configured your system Firewall and allowed external connections, open a remote browser and type use your server
+external IP address to access Apache GUI
+
+http://192.168.1.80:9999/ApacheGUI/
+Use following credentials to login into ApacheGUI tool.
+
+Username: admin
+Password: admin 
+Access ApacheGUI Web Panel
+Access ApacheGUI Web Panel
+8. Next, the tool will prompt you on How Apache Web Server was installed? Choose Package option, if you installed Apache on RHEL/CentOS using yum package management tool and hit OK to move forward.
+
+Select ApacheGUI Installation Type
+Select ApacheGUI Installation Type
+9. Provide your Apache Web Server Package Parameters with the following configurations and, also, choose a username and a strong password to login Apache GUI next time.
+
+Server Root: /etc/httpd
+Primary Configuration File: /etc/httpd/conf/httpd.conf
+Configuration Directory: /etc/httpd
+Log Directory: /var/log/httpd
+Modules Directory: /etc/httpd/modules
+Binary File: /usr/sbin/apachectl
+Username: choose a username
+Password: choose a strong password
+Password: repeat the above password
+Apache GUI Configuration
+Apache GUI Configuration
+10. After you finish hit on Submit button to apply configuration and you’re done. Now you can control Apache Web Server with all its configuration files and edit web documents directly from your browser like in the screenshots below.
+
+ApacheGUI Settings
+ApacheGUI Settings
+Apache Server Information
+Apache Server Information
+ApacheGUI VirtualHosts
+ApacheGUI VirtualHosts
+Step 3: Create systemv init script
+11. If you need method to manage Apache GUI Tool without always changing directory to [APACHEGUI_HOME], which for this installation is /opt/ApacheGUI/, and execute run.sh and stop.sh scripts, create a init configuration file /etc/init.d/apache-gui as in the following excerpt.
+
+# nano /etc/init.d/apache-gui
+Copy the below text without any modification, save it and apply execution permissions.
+
+#!/bin/sh
+#
+#
+# System startup script for apache-gui
+#
+### BEGIN INIT INFO
+# Provides: apache-gui
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start the apache-gui
+# Description:       Start the apache-gui
+### END INIT INFO
+#
+# chkconfig: 2345 20 80
+# description: Runs the apache-gui
+# processname: apache-gui
+#
+# Source function library
+. /etc/init.d/functions
+
+case "$1" in
+    start)
+    cd /opt/ApacheGUI/bin/
+./run.sh
+       ;;
+    stop)
+   cd /opt/ApacheGUI/bin/
+./stop.sh
+        ;;
+    *)
+        echo $"Usage: $0 {start|stop}"
+        exit 2
+esac
+exit $? 
+ApacheGUI init Script
+ApacheGUI init Script
+12. Use the following commands to manage Apache GUI process on RHEL/CentOS 7.
+
+# service apache-gui start
+# service apache-gui stop
+
+OR
+
+# systemctl start apache-gui
+# systemctl stop apache-gui
+# systemctl status apache-gui
+Start ApacheGUI Service
+Start ApacheGUI Service
+13. If you need Apache GUI Web Tool to automatically run after system reboot, use the following command to enable it system-wide.
+
+# chkconfig apache-gui on
+To disable it system-wide.
+
+# chkconfig apache-gui off
+Start ApacheGUI System-Wide
+Start ApacheGUI System-Wide
+Even though Apache GUI Web Tool has some limitations and doesn’t provide the same degree of flexibility for Apache Web Server as you can achieve from command line, it can provide a modern free Java web interface to administer your web server and has a full inline editor for web documents such as HTML, CSS, JavaScript, XML, Json, PHP, Perl, Shell, Python and can generate some detailed graphs of Apache Transactions.
 
 SSH Essentials: Working with SSH Servers, Clients, and Keys
 Linux BasicsSecurityNetworkingSystem Tools
