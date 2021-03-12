@@ -41,3 +41,4 @@
     39. https://www.linkedin.com/learning/linux-foundation-cert-prep-operation-of-running-systems-ubuntu/welcome
     40. https://www.linkedin.com/learning/linux-foundation-cert-prep-essential-commands-ubuntu/welcome
     41. https://www.linkedin.com/learning/linux-foundation-cert-prep-networking-ubuntu/welcome
+    42. https://www.linkedin.com/learning/linux-foundation-cert-prep-user-and-group-management-ubuntu/welcome
