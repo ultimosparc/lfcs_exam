@@ -34,3 +34,10 @@
     32. https://www.tecmint.com/view-yum-history-to-find-packages-info/
     33. https://learning.edx.org/course/course-v1:LinuxFoundationX+LFS101x+1T2020/home
     34. https://ibm-learning.udemy.com/course/redhat-linux-administration-ll/learn/lecture/16499752#overview
+    35. https://www.linkedin.com/learning/linux-foundation-cert-prep-email-services-ubuntu/welcome
+    36. https://www.digitalocean.com/community/tutorials/ssh-essentials-working-with-ssh-servers-clients-and-keys
+    37. https://www.linkedin.com/learning/linux-foundation-cert-prep-service-configuration-ubuntu/welcome
+    38. https://www.linkedin.com/learning/linux-foundation-cert-prep-storage-management-ubuntu/welcome
+    39. https://www.linkedin.com/learning/linux-foundation-cert-prep-operation-of-running-systems-ubuntu/welcome
+    40. https://www.linkedin.com/learning/linux-foundation-cert-prep-essential-commands-ubuntu/welcome
+    41. 
