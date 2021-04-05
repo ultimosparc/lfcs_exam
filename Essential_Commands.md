@@ -2,7 +2,7 @@
 
 Essential Commands domain might appears more frequently than others in the exam. 
 
-_Archivieren von Dateien_ [9]
+_Generieren, Lesen, Kopieren, Verschieben, Archivieren, Komprimieren, Backup und Lschen von Dateien_[9]
 
 Dateien können in Archiven verpackt werden. Das Tool dafür ist _tar_. 
 Ein möglicher Befehl zum Generieren eines Archives könnte wie folgt aussehen: 
@@ -30,7 +30,29 @@ Weitere Ooptionen:
     -p man archiviert Dateien und den Rechten auf den Dateien
     -f muss gesetzt werden, damit Grundbefehle we c,d ausgeführt werden kann
  
- 
+ _Creating Backups_ [9]
+
+Creating Backups:
+dd - Use this tool to take complete back ups of entire partitions or drives. 
+dd if=[device you want to backup] of=[backup.img]
+IMPORTANT: This backup will be of the entire extent of the device you mention even if there is space on the drive. It will backup the entire extent. 
+rsync - use this tool if you need to perform backups over a network. 
+rsync -av [source] [destination]
+tar - Standard archiving. 
+tar cvf tarball.tar /directory/
+Some practical code:
+dd if=/dev/sda of=/backups/sda.img
+rsync -av /root/ /backups/
+tar cvfj rootarchive.bz2 /root/
+Restoring Backups: Pretty much straightforward in most cases. 
+dd - simply reverse the process
+rsync - Same idea as dd - Reverse the process. 
+tar - Use the extract directive (x)
+Some practical code:
+dd if=/backups/sda.img /dev/sda
+rsync -v /backups/ /root/
+tar xvfj rootarchive.bz2
+Make sure you are in the directory you want to the data to be unpacked into. 
 _Suchen nach Dateien_ [10]
 
 Es gibt verschiedene Befehle zum Suchen von Textdateien. Meist wird der Befehl _find_ genutzt. It can be u
@@ -966,29 +988,7 @@ $ ln -sfv ~/bin/topprocs.sh topps.sh
 $ $ls -l topps.sh
 
 
-_Creating Backups_ [9]
 
-Creating Backups:
-dd - Use this tool to take complete back ups of entire partitions or drives. 
-dd if=[device you want to backup] of=[backup.img]
-IMPORTANT: This backup will be of the entire extent of the device you mention even if there is space on the drive. It will backup the entire extent. 
-rsync - use this tool if you need to perform backups over a network. 
-rsync -av [source] [destination]
-tar - Standard archiving. 
-tar cvf tarball.tar /directory/
-Some practical code:
-dd if=/dev/sda of=/backups/sda.img
-rsync -av /root/ /backups/
-tar cvfj rootarchive.bz2 /root/
-Restoring Backups: Pretty much straightforward in most cases. 
-dd - simply reverse the process
-rsync - Same idea as dd - Reverse the process. 
-tar - Use the extract directive (x)
-Some practical code:
-dd if=/backups/sda.img /dev/sda
-rsync -v /backups/ /root/
-tar xvfj rootarchive.bz2
-Make sure you are in the directory you want to the data to be unpacked into. 
 
 
 man -k "keyword" 
