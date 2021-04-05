@@ -73,9 +73,61 @@ If there is need to change IP configuration of an interface without using nmtui 
 
 In /etc/hosts is configured a name resolution that take precedence of DNS
 
-    It contains static DNS entry
+Für die Konfiguration des Netzwerkes und und das Ändern des Hostnamen statisch und dynamisch gibt es verschiedene Wege, falls es Probleme geben sollte nach den Ändernungen, 
+dann kann man die Einstellungen wie folgt prüfen und ggf. den Fehler beheben. 
 
-    It is possible add hostname to row for 127.0.0.1 resolution, or insert a static IP configured on principal interface equal to hostname
+    ip addr show eth0       //Display IP information for a device
+    ip -s link show eth0    //Display network statistics for a device
+    ip route                //Display routes for a device
+    ip link                 //Display network devices
+    tracepath               //Show all hops a packet has to go through and the MTA for each router
+    yum install traceroute  //older version command to trace and works on all routers
+    ping yahoo.com          //ping a ipv site till hit control c
+    ss/netstat              //utility used to look at listening ports, established connections, and investigate sockets
+                            //-a All, listening and established
+                            //-t Display TCP sockets
+                            //-n Show numbers instead of names and port number (ip address number with port number instead of ex: yahoo.com:smtp) for interfaces and ports
+                            //-u Display udp sockets
+                            //-l Show only listening sockets
+    ss -tan                 //Falls 80 nicht belegt ist, dann 
+                            //yum install httpd
+                            //systemctl httpd start
+                            //ss -tan
+                            
+Will man nun einen neuen DNS Namen festlegen bzw. einen neuen Hostnamen festlegen und ggf. auch längerfristig die Änderungen einstellen, dann kann man wie folgt vorgehen: 
+
+    systemctl start NetworkManager              //Zunächst Netzwerkmangeger starten, falls noch nicht geschehen
+    systemctl enable NetworkManager             //Service muss nach en Änderungen restartet werden, damit die Änderungen wirksam werden
+    systemctl restart network
+    hostname                                    //Anzeigen des aktuellen Hostnamen
+    hostnamectl set-hostname system.domain.com  //etc/hostname — Manages the “static” hostname for the system. hostnamectl is persistent, it updates /etc/hostname file
+    /etc/resolv.conf << hosty.com               //in dieser Datei werden externe DNS Namen festgelegt, die Maschine sucht dort zuerst nach externen DNS Namen bevor andere DNSer                                                 //im Netwerk angefragt werden
+    /etc/hosts                                  ///etc/hosts first, before going to /etc/resolv.conf to look externally 
+    (ip address) (domain name)                  //Somit können DNS Cache Posioning festgelegt werden, z.B. 1.1.1.1 yahoo.com
+    /etc/resolv.conf                            //Wird gemanagement vom Network Manager, diese Datei kann darüber bearbeitet werden oder es können Skripts in                                                                     ///etc/sysconfig/network-scripts eingestellt werden, um die Netzwerkkonfigurationen zu manipulieren
+    
+Each connection to system is a configuration, each configuration is attached to a device, each device has a configuration file, z.B. cat /etc/sysconfig/network-scripts/ifcfg-eth0. Zur Bearbeitung von Netzwerk gibt es verschiedene Wege View which network cards are attached to the system, or to list all the devices.
+
+    nmcli con show      //Display a list of connections
+    nmcli dev status    //Display “device” status
+    nmcli con add help  //Display help for adding connections
+    
+In der Prüfung kann es nun vorkommen, das eine aktive Verbindung geändert werden kann, Gateway oder IP Adresse, statische zu dynamische Methode wechseln z.B., oder eine neue Verbindung mit vorgegeben Konfiguration hinzugefügt werden soll
+
+    nmcli con add con-name "nameofthecon" ifname eth0 autoconnect no type Ethernet ip4 ipaddress gw4 gateway //Add a connection
+    nmcli con mod "nameofthecon" connection.autocorrect yes         //cat /etc/sysconfig/network-scripts/ifcfg-nameofthecon
+                                                                    //see if ONBOOT=yes, which means this configuration will automatically connect. if device set to DEVICE=eth0,                                                                     //it will connect to configuration to eth0 device
+    nmcli con reload                                                //After modifying a network connection, you should reload the configuration
+    nmcli dev status                                                 //List all devices
+    nmcli dev disconnect "device"                                    //Activate or “bring down” a connection
+    nmcli dev connect "device"                                       //Activate or “bring up” a connection
+    nmcli con show                                                  //Delete a connection
+    nmcli con mod con-name ipv4.method manual                          //Change the method from static IP to DHCP
+    nmcli con del "connectionname"                                  //Delete a connection
+    
+    
+    
+    
 
 In /etc/resolv.conf there are configured DNS servers entry
 It is possible to insert more than one nameserver as backup (primary and secondary)
