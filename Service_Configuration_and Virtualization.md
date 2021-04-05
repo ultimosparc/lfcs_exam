@@ -1,4 +1,13 @@
 # Service Configuration and Virtualization
+Configurations
+file 	purpose
+id_rsa.pub 	default public key
+id_rsa 	default private ky
+authorized_keys 	list of identities who can login in this host
+known_hosts 	trusted hosts (public keys)
+config 	ssh client config
+
+ssh-keygen is to generate identity keys.
 
 case expression in pattern1) execute commands;; pattern2) execute commands;; pattern3) execute commands;; pattern4) execute commands;;
 
