@@ -2,7 +2,7 @@
 
 Essential Commands domain might appears more frequently than others in the exam. 
 
-_Generieren, Lesen, Kopieren, Verschieben, Archivieren, Komprimieren, Backup und Lschen von Dateien_[9]
+_Generieren, Lesen, Kopieren, Verschieben, Archivieren, Komprimieren, Backup und Lschen von Dateien_[9,25]
 
 Dateien können in Archiven verpackt werden. Das Tool dafür ist _tar_. Beispiel:  
 
@@ -35,6 +35,183 @@ Mit den obigen Beispielen kann man ein einfaches Backup erstellen. Will man nun 
 Ein weiteres Tool für Backing Up wäre _rsync_, mit dem auch Backups über das Netzwerk erstellt werden. 
 
     rsync -av [source] [destination]  --> rsync -av /root/ /backups/  --> rsync -v /backups/ /root/
+ 
+ 
+Mit dem Befehl _FILE_ können Metadaten einer Datei ausgegben werden. Zum Auslesen einer Datei gibt es mehrere Befehle wie cat, less, more, head, tail. 
+
+Die Befehle _HEAD/TAIL_ geben jeweils die ersten/letzten 10 Zeilen einer Datei aus. Man kann auch die Ausgabe anpassen. Beispiel: 
+
+    head -n 5 testfile
+    
+gibt die ersten 5 Zeilen der testfile wieder. 
+Es gib verschiedene Befehle eine Textdatei zu inhaltlich zu manipulieren. Der einfachste Befehl ist _ECHO_, der Strings in eine Textdatei schreibt. Ein weitere Befehl wäre the cut Funktion. 
+The cut command in UNIX is a command for cutting out the sections from each line of files and writing the result to standard output. Basically the cut command slices a line and extracts the text. It is necessary to specify option with command otherwise it gives error. If more than one file name is provided then data from each file is not precedes by its file name. Let us consider two files having name state.txt and capital.txt contains 5 names of the Indian states and capitals respectively.
+
+    $ cat state.txt
+    Andhra Pradesh
+    Arunachal Pradesh
+    Assam
+    Bihar
+    Chhattisgarh
+
+Without any option specified it displays error.
+
+    $ cut state.txt
+    cut: you must specify a list of bytes, characters, or fields
+    Try 'cut --help' for more information.
+
+Folgende Optionen stehen unteranderem zur Verfügung: 
+
+     -c (column): $cut -c [(k)-(n)/(k),(n)/(n)] filename
+
+Here,k denotes the starting position of the character and n denotes the ending position of the character in each line, if k and n are separated by “-” otherwise they are only the position of character in each line from the file taken as an input. Beispiel: 
+
+    $ cut -c 2,5,7 state.txt
+    nr
+    rah
+    sm
+    ir
+    hti
+     
+    -f (field): $cut -d "delimiter" -f (field number) file.txt
+    $ cut -f 1 state.txt
+    Andhra Pradesh
+    Arunachal Pradesh
+    Assam
+    Bihar
+    Chhattisgarh
+
+If -d option is used then it considered space as a field separator or delimiter:
+
+    $ cut -d " " -f 1 state.txt
+    Andhra
+    Arunachal
+    Assam
+    Bihar
+    Chhattisgarh
+
+Der Befehl _SORT_ kann den Inhalt einer Datei sortieren command is used to sort a file, arranging the records in a particular order. By default, the sort command sorts file assuming the contents are ASCII.
+
+    $ sort file.txt
+    abhishek
+    chitransh
+    divyam
+    harsh
+    naveen 
+    rajan
+    satish
+    
+Weitere Optionen sind:
+
+    -u sortiert und löscht doppelte Einträge
+    -n numerisch sortieren
+    -k N sortiert die Spalte N 
+    -o exportiert Ergbnis in eine neue Datei
+    -r zngekehrte Sortierung
+    -c checkt ob datei sortiert ist
+    
+The _UNIQ_ command in Linux is a command line utility that reports or filters out the repeated lines in a file.
+
+    $uniq [OPTION] [INPUT[OUTPUT]]
+
+    $cat kt.txt
+    I love music.
+    I love music.
+    I love music.
+
+    $uniq kt.txt
+    I love music.
+
+Weitere Optionen sind: 
+
+    -c zählt die Lines, die mehrfach vorkammen
+    -d gibt die Lines aus, die mehrfach vorkammen
+    -f N It allows you to skip N fields(a field is a group of characters, delimited by whitespace) of a line before determining uniqueness of a line.
+    -i By default, comparisons done are case sensitive but with this option case insensitive comparisons can be made.
+    -s N It doesn’t compares the first N characters of each line while determining uniqueness. 
+    -u It allows you to print only unique lines.
+    -z It will make a line end with 0 byte(NULL), instead of a newline.
+    -w N It only compares N characters in a line.
+    – – help It displays a help message and exit.
+    – – version It displays version information and exit.
+
+Man Dateien miteinander vergleichen über den Befehl _DIFF_ beispielsweise. Aufbau: 
+
+    diff PARAMETER FILES
+    
+The important thing to remember is that diff uses certain special symbols and instructions that are required to make two files identical. It tells you the instructions on how to change the first file to make it match the second file.
+Special symbols are: a : add c : change d : delete
+
+Beispiel:
+
+    $ ls
+    a.txt  b.txt
+
+    $ cat a.txt
+    Gujarat
+    Uttar Pradesh
+    Kolkata
+    Bihar
+    Jammu and Kashmir
+
+    $ cat b.txt
+    Tamil Nadu
+    Gujarat
+    Andhra Pradesh
+    Bihar
+    Uttar pradesh
+    
+Now, applying diff command without any option we get the following output:
+
+    $ diff a.txt b.txt
+    0a1
+    > Tamil Nadu
+    2,3c3
+    < Uttar Pradesh
+     Andhra Pradesh
+    5c5
+     Uttar pradesh
+     
+Like in our case, 0a1 which means after lines 0(at the very beginning of file) you have to add Tamil Nadu to match the second file line number 1. It then tells us what those lines are in each file preceeded by the symbol: Lines preceded by a < are lines from the first file. Lines preceded by > are lines from the second file.
+Next line contains 2,3c3 which means from line 2 to line 3 in the first file needs to be changed to match line number 3 in the second file. It then tells us those lines with the above symbols. The three dashes (“—“) merely separate the lines of file 1 and file 2.
+
+Ein weiterer Kommando ist der _SED_ command in UNIX is stands for stream editor and it can perform lot’s of function on file like, searching, find and replace, insertion or deletion. sed OPTIONS... [SCRIPT] [INPUTFILE...] Z.B. sed -e command <filename> spezifiziert on file and put the output on standard out (e.g. the terminal)
+sed -f scriptfile <filename>	Specify a scriptfile containing sed commands, operate on file and put output on standard out. Andere Beispiele: 
+    
+    sed s/pattern/replace_string/ file	Substitute first string occurrence in every line
+    sed s/pattern/replace_string/g file	Substitute all string occurrences in every line
+    sed 1,3s/pattern/replace_string/g file	Substitute all string occurrences in a range of lines
+    sed -i s/pattern/replace_string/g file	Save changes for string substitution in the same file
+    $ sed s/pattern/replace_string/g file1 > file2
+
+The above command will replace all occurrences of pattern with replace_string in file1 and move the contents to file2. The contents of file2 can be viewed with cat file2. If you approve you can then overwrite the original file with mv file2 file1.
+Das Kommando _AWK_ to extract and then print specific contents of a file and is often used to construct reports. awk has the following features:
+
+    It is a powerful utility and interpreted programming language.
+    It is used to manipulate data files, retrieving, and processing text.
+    It works well with fields (containing a single piece of data, essentially a column) and records (a collection of fields, essentially a line in a file).
+
+Ein weiteres Kommando ist der _SPLIT_ Befehl, der den Inhalt in verschiedene Datei teilt, ohne die Ursprungsdatei zu löschen oder zu manipulieren.  By default, split breaks up a file into 1000-line segments. 
+Ein anderes Kommando ist _TR_, der den Inhalt der Datei übersetzt oder löscht. 
+
+    $ tr [options] set1 [set2]
+
+Beispiele:
+
+    tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ	Convert lower case to upper case
+    tr '{}' '()' < inputfile > outputfile	Translate braces into parenthesis
+    echo "This is for testing" | tr [:space:] '\t'	Translate white-space to tabs
+    echo "This   is   for    testing" | tr -s [:space:]
+    Squeeze repetition of characters using -s
+    echo "the geek stuff" | tr -d 't'	Delete specified characters using -d option
+    echo "my username is 432234" | tr -cd [:digit:]	Complement the sets using -c option
+    tr -cd [:print:] < file.txt	Remove all non-printable character from a file
+    tr -s '\n' ' ' < file.txt	Join all the lines in a file into a single line
+
+ 
+ 
+ 
+ 
  
 _Suchen nach Dateien_ [10]
 
@@ -77,386 +254,8 @@ Ein weiteres Beispiel zeigt, wie man nach Dateien mit einer bestimmten Größe s
  
     find ~ -maxdepth 1 -type f -perm u=rw
 
-_Bearbeitung von Dateien_[25]
 
-Mit dem Befehl file kann man Information über den Typ der Datei bekommen. Zum Auslesen einer Datei gibt es mehrere Befehle wie cat, less, more, head, tail. 
 
-Die Befehle head/tail geben jeweils die ersten/letzten 10 Zeilen einer Datei aus. Man kann auch die Ausgabe anpassen. Beispiel: 
-
-    head -n 5 testfile
-    
-gibt die ersten 5 Zeilen der testfile wieder. 
-Es gib verschiedene Befehle eine Textdatei zu inhaltlich zu manipulieren. Der einfachste Befehl ist echo, der was in eine Textdatei schreibt. Ein weitere Befehl wäre the cut Funktion. 
-The cut command in UNIX is a command for cutting out the sections from each line of files and writing the result to standard output. It can be used to cut parts of a line by byte position, character and field. Basically the cut command slices a line and extracts the text. It is necessary to specify option with command otherwise it gives error. If more than one file name is provided then data from each file is not precedes by its file name.
-
-Syntax:
-
-cut OPTION... [FILE]...
-
-Let us consider two files having name state.txt and capital.txt contains 5 names of the Indian states and capitals respectively.
-
-    $ cat state.txt
-    Andhra Pradesh
-    Arunachal Pradesh
-    Assam
-    Bihar
-    Chhattisgarh
-
-Without any option specified it displays error.
-
-    $ cut state.txt
-    cut: you must specify a list of bytes, characters, or fields
-    Try 'cut --help' for more information.
-
-2. -c (column): To cut by character use the -c option. This selects the characters given to the -c option. This can be a list of numbers separated comma or a range of numbers separated by hyphen(-). Tabs and backspaces are treated as a character. It is necessary to specify list of character numbers otherwise it gives error with this option.
-
-Syntax:
-
-$cut -c [(k)-(n)/(k),(n)/(n)] filename
-
-Here,k denotes the starting position of the character and n denotes the ending position of the character in each line, if k and n are separated by “-” otherwise they are only the position of character in each line from the file taken as an input.
-
-$ cut -c 2,5,7 state.txt
-nr
-rah
-sm
-ir
-hti
-
-Above cut command prints second, fifth and seventh character from each line of the file.
-
-$ cut -c 1-7 state.txt
-Andhra
-Arunach
-Assam
-Bihar
-Chhatti
-
-Above cut command prints first seven characters of each line from the file.
-
-Cut uses a special form for selecting characters from beginning upto the end of the line:
-
-
-$ cut -c 1- state.txt
-Andhra Pradesh
-Arunachal Pradesh
-Assam
-Bihar
-Chhattisgarh
-
-Above command prints starting from first character to end. Here in command only starting
-position is specified and the ending position is omitted.
-
-$ cut -c -5 state.txt
-Andhr
-Aruna
-Assam
-Bihar
-Chhat
-
-Above command prints starting position to the fifth character. Here the starting position
-is omitted and the ending position is specified.
-
-3. -f (field): -c option is useful for fixed-length lines. Most unix files doesn’t have fixed-length lines. To extract the useful information you need to cut by fields rather than columns. List of the fields number specified must be separated by comma. Ranges are not described with -f option. cut uses tab as a default field delimiter but can also work with other delimiter by using -d option.
-Note: Space is not considered as delimiter in UNIX.
-
-Syntax:
-
-$cut -d "delimiter" -f (field number) file.txt
-
-Like in the file state.txt fields are separated by space if -d option is not used then it prints whole line:
-
-$ cut -f 1 state.txt
-Andhra Pradesh
-Arunachal Pradesh
-Assam
-Bihar
-Chhattisgarh
-
-If -d option is used then it considered space as a field separator or delimiter:
-
-$ cut -d " " -f 1 state.txt
-Andhra
-Arunachal
-Assam
-Bihar
-Chhattisgarh
-
-Command prints field from first to fourth of each line from the file.
-Command:
-$ cut -d " " -f 1-4 state.txt
-Output:
-Andhra Pradesh
-Arunachal Pradesh
-Assam
-Bihar
-Chhattisgarh
-
-SORT command is used to sort a file, arranging the records in a particular order. By default, the sort command sorts file assuming the contents are ASCII. Using options in sort command, it can also be used to sort numerically.
-
-SORT command sorts the contents of a text file, line by line.
-sort is a standard command line program that prints the lines of its input or concatenation of all files listed in its argument list in sorted order.
-The sort command is a command line utility for sorting lines of text files. It supports sorting alphabetically, in reverse order, by number, by month and can also remove duplicates.
-The sort command can also sort by items not at the beginning of the line, ignore case sensitivity and return whether a file is sorted or not. Sorting is done based on one or more sort keys extracted from each line of input.
-By default, the entire input is taken as sort key. Blank space is the default field separator.
-The sort command follows these features as stated below:
-
-Lines starting with a number will appear before lines starting with a letter.
-Lines starting with a letter that appears earlier in the alphabet will appear before lines starting with a letter that appears later in the alphabet.
-Lines starting with a lowercase letter will appear before lines starting with the same letter in uppercase.
-
-$ sort filename.txt
-
-Command:
-$ sort file.txt
-
-Output :
-abhishek
-chitransh
-divyam
-harsh
-naveen 
-rajan
-satish
-
-    -u sortiert und löscht doppelte Einträge
-    -n numerisch sortieren
-    -k N sortiert die Spalte N 
-    -o exportiert Ergbnis in eine neue Datei
-    -r zngekehrte Sortierung
-    -c checkt ob datei sortiert ist
-    
-The uniq command in Linux is a command line utility that reports or filters out the repeated lines in a file.
-In simple words, uniq is the tool that helps to detect the adjacent duplicate lines and also deletes the duplicate lines. uniq filters out the adjacent matching lines from the input file(that is required as an argument) and writes the filtered data to the output file .
-
-Syntax of uniq Command :
-
- //...syntax of uniq...// 
-$uniq [OPTION] [INPUT[OUTPUT]]
-The syntax of this is quite easy to understand. Here, INPUT refers to the input file in which repeated lines need to be filtered out and if INPUT isn’t specified then uniq reads from the standard input. OUTPUT refers to the output file in which you can store the filtered output generated by uniq command and as in case of INPUT if OUTPUT isn’t specified then uniq writes to the standard output.
-
-Now, let’s understand the use of this with the help of an example. Suppose you have a text file named kt.txt which contains repeated lines that needs to be omitted. This can simply be done with uniq.
-
-//displaying contents of kt.txt//
-
-$cat kt.txt
-I love music.
-I love music.
-I love music.
-
-I love music of Kartik.
-I love music of Kartik.
-
-Thanks.
-Now, as we can see that the above file contains multiple duplicate lines. Now, lets’s use uniq command to remove them:
-
-
-
-//...using uniq command.../
-
-$uniq kt.txt
-I love music.
-
-I love music of Kartik.
-
--c – -count : It tells how many times a line was repeated by displaying a number as a prefix with the line.
--d – -repeated : It only prints the repeated lines and not the lines which aren’t repeated.
--D – -all-repeated[=METHOD] : It prints all duplicate lines and METHOD can be any of the following:
-none : Do not delimit duplicate lines at all. This is the default.
-prepend : Insert a blank line before each set of duplicated lines.
-separate : Insert a blank line between each set of duplicated lines.
--f N – -skip-fields(N) : It allows you to skip N fields(a field is a group of characters, delimited by whitespace) of a line before determining uniqueness of a line.
--i – -ignore case : By default, comparisons done are case sensitive but with this option case insensitive comparisons can be made.
--s N – -skip-chars(N) : It doesn’t compares the first N characters of each line while determining uniqueness. This is like the -f option, but it skips individual characters rather than fields.
--u – -unique : It allows you to print only unique lines.
--z – -zero-terminated : It will make a line end with 0 byte(NULL), instead of a newline.
--w N – -check-chars(N) : It only compares N characters in a line.
-– – help : It displays a help message and exit.
-– – version : It displays version information and exit.
-
-Man Dateien miteinander vergleichen über den Befehl diff beispielsweise. Aufbau: 
-
-    diff PARAMETER FILES
-    
-Zum Beispiel, man vergleicht zwei Daeien miteinander, dann werden eine Liste von Unterschieden zwischen den zwei Dateien im Terminal ausgeben
-The important thing to remember is that diff uses certain special symbols and instructions that are required to make two files identical. It tells you the instructions on how to change the first file to make it match the second file.
-
-Special symbols are:
-
-    a : add
-    c : change
-    d : delete
-
-Beispiel:
-
-    $ ls
-    a.txt  b.txt
-
-    $ cat a.txt
-    Gujarat
-    Uttar Pradesh
-    Kolkata
-    Bihar
-    Jammu and Kashmir
-
-    $ cat b.txt
-    Tamil Nadu
-    Gujarat
-    Andhra Pradesh
-    Bihar
-    Uttar pradesh
-    
-Now, applying diff command without any option we get the following output:
-
-    $ diff a.txt b.txt
-    0a1
-    > Tamil Nadu
-    2,3c3
-    < Uttar Pradesh
-     Andhra Pradesh
-    5c5
-     Uttar pradesh
-     
-Let’s take a look at what this output means. The first line of the diff output will contain:
-
-Line numbers corresponding to the first file,
-A special symbol and
-Line numbers corresponding to the second file.
-Like in our case, 0a1 which means after lines 0(at the very beginning of file) you have to add Tamil Nadu to match the second file line number 1. It then tells us what those lines are in each file preceeded by the symbol:
-
-    Lines preceded by a < are lines from the first file.
-    Lines preceded by > are lines from the second file.
-    Next line contains 2,3c3 which means from line 2 to line 3 in the first file needs to be changed to match line number 3 in the second file. It then tells us those lines with the above symbols.
-    
-The three dashes (“—“) merely separate the lines of file 1 and file 2.
-
-SED command in UNIX is stands for stream editor and it can perform lot’s of function on file like, searching, find and replace, insertion or deletion. Though most common use of SED command in UNIX is for substitution or for find and replace. By using SED you can edit files even without opening it, which is much quicker way to find and replace something in file, than first opening that file in VI Editor and then changing it.
-
-SED is a powerful text stream editor. Can do insertion, deletion, search and replace(substitution).
-SED command in unix supports regular expression which allows it perform complex pattern matching.
-Syntax:
-
-sed OPTIONS... [SCRIPT] [INPUTFILE...] 
-Example:
-Consider the below text file as an input.
-
-sed -e command <filename>
-
-Specify editing commands at the command line, operate on file and put the output on standard out (e.g. the terminal)
-sed -f scriptfile <filename>	Specify a scriptfile containing sed commands, operate on file and put output on standard out
-    
-Now that you know that you can perform multiple editing and filtering operations with sed, let’s explain some of them in more detail. The table explains some basic operations, where pattern is the current string and replace_string is the new string:
-
- 
-
-Command	Usage
-sed s/pattern/replace_string/ file	Substitute first string occurrence in every line
-sed s/pattern/replace_string/g file	Substitute all string occurrences in every line
-sed 1,3s/pattern/replace_string/g file	Substitute all string occurrences in a range of lines
-sed -i s/pattern/replace_string/g file	Save changes for string substitution in the same file
- 
-
-You must use the -i option with care, because the action is not reversible. It is always safer to use sed without the –i option and then replace the file yourself, as shown in the following example:
-
-$ sed s/pattern/replace_string/g file1 > file2
-
-The above command will replace all occurrences of pattern with replace_string in file1 and move the contents to file2. The contents of file2 can be viewed with cat file2. If you approve you can then overwrite the original file with mv file2 file1.
-
-Example: To convert 01/02/… to JAN/FEB/…
-
-sed -e 's/01/JAN/' -e 's/02/FEB/' -e 's/03/MAR/' -e 's/04/APR/' -e 's/05/MAY/' \
-    -e 's/06/JUN/' -e 's/07/JUL/' -e 's/08/AUG/' -e 's/09/SEP/' -e 's/10/OCT/' \
-    -e 's/11/NOV/' -e 's/12/DEC/'
-    
-AWK awk is used to extract and then print specific contents of a file and is often used to construct reports. It was created at Bell Labs in the 1970s and derived its name from the last names of its authors: Alfred Aho, Peter Weinberger, and Brian Kernighan.
-
-awk has the following features:
-
-It is a powerful utility and interpreted programming language.
-It is used to manipulate data files, retrieving, and processing text.
-It works well with fields (containing a single piece of data, essentially a column) and records (a collection of fields, essentially a line in a file).
-awk is invoked as shown in the following:
-
-As with sed, short awk commands can be specified directly at the command line, but a more complex script can be saved in a file that you can specify using the -f option.
-
- 
-
-Command	Usage
-awk ‘command’  file	Specify a command directly at the command line
-awk -f scriptfile file	Specify a file that contains the script to be executed
-
-The table explains the basic tasks that can be performed using awk. The input file is read one line at a time, and, for each line, awk matches the given pattern in the given order and performs the requested action. The -F option allows you to specify a particular field separator character. For example, the /etc/passwd file uses ":" to separate the fields, so the -F: option is used with the /etc/passwd file.
-
-The command/action in awk needs to be surrounded with apostrophes (or single-quote (')). awk can be used as follows:
-
- Suppose you have a file that contains the full name of all employees and another file that lists their phone numbers and Employee IDs. You want to create a new file that contains all the data listed in three columns: name, employee ID, and phone number. How can you do this effectively without investing too much time?
-
-paste can be used to create a single file containing all three columns. The different columns are identified based on delimiters (spacing used to separate two fields). For example, delimiters can be a blank space, a tab, or an Enter. In the image provided, a single space is used as the delimiter in all files.
-
-paste accepts the following options:
-
--d delimiters, which specify a list of delimiters to be used instead of tabs for separating consecutive values on a single line. Each delimiter is used in turn; when the list has been exhausted, paste begins again at the first delimiter.
--s, which causes paste to append the data in series rather than in parallel; that is, in a horizontal rather than vertical fashion.
- 
- paste can be used to combine fields (such as name or phone number) from different files, as well as combine lines from multiple files. For example, line one from file1 can be combined with line one of file2, line two from file1 can be combined with line two of file2, and so on.
-
-To paste contents from two files one can do:
-
-$ paste file1 file2
-
-The syntax to use a different delimiter is as follows:
-
-$ paste -d, file1 file2
-
-Common delimiters are 'space', 'tab', '|', 'comma', etc.
-
-Suppose you have two files with some similar columns. You have saved employees’ phone numbers in two files, one with their first name and the other with their last name. You want to combine the files without repeating the data of common columns. How do you achieve this?
-
-The above task can be achieved using join, which is essentially an enhanced version of paste. It first checks whether the files share common fields, such as names or phone numbers, and then joins the lines in two files based on a common field.
-
-split is used to break up (or split) a file into equal-sized segments for easier viewing and manipulation, and is generally used only on relatively large files. By default, split breaks up a file into 1000-line segments. The original file remains unchanged, and a set of new files with the same name plus an added prefix is created. By default, the x prefix is added. To split a file into segments, use the command split infile.
-
-To split a file into segments using a different prefix, use the command split infile <Prefix>.
-    
-    We will apply split to an American-English dictionary file of over 99,000 lines:
-
-$ wc -l american-english
-99171 american-english
-
-where we have used wc (word count, soon to be discussed) to report on the number of lines in the file. Then, typing:
-
-$ split american-english dictionary
-
-will split the American-English file into 100 equal-sized segments named dictionaryxx. The last one will of course be somewhat smaller.
-
-strings is used to extract all printable character strings found in the file or files given as arguments. It is useful in locating human-readable content embedded in binary files; for text files one can just use grep.
-
-For example, to search for the string my_string in a spreadsheet:
-
-$ strings book1.xls | grep my_string
-
-The screenshot shows a  search of a number of programs to see which ones have GPL licenses of various versions.
-
-The tr utility is used to translate specified characters into other characters or to delete them. The general syntax is as follows:
-
-$ tr [options] set1 [set2]
-
-The items in the square brackets are optional. tr requires at least one argument and accepts a maximum of two. The first, designated set1 in the example, lists the characters in the text to be replaced or removed. The second, set2, lists the characters that are to be substituted for the characters listed in the first argument. Sometimes these sets need to be surrounded by apostrophes (or single-quotes (')) in order to have the shell ignore that they mean something special to the shell. It is usually safe (and may be required) to use the single-quotes around each of the sets as you will see in the examples below.
-
-For example, suppose you have a file named city containing several lines of text in mixed case. To translate all lower case characters to upper case, at the command prompt type cat city | tr a-z A-Z and press the Enter key.
-
- 
-
-Command	Usage
-tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ	Convert lower case to upper case
-tr '{}' '()' < inputfile > outputfile	Translate braces into parenthesis
-echo "This is for testing" | tr [:space:] '\t'	Translate white-space to tabs
-echo "This   is   for    testing" | tr -s [:space:]
-Squeeze repetition of characters using -s
-echo "the geek stuff" | tr -d 't'	Delete specified characters using -d option
-echo "my username is 432234" | tr -cd [:digit:]	Complement the sets using -c option
-tr -cd [:print:] < file.txt	Remove all non-printable character from a file
-tr -s '\n' ' ' < file.txt	Join all the lines in a file into a single line
 
 Here is the basic structure of the case statement:
 
