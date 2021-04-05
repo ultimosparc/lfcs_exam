@@ -4,17 +4,15 @@ Essential Commands domain might appears more frequently than others in the exam.
 
 _Generieren, Lesen, Kopieren, Verschieben, Archivieren, Komprimieren, Backup und Lschen von Dateien_[9]
 
-Dateien können in Archiven verpackt werden. Das Tool dafür ist _tar_. 
-Ein möglicher Befehl zum Generieren eines Archives könnte wie folgt aussehen: 
+Dateien können in Archiven verpackt werden. Das Tool dafür ist _tar_. Beispiel:  
 
     tar cvf test.tar datei1 datei2 verzeichnis1
 
-Dieser Befehl generiert ein Archiv "test.tar" (-c) aus den Dateien "datei1" und "datei2" und dem Verzeichnis "verzeichnis1". Dabei wird im Terminal ausgegeben, welche Dateien ins Archiv gepackt werden (-v). 
-Das Entpacken eines Archivs kann wie folgt realisiert werden: 
+Dieser Befehl generiert ein Archiv "test.tar" (-c) aus den Dateien "datei1" und "datei2" und dem Verzeichnis "verzeichnis1". Dabei wird im Terminal ausgegeben, welche Dateien ins Archiv gepackt werden (-v). Beispiel für das Entpacken: 
 
     tar xvf test.tar (Size: 10 KB)
     
-Die Option -x steht für Entpacken. Es gibt zusätzlich die Möglichkeit, ein Archiv zu komprimieren. Unteranderem gibt es folgende Möglichkeiten der Kompromierung:
+Die Option -x steht für Entpacken. Es gibt zusätzlich die Möglichkeit, ein Archiv zu komprimieren. Es gibt folgende Möglichkeiten der Kompromierung:
 
     -z gzip (Size: 131 B)
     -j bzip2/bz (Size: 140 B)
@@ -30,29 +28,14 @@ Weitere Ooptionen:
     -p man archiviert Dateien und den Rechten auf den Dateien
     -f muss gesetzt werden, damit Grundbefehle we c,d ausgeführt werden kann
  
- _Creating Backups_ [9]
+Mit den obigen Beispielen kann man ein einfaches Backup erstellen. Will man nun ein Backup für eine Partition/Drives anlegen, dann kann man den Befehl _dd_ verwenden. 
 
-Creating Backups:
-dd - Use this tool to take complete back ups of entire partitions or drives. 
-dd if=[device you want to backup] of=[backup.img]
-IMPORTANT: This backup will be of the entire extent of the device you mention even if there is space on the drive. It will backup the entire extent. 
-rsync - use this tool if you need to perform backups over a network. 
-rsync -av [source] [destination]
-tar - Standard archiving. 
-tar cvf tarball.tar /directory/
-Some practical code:
-dd if=/dev/sda of=/backups/sda.img
-rsync -av /root/ /backups/
-tar cvfj rootarchive.bz2 /root/
-Restoring Backups: Pretty much straightforward in most cases. 
-dd - simply reverse the process
-rsync - Same idea as dd - Reverse the process. 
-tar - Use the extract directive (x)
-Some practical code:
-dd if=/backups/sda.img /dev/sda
-rsync -v /backups/ /root/
-tar xvfj rootarchive.bz2
-Make sure you are in the directory you want to the data to be unpacked into. 
+    dd if=[device you want to backup] of=[backup.img]  --> dd if=/dev/sda of=/backups/sda.img  --> dd if=/backups/sda.img /dev/sda
+
+Ein weiteres Tool für Backing Up wäre _rsync_, mit dem auch Backups über das Netzwerk erstellt werden. 
+
+    rsync -av [source] [destination]  --> rsync -av /root/ /backups/  --> rsync -v /backups/ /root/
+ 
 _Suchen nach Dateien_ [10]
 
 Es gibt verschiedene Befehle zum Suchen von Textdateien. Meist wird der Befehl _find_ genutzt. It can be u
