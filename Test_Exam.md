@@ -386,4 +386,30 @@ S: Mögliche Lösung wäre:
 
     Peter ALL=(ALL:ALL) cat, tail -> /etc/sudoers 
     
-         
+  Create a RAID 0 array using the two spare drives on (5GB) on this machine. 
+Size=2048MB
+Label=RAID_0
+Mount it persistently by Label at /storage
+Create a RAID 1 array using LVM using the two spare drives (5GB) on this machine
+size 1024MB
+Label=RAID_1
+Mount it persistently by UUID at /storage2
+Using the left over space on those one of those two drives, create a 1GB SWAP partition and add it to the existing SWAP pool - This SWAP space should mount at boot. 
+Assume that there is an NFS share somewhere on your network. Write the command you would use to mount the NFS share on /NFS_mount. Append your terminal code to a file named “network_mount.txt” and place it in the /root folder.
+The IP or DNS name for the share do not matter - Use whatever you would like. 
+Assume that there is an CIFS share somewhere on your network. Write the command you would use to mount the CIFS share on /CIFS_mount. Append your terminal code to a file named “network_mount.txt” and place it in the /root folder.
+The IP or DNS name for the share do not matter - Use whatever you would like.
+
+Create a bash script named “Infinite_loop” that does the following:
+Continually writes the string "Linux is fun" to the folder /dev/null
+Has no exit loop (that is, it will continue to run until told to stop
+Place the script in /root
+Give bob permissions to run infinite_loop
+Switch user to Bob and have him run infinite_loop
+Switch back to root
+As root, locate the now running infinite_loop and forcefully kill it by PID
+Create a backup of the /etc/yum.repos.d folder using tar or rsync; place your backup in /root
+Create a local repo using a live dvd iso of Centos
+Using your local repo, install the appropriate packages needed for virtualization.
+
+As always, consult man pages for more information.         
