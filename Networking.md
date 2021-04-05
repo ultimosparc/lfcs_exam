@@ -21,7 +21,34 @@ Um permanent den Hostname zu ändern, muss der Eintrag der Datei /etc/hostname e
 
 _Network Management_ [19,22,23,24]
 
-Ein Computer mit einer Netzwerkkarte (Netzwerk-Interface) besitzt regulär zwei IP Adressen, IP4 und IP6. Um sich die IP Adresse einmal anzuzeigen gibt es verschiedene Möglichkeiten: ip, ifconfig, nmcli usw.. Eine einfache Möglichkeit wäre wie folgt: 
+Ein Computer mit einer Netzwerkkarte (Netzwerk-Interface) besitzt regulär zwei IP Adressen, IP4 und IP6. Um sich die IP Adresse einmal anzuzeigen gibt es verschiedene Möglichkeiten: ip, ifconfig, nmcli usw.. 
+A 32-bit IPv4 address is divided into four 8-bit sections called octets.
+
+Example:
+IP address →            172  .          16  .          31  .         46
+Bit format →     10101100.00010000.00011111.00101110
+
+Note: Octet is just another word for byte.
+
+Network addresses are divided into five classes: A, B, C, D and E. Classes A, B and C are classified into two parts: Network addresses (Net ID) and Host address (Host ID). The Net ID is used to identify the network, while the Host ID is used to identify a host in the network. Class D is used for special multicast applications (information is broadcast to multiple computers simultaneously) and Class E is reserved for future use. In this section you will learn about classes A, B and C.
+Network configuration files are essential to ensure that interfaces function correctly. They are located in the /etc directory tree. However, the exact files used have historically been dependent on the particular Linux distribution and version being used.
+Modern systems emphasize the use of Network Manager, which we briefly discussed when we considered graphical system administration, rather than try to keep up with the vagaries of the files in /etc. While the graphical versions of Network Manager do look somewhat different in different distributions, the nmtui utility (shown in the screenshot) varies almost not at all, as does the even more sparse nmcli (command line interface) utility. If you are proficient in the use of the GUIs, by all means, use them. If you are working on a variety of systems, the lower level utilities may make life easier.
+Network interfaces are a connection channel between a device and a network. Physically, network interfaces can proceed through a network interface card (NIC), or can be more abstractly implemented as software. You can have multiple network interfaces operating at once. Specific interfaces can be brought up (activated) or brought down (de-activated) at any time. Information about a particular network interface or all network interfaces can be reported by the ip and ifconfig utilities, which you may have to run as the superuser, or at least, give the full path, i.e. /sbin/ifconfig, on some distributions. ip is newer than ifconfig and has far more capabilities, but its output is uglier to the human eye. Some new Linux distributions do not install the older net-tools package to which ifconfig belongs, and  so you would have to install it if you want to use it.
+A network requires the connection of many nodes. Data moves from source to destination by passing through a series of routers and potentially across multiple networks. Servers maintain routing tables containing the addresses of each node in the network. The IP routing protocols enable routers to build up a forwarding table that correlates final destinations with the next hop addresses. traceroute is used to inspect the route which the data packet takes to reach the destination host, which makes it quite useful for troubleshooting network delays and errors. By using traceroute, you can isolate connectivity issues between hops, which helps resolve them faster. To print the route taken by the packet to reach the network host, at the command prompt, type traceroute <address>. Networking Tools	Description Nethtool Queries network interfaces and can also set various parameters such as the speed 
+    
+    netstat	- Displays all active connections and routing tables. Useful for monitoring performance and troubleshooting
+    nmap	- Scans open ports on a network. Important for security analysis
+    tcpdump	- Dumps network traffic for analysis
+    iptraf	- Monitors network traffic in text mode
+    mtr	    - Combines functionality of ping and traceroute and gives a continuously updated display
+    dig	    - Tests DNS workings. A good replacement for host and nslookup          
+    Lynx    - Configurable text-based web browser; the earliest such browser and still in use
+    ELinks  - Based on Lynx. It can display tables and frames
+    w3m     - Another text-based web browser with many features.
+
+Sometimes, you need to download files and information, but a browser is not the best choice, either because you want to download multiple files and/or directories, or you want to perform the action from a command line or a script. wget is a command line utility that can capably handle the mehr Typen von Downloads:
+When you are connected to a network, you may need to transfer files from one machine to another. File Transfer Protocol (FTP) is a well-known and popular method for transferring files between computers using the Internet. This method is built on a client-server model. FTP can be used within a browser or with stand-alone client programs
+Eine einfache Möglichkeit wäre wie folgt: 
 
     ip a s 
 
@@ -125,74 +152,21 @@ In der Prüfung kann es nun vorkommen, das eine aktive Verbindung geändert werd
     nmcli con mod con-name ipv4.method manual                          //Change the method from static IP to DHCP
     nmcli con del "connectionname"                                  //Delete a connection
     
-packet filtering (iptables, no firewalld since it’s not related to RHEL)
-
-Configurations
-file 	purpose
-id_rsa.pub 	default public key
-id_rsa 	default private ky
-authorized_keys 	list of identities who can login in this host
-known_hosts 	trusted hosts (public keys)
-config 	ssh client config
-
-ssh-keygen is to generate identity keys.
-
-
-festlegen von statischen Ips. DNS, FQDN und Gateways wäre möglich
-   ip as / nmtui   
-   
-to start automatically at boot (using systemctl   
-
-Start, stop, and check the status of network services
-
-rerouting pakete an eine neue Ipadresse die man erstellt hat
-
 _Implement packet filtering_ 
+
+Daten werden in Pakete zerlegt und über das Netzwerk geschickt. Über eine sogenannte Firewall kann das Senden und Empfangen von Paketen bei einer Maschine gesteuert werden. Der Filter liest the header of each data packet that attempts to pass through it. Then, it filters the packet by taking the required action based on rules that have been previously defined.  The firewall is managed by Kernel. The kernel firewall functionality is Netfilter. Netfilter will process information that will enter and will exit from system
+For this it has two tables of rules called chains: INPUT that contains rules applied to packets that enter in the system and OUTPUT that contains rules applied to packets that leave the system. Another chain can be used if system is configured as router: FORWARD. Finally there are other two chains: PREROUTING, POSTROUTING. 
+The rules inside chains are evaluated in an orderly way. When a rule match the other rules are skipped If no rules match, default policy will be applied Default policy:
+ACCEPT: the packet will be accepted and it will continue its path through the chains DROP: the packet will be rejected. The utility to manage firewall is iptables iptables will create rules for chains that will be processed in an orderly way firewalld is a service that use iptables to manage firewalls rules firewall-cmd is the command to manage firewalld. 
 
 ![2021-02-14 15_41_05-lfcs_Networking md at master · ultimosparc_lfcs](https://user-images.githubusercontent.com/15387251/107879777-3457e200-6edb-11eb-929a-31bb0fae24e9.png)
 
-    The firewall is managed by Kernel
-
-    The kernel firewall functionality is Netfilter
-
-    Netfilter will process information that will enter and will exit from system
-        For this it has two tables of rules called chains:
-            INPUT that contains rules applied to packets that enter in the system
-            OUTPUT that contains rules applied to packets that leave the system
-
-    Another chain can be used if system is configured as router: FORWARD
-
-    Finally there are other two chains: PREROUTING, POSTROUTING
     
-    
+    firewalld --> iptable --> Kernel --> Netfilter; firewall-cmd --> firewalld
+   
+   
 
-    Picture show the order with which the various chains are valued. The arrows indicate the route of the packages:
-        Incoming packets are generated from the outside
-        Outgoing packets are either generated by an application or are packets in transit
-
-    The rules inside chains are evaluated in an orderly way.
-        When a rule match the other rules are skipped
-        If no rules match, default policy will be applied
-            Default policy:
-                ACCEPT: the packet will be accepted and it will continue its path through the chains
-                DROP: the packet will be rejected
-
-    The utility to manage firewall is iptables
-
-    iptables will create rules for chains that will be processed in an orderly way
-
-    firewalld is a service that use iptables to manage firewalls rules
-
-    firewall-cmd is the command to manage firewalld
-
-Firewalld
-
-    firewalld is enabled by default in CentOS
-
-    It works with zone, public is default zone
-
-    The zone is applied to an interface
-        The idea is that we can have safe zone, e.g. bound to an internal interface, and unsafe zone, e.g. bound to external interfaces internet facing
+firewalld is enabled by default in CentOS It works with zone, public is default zone The zone is applied to an interface The idea is that we can have safe zone, e.g. bound to an internal interface, and unsafe zone, e.g. bound to external interfaces internet facing. Einige Befehle: 
 
     firewall-cmd --list-all show current configuration
         services -> service that are allowed to use interface
@@ -254,8 +228,6 @@ iptables
             REJECTED reject the packet with an ICMP error packet
             LOG log packet. Evaluation of rules isn't blocked.
 
-    E.g.
-
     iptables -A INPUT -i lo -j ACCEPT
         Accept all inbound loopback traffic
 
@@ -270,9 +242,6 @@ iptables
 
     NOTE file /etc/services contains a list of well know ports with services name
     
-    
-
-
     Network services are controlled as other daemon with systemctl command
         systemctl status servicename
 
@@ -302,101 +271,21 @@ Statically route IP traffic
         echo 1 > /proc/sys/net/ipv4/ip_forward
         To make configuration persistent
             echo net.ipv4.ip_forward = 1 > /etc/sysctl.d/ipv4.conf
-Synchronize time using other network peers
-
-    In time synchronization the concept of Stratum define the accuracy of server time.
-    A server with Stratum 0 it is the most reliable
-    A server synchronized with a Stratum 0 become Stratum 1
-    Stratum 10 is reserved for local clock. This means that it is not utilizable
-    The upper limit for Stratum is 15
-    Stratum 16 is used to indicate that a device is unsynchronized
-    Remember that time synchronization between servers is a slowly process
+            
+Synchronize time using other network peers  In time synchronization the concept of Stratum define the accuracy of server time. A server with Stratum 0 it is the most reliable    A server synchronized with a Stratum 0 become Stratum 1 Stratum 10 is reserved for local clock. This means that it is not utilizable The upper limit for Stratum is 15    Stratum 16 is used to indicate that a device is unsynchronized Remember that time synchronization between servers is a slowly process
 
 CHRONYD
 
     Default mechanism to synchronize time in CentOS
-
     Configuration file /etc/chrony.conf
-
     server parameters are servers that are used as source of synchronization
-
     chronyc sources contact server and show them status
-
     chronyc tracking show current status of system clock
-
-    NOTE: if some of the commands below doesn't work please refer to this bug https://bugzilla.redhat.com/show_bug.cgi?id=1574418
-        Simple solution: setenforce 0
-        Package selinux-policy-3.13.1-229 should resolve problem
-
 NTP
-
     The old method of synchronization. To enable it Chronyd must be disabled
     Configuration file /etc/ntp.conf
     server parameters are servers that are used as source of synchronization
     ntpq -p check current status of synchronization
+ 
 
-A 32-bit IPv4 address is divided into four 8-bit sections called octets.
-
-Example:
-IP address →            172  .          16  .          31  .         46
-Bit format →     10101100.00010000.00011111.00101110
-
-Note: Octet is just another word for byte.
-
-Network addresses are divided into five classes: A, B, C, D and E. Classes A, B and C are classified into two parts: Network addresses (Net ID) and Host address (Host ID). The Net ID is used to identify the network, while the Host ID is used to identify a host in the network. Class D is used for special multicast applications (information is broadcast to multiple computers simultaneously) and Class E is reserved for future use. In this section you will learn about classes A, B and C.
-
- host domainname liefert von Webserver über das Netzwerk jeweils wertvolle informationen
-  Müssen es später nochmal nachinstallieren 
-  
-  Network configuration files are essential to ensure that interfaces function correctly. They are located in the /etc directory tree. However, the exact files used have historically been dependent on the particular Linux distribution and version being used.
-
-For Debian family configurations, the basic network configuration files could be found under /etc/network/, while for Fedora and SUSE family systems one needed to inspect /etc/sysconfig/network. 
-
-Modern systems emphasize the use of Network Manager, which we briefly discussed when we considered graphical system administration, rather than try to keep up with the vagaries of the files in /etc. While the graphical versions of Network Manager do look somewhat different in different distributions, the nmtui utility (shown in the screenshot) varies almost not at all, as does the even more sparse nmcli (command line interface) utility. If you are proficient in the use of the GUIs, by all means, use them. If you are working on a variety of systems, the lower level utilities may make life easier.
-
- Network interfaces are a connection channel between a device and a network. Physically, network interfaces can proceed through a network interface card (NIC), or can be more abstractly implemented as software. You can have multiple network interfaces operating at once. Specific interfaces can be brought up (activated) or brought down (de-activated) at any time.
-
-Information about a particular network interface or all network interfaces can be reported by the ip and ifconfig utilities, which you may have to run as the superuser, or at least, give the full path, i.e. /sbin/ifconfig, on some distributions. ip is newer than ifconfig and has far more capabilities, but its output is uglier to the human eye. Some new Linux distributions do not install the older net-tools package to which ifconfig belongs, and  so you would have to install it if you want to use it.
-
-A network requires the connection of many nodes. Data moves from source to destination by passing through a series of routers and potentially across multiple networks. Servers maintain routing tables containing the addresses of each node in the network. The IP routing protocols enable routers to build up a forwarding table that correlates final destinations with the next hop addresses.
-
-traceroute is used to inspect the route which the data packet takes to reach the destination host, which makes it quite useful for troubleshooting network delays and errors. By using traceroute, you can isolate connectivity issues between hops, which helps resolve them faster.
-
-To print the route taken by the packet to reach the network host, at the command prompt, type traceroute <address>.
-    Networking Tools	Description
-ethtool	Queries network interfaces and can also set various parameters such as the speed
-netstat	Displays all active connections and routing tables. Useful for monitoring performance and troubleshooting
-nmap	Scans open ports on a network. Important for security analysis
-tcpdump	Dumps network traffic for analysis
-iptraf	Monitors network traffic in text mode
-mtr	Combines functionality of ping and traceroute and gives a continuously updated display
-dig	Tests DNS workings. A good replacement for host and nslookup
-    
-    Lynx
-Configurable text-based web browser; the earliest such browser and still in use
-ELinks
-Based on Lynx. It can display tables and frames
-w3m
-Another text-based web browser with many features.
-
-Sometimes, you need to download files and information, but a browser is not the best choice, either because you want to download multiple files and/or directories, or you want to perform the action from a command line or a script. wget is a command line utility that can capably handle the following types of downloads:
-
-Large file downloads
-Recursive downloads, where a web page refers to other web pages and all are downloaded at once
-Password-required downloads
-Multiple file downloads.
-To download a web page, you can simply type wget <url>, and then you can read the downloaded page as a local file using a graphical or non-graphical browser.
-    
-    Besides downloading, you may want to obtain information about a URL, such as the source code being used. curl can be used from the command line or a script to read such information. curl also allows you to save the contents of a web page to a file, as does wget.
-
-You can read a URL using curl <URL>. For example, if you want to read http://www.linuxfoundation.org, type curl http://www.linuxfoundation.org.
-
-To get the contents of a web page and store it to a file, type curl -o saved.html http://www.mysite.com. The contents of the main index file at the website will be saved in saved.html.
-
-When you are connected to a network, you may need to transfer files from one machine to another. File Transfer Protocol (FTP) is a well-known and popular method for transferring files between computers using the Internet. This method is built on a client-server model. FTP can be used within a browser or with stand-alone client programs.  
-
-FTP is one of the oldest methods of network data transfer, dating back to the early 1970s. As such, it is considered inadequate for modern needs, as well as being intrinsically insecure. However, it is still in use and when security is not a concern (such as with so-called anonymous FTP) it can make sense. However, many websites, such as kernel.org, have abandoned its use.
-
-To copy a local file to a remote system, at the command prompt, type scp <localfile> <user@remotesystem>:/home/user/ and press Enter.
-    
     
