@@ -18,7 +18,8 @@ Die Option -x steht für Entpacken. Es gibt zusätzlich die Möglichkeit, ein Ar
     -j bzip2/bz (Size: 140 B)
     -J xz (Size: 180 B)
     
-Wie im Beispiel beobachtet werden kann, das Archiv kann bis um das 10fache verkleinert werden. Damit wird klar, jedes Archiv sollte komprimiert werden. Gewöhnlich benutzt man gzip, um ein tar Archiv zu komprimieren. 
+Wie im Beispiel beobachtet werden kann, das Archi
+v kann bis um das 10fache verkleinert werden. Damit wird klar, jedes Archiv sollte komprimiert werden. Gewöhnlich benutzt man gzip, um ein tar Archiv zu komprimieren. 
 Weitere Ooptionen: 
 
     -t Auflisten des Inhaltes des Archives
@@ -208,12 +209,56 @@ Beispiele:
     tr -cd [:print:] < file.txt	Remove all non-printable character from a file
     tr -s '\n' ' ' < file.txt	Join all the lines in a file into a single line
 
+Nehmen den Befehlen cat, more, read für die Ausgabe von Testdatei gibt es noch die Befehle, die einen Ausdruck einer Datei erstellen. 
+Ausdrucke für Dateien werden in PDF oder Postscript angegeben, PDF ist kleiner als PostScript, jedoch PostScript bietet Eigenschaften für die längere Aufbewahrung. 
+Beispiele: 
+
+    enscript -2 -r -p psfile.ps textfile.txt
+    enscript -p psfile.ps textfile.txt	Convert a text file to PostScript (saved to psfile.ps)
+    enscript -n -p psfile.ps textfile.txt	Convert a text file to n columns where n=1-9 (saved in psfile.ps)
+    enscript textfile.txt	Print a text file directly to the default printer
+
+Manchmal muss zwischen PostScript und PDF convertiert werden. Dafür gibt es die Befehle ps2pdf and pdf2ps are part of the ghostscript package installed on or available on all Linux distributions. As an alternative, there are pstopdf and pdftops which are usually part of the poppler package, which may need to be added through your package manager. Ein anderes Tool ist ImageMagick package. 
+
+    pdf2ps file.pdf	Converts file.pdf to file.ps
+    ps2pdf file.ps	Converts file.ps to file.pdf
+    pstopdf input.ps output.pdf	Converts input.ps to output.pdf
+    pdftops input.pdf output.ps	Converts input.pdf to output.ps
+    convert input.ps output.pdf	Converts input.ps to output.pdf
+    convert input.pdf output.ps	Converts input.pdf to output.ps
+
+Terminalbasierte Programme für PDF sind 
+
+    qpdf
+    pdftk
+    ghostscript
+
+Beispiele: 
+
+    qpdf --empty --pages 1.pdf 2.pdf -- 12.pdf	Merge the two documents 1.pdf and 2.pdf. The output will be saved to 12.pdf.
+    qpdf --empty --pages 1.pdf 1-2 -- new.pdf	Write only pages 1 and 2 of 1.pdf. The output will be saved to new.pdf.
+    qpdf --rotate=+90:1 1.pdf 1r.pdf
+    qpdf --rotate=+90:1-z 1.pdf 1r-all.pdf
+    Rotate page 1 of 1.pdf 90 degrees clockwise and save to 1r.pdf
+    Rotate all pages of 1.pdf 90 degrees clockwise and save to 1r-all.pdf
+    qpdf --encrypt mypw mypw 128 -- public.pdf private.pdf	Encrypt with 128 bits public.pdf using as the passwd mypw with output as private.pdf
+    qpdf --decrypt --password=mypw private.pdf file-decrypted.pdf	Decrypt private.pdf with output as file-decrypted.pdf. 
+    pdftk public.pdf output private.pdf user_pw PROMPT
+    Combine three PDF files into one:
+    $ gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite  -sOutputFile=all.pdf file1.pdf file2.pdf file3.pdf
+    Split pages 10 to 20 out of a PDF file:
+    $ gs -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dDOPDFMARKS=false -dFirstPage=10 -dLastPage=20\
+    -sOutputFile=split.pdf file.pdf
+
+_Repitative Ausführung von Befehlen über die Historie des Terminals_
+
+history befehl wiederholen mit !26 !"26" klären was das genau bedeutet
+
+_Ausgabe und Manipulation des Datum und der Zeit_
+
+date cal und in diesem Zusammenhang das Format diskutieren
  
- 
- 
- 
- 
-_Suchen nach Dateien_ [10]
+ _Suchen nach Dateien_ [10]
 
 Es gibt verschiedene Befehle zum Suchen von Textdateien. Meist wird der Befehl _find_ genutzt. It can be u
 to search by name, file type, timestamp, owner, and many other attributes. Ein möglicher Befehl kann wie folgt aussehen:
@@ -253,355 +298,6 @@ Ein weiteres Beispiel zeigt, wie man nach Dateien mit einer bestimmten Größe s
  Nach rechten kann auch gesucht werden. Beispiel: 
  
     find ~ -maxdepth 1 -type f -perm u=rw
-
-
-
-
-Here is the basic structure of the case statement:
-
-case expression in
-   pattern1) execute commands;;
-   pattern2) execute commands;;
-   pattern3) execute commands;;
-   pattern4) execute commands;;
-   * )       execute some default commands or nothing ;;
-esac
-
-You can run a bash script in debug mode either by doing bash –x ./script_file, or bracketing parts of the script with set -x and set +x. The debug mode helps identify the error because:
-
-It traces and prefixes each command with the + character.
-It displays each command before executing it.
-It can debug only selected parts of a script (if desired) with:
-
-set -x    # turns on debugging
-...
-set +x    # turns off debugging
-The screenshot shown here demonstrates a script which runs in debug mode if run with any argument on the command line.
-
-Consider a situation where you want to retrieve 100 records from a file with 10,000 records. You will need a place to store the extracted information, perhaps in a temporary file, while you do further processing on it.
-
-Temporary files (and directories) are meant to store data for a short time. Usually, one arranges it so that these files disappear when the program using them terminates. While you can also use touch to create a temporary file, in some circumstances this may make it easy for hackers to gain access to your data. This is particularly true if the name and the file location of the temporary file are predictable.
-
-The best practice is to create random and unpredictable filenames for temporary storage. One way to do this is with the mktemp utility, as in the following examples.
-
-The XXXXXXXX is replaced by mktemp with random characters to ensure the name of the temporary file cannot be easily predicted and is only known within your program.
-
- 
-
-Command	Usage
-TEMP=$(mktemp /tmp/tempfile.XXXXXXXX)	To create a temporary file
-TEMPDIR=$(mktemp -d /t
-
-It is often useful to generate random numbers and other random data when performing tasks such as:
-
-Performing security-related tasks
-Reinitializing storage devices
-Erasing and/or obscuring existing data
-Generating meaningless data to be used for tests.
-Such random numbers can be generated by using the $RANDOM environment variable, which is derived from the Linux kernel’s built-in random number generator, or by the OpenSSL library function, which uses the FIPS140 (Federal Information Processing Standard) algorithm to generate random numbers for encryption
-
-To learn about FIPS140, read Wikipedia's "FIPS 140-2" article.
-
-The example shows you how to easily use the environmental variable method to generate random numbers.
-
- 
-
-Some servers have hardware random number generators that take as input different types of noise signals, such as thermal noise and photoelectric effect. A transducer converts this noise into an electric signal, which is again converted into a digital number by an A-D converter. This number is considered random. However, most common computers do not contain such specialized hardware and, instead, rely on events created during booting to create the raw data needed.
-
-Regardless of which of these two sources is used, the system maintains a so-called entropy pool of these digital numbers/random bits. Random numbers are created from this entropy pool.
-
-The Linux kernel offers the /dev/random and /dev/urandom device nodes, which draw on the entropy pool to provide random numbers which are drawn from the estimated number of bits of noise in the entropy pool.
-
-/dev/random is used where very high quality randomness is required, such as one-time pad or key generation, but it is relatively slow to provide values. /dev/urandom is faster and suitable (good enough) for most cryptographic purposes.
-
-Furthermore, when the entropy pool is empty, /dev/random is blocked and does not generate any number until additional environmental noise (network traffic, mouse movement, etc.) is gathered, whereas /dev/urandom reuses the internal pool to produce more pseudo-random bits.
-
- CUPS carries out the printing process with the help of its various components:
-
-Configuration Files
-Scheduler
-Job Files
-Log Files
-Filter
-Printer Drivers
-Backend.
-You will learn about each of these components on the next few pages.
-
-he print scheduler reads server settings from several configuration files, the two most important of which are cupsd.conf and printers.conf. These and all other CUPS related configuration files are stored under the /etc/cups/ directory.
-
-cupsd.conf is where most system-wide settings are located; it does not contain any printer-specific details. Most of the settings available in this file relate to network security, i.e. which systems can access CUPS network capabilities, how printers are advertised on the local network, what management features are offered, and so on.
-
-printers.conf is where you will find the printer-specific settings. For every printer connected to the system, a corresponding section describes the printer’s status and capabilities. This file is generated or modified only after adding a printer to the system, and should not be modified by hand.
-
-You can view the full list of configuration files by typing ls -lF /etc/cups.
-
-CUPS stores print requests as files under the /var/spool/cups directory (these can actually be accessed before a document is sent to a printer). Data files are prefixed with the letter d while control files are prefixed with the letter c.
-
- After a printer successfully handles a job, data files are automatically removed. These data files belong to what is commonly known as the print queue.
- 
- Log files are placed in /var/log/cups and are used by the scheduler to record activities that have taken place. These files include access, error, and page records.
-
-To view what log files exist, type:
-
-$ sudo ls -l /var/log/cups
-
-CUPS uses filters to convert job file formats to printable formats. Printer drivers contain descriptions for currently connected and configured printers, and are usually stored under /etc/cups/ppd/. The print data is then sent to the printer through a filter, and via a backend that helps to locate devices connected to the system.
-
-So, in short, when you execute a print command, the scheduler validates the command and processes the print job, creating job files according to the settings specified in the configuration files. Simultaneously, the scheduler records activities in the log files. Job files are processed with the help of the filter, printer driver, and backend, and then sent to the printer.
-
-Assuming CUPS has been installed you'll need to start and manage the CUPS daemon so that CUPS is ready for configuring a printer. Managing the CUPS daemon is simple; all management features can be done with the systemctl utility:
-
-$ systemctl status cups
-
-$ sudo systemctl [enable|disable] cups
-
-$ sudo systemctl [start|stop|restart] cups
-
-Note: The next screen demonstrates this on Ubuntu, but is the same for all major current Linux distributions. 
-
-
-A fact that few people know is that CUPS also comes with its own web server, which makes a configuration interface available via a set of CGI scripts.
-
-This web interface allows you to:
-
-Add and remove local/remote printers
-Configure printers:
-– Local/remote printers
-– Share a printer as a CUPS server
-Control print jobs:
-– Monitor jobs
-– Show completed or pending jobs
-– Cancel or move jobs.
-The CUPS web interface is available on your browser at: http://localhost:631.
-
-Some pages require a username and password to perform certain actions, for example to add a printer. For most Linux distributions, you must use the root password to add, modify, or delete printers or classes.
-
-CUPS provides two command-line interfaces, descended from the System V and BSD flavors of UNIX. This means that you can use either lp (System V) or lpr (BSD) to print. You can use these commands to print text, PostScript, PDF, and image files.
-
-These commands are useful in cases where printing operations must be automated (from shell scripts, for instance, which contain multiple commands in one file). 
-
-lp is just a command line front-end to the lpr utility that passes input to lpr. Thus, we will discuss only lp in detail. In the example shown here, the task is to print  $HOME/.emacs .
-
- lp and lpr accept command line options that help you perform all operations that the GUI can accomplish. lp is typically used with a file name as an argument.
-
-Some lp commands and other printing utilities you can use are listed in the table:
-
- 
-
-Command	Usage
-lp <filename>	To print the file to default printer
-lp -d printer <filename>	To print to a specific printer (useful if multiple printers are available)
-program | lp
-echo string | lp	To print the output of a program
-lp -n number <filename>	To print multiple copies
-lpoptions -d printer	To set the default printer
-lpq -a	To show the queue status
-lpadmin
-    
-    lpoptions can be used to set printer options and defaults. Each printer has a set of tags associated with it, such as the default number of copies and authentication requirements. You can type lpoptions help to obtain a list of supported options. lpoptions can also be used to set system-wide values, such as the default printer.
-    
-    You send a file to the shared printer. But when you go there to collect the printout, you discover another user has just started a 200 page job that is not time sensitive. Your file cannot be printed until this print job is complete. What do you do now?
-
-In Linux, command line print job management commands allow you to monitor the job state as well as managing the listing of all printers and checking their status, and canceling or moving print jobs to another printer.
-
-Some of these commands are listed in the table. 
-
- 
-
-Command	Usage
-lpstat -p -d	To get a list of available printers, along with their status
-lpstat -a	To check the status of all connected printers, including job numbers
-cancel job-id
-OR
-lprm job-id	To cancel a print job
-lpmove job-id newprinter	To move a print job to new printer
-
-PostScript is a standard  page description language. It effectively manages scaling of fonts and vector graphics to provide quality printouts. It is purely a text format that contains the data fed to a PostScript interpreter. The format itself is a language that was developed by Adobe in the early 1980s to enable the transfer of data to printers.
-
-Features of PostScript are:
-
-It can be used on any printer that is PostScript-compatible; i.e. any modern printer
-Any program that understands the PostScript specification can print to it
-Information about page appearance, etc. is embedded in the page.
-Postscript has been for the most part superseded by the PDF format (Portable Document Format) which produces far smaller files in a compressed format for which support has been integrated into many applications. However, one still has to deal with postscript documents, often as an intermediate format on the way to producing final documents.
-
-enscript is a tool that is used to convert a text file to PostScript and other formats. It also supports Rich Text Format (RTF) and HyperText Markup Language (HTML). For example, you can convert a text file to two columns (-2) formatted PostScript using the command:
-
-$ enscript -2 -r -p psfile.ps textfile.txt
-
-This command will also rotate (-r) the output to print so the width of the paper is greater than the height (aka landscape mode) thereby reducing the number of pages required for printing.
-
-The commands that can be used with enscript are listed in the table below (for a file called textfile.txt).
-
- 
-
-Command	Usage
-enscript -p psfile.ps textfile.txt	Convert a text file to PostScript (saved to psfile.ps)
-enscript -n -p psfile.ps textfile.txt	Convert a text file to n columns where n=1-9 (saved in psfile.ps)
-enscript textfile.txt	Print a text file directly to the default printer
-
-Most users today are far more accustomed to working with files in PDF format, viewing them easily either on the Internet through their browser or locally on their machine. The PostScript format is still important for various technical reasons that the general user will rarely have to deal with.
-
-From time to time, you may need to convert files from one format to the other, and there are very simple utilities for accomplishing that task. ps2pdf and pdf2ps are part of the ghostscript package installed on or available on all Linux distributions. As an alternative, there are pstopdf and pdftops which are usually part of the poppler package, which may need to be added through your package manager. Unless you are doing a lot of conversions or need some of the fancier options (which you can read about in the man pages for these utilities), it really does not matter which ones you use.
-
-Another possibility is to use the very powerful convert program, which is part of the ImageMagick package. (Some newer distributions have replaced this with Graphics Magick, and the command to use is gm convert).
-
-Some usage examples:
-
- 
-
-Command	Usage
-pdf2ps file.pdf	Converts file.pdf to file.ps
-ps2pdf file.ps	Converts file.ps to file.pdf
-pstopdf input.ps output.pdf	Converts input.ps to output.pdf
-pdftops input.pdf output.ps	Converts input.pdf to output.ps
-convert input.ps output.pdf	Converts input.ps to output.pdf
-convert input.pdf output.ps	Converts input.pdf to output.ps
-
-Linux has many standard programs that can read PDF files, as well as many applications that can easily create them, including all available office suites, such as LibreOffice.
-
-The most common Linux PDF readers are:
-
-evince is available on virtually all distributions and the most widely used program.
-okular is based on the older kpdf and available on any distribution that provides the KDE environment.
-ghostView is one of the first open source PDF readers and is universally available.
-xpdf is one of the oldest open source PDF readers and still has a good user base. 
-All of these open source PDF readers support and can read files following the PostScript standard unlike the proprietary Adobe Acrobat Reader, which was once widely used on Linux systems, but, with the growth of these excellent programs, very few Linux users use it today.
-
-At times, you may want to merge, split, or rotate PDF files; not all of these operations can be achieved while using a PDF viewer. Some of these operations include:
-
-Merging/splitting/rotating PDF documents
-Repairing corrupted PDF pages
-Pulling single pages from a file
-Encrypting and decrypting PDF files
-Adding, updating, and exporting a PDF’s metadata
-Exporting bookmarks to a text file
-Filling out PDF forms.
-In order to accomplish these tasks there are several programs available:
-
-qpdf
-pdftk
-ghostscript.
-qpdf is widely available on Linux distributions and is very full-featured. pdftk was once very popular but depends on an obsolete unmaintained package (libgcj) and a number of distributions have dropped it; thus we recommend avoiding it. Ghostscript (often invoked using gs) is widely available and well-maintained. However, its usage is a little complex.
-
-You can accomplish a wide variety of tasks using qpdf including:
-
- 
-
-Command	Usage
-qpdf --empty --pages 1.pdf 2.pdf -- 12.pdf	Merge the two documents 1.pdf and 2.pdf. The output will be saved to 12.pdf.
-qpdf --empty --pages 1.pdf 1-2 -- new.pdf	Write only pages 1 and 2 of 1.pdf. The output will be saved to new.pdf.
-qpdf --rotate=+90:1 1.pdf 1r.pdf
-
-qpdf --rotate=+90:1-z 1.pdf 1r-all.pdf
-
-Rotate page 1 of 1.pdf 90 degrees clockwise and save to 1r.pdf
-
-Rotate all pages of 1.pdf 90 degrees clockwise and save to 1r-all.pdf
-
-qpdf --encrypt mypw mypw 128 -- public.pdf private.pdf	Encrypt with 128 bits public.pdf using as the passwd mypw with output as private.pdf
-qpdf --decrypt --password=mypw private.pdf file-decrypted.pdf	Decrypt private.pdf with output as file-decrypted.pdf. 
-
-If you’re working with PDF files that contain confidential information and you want to ensure that only certain people can view the PDF file, you can apply a password to it using the user_pw option. One can do this by issuing a command such as:
-
-$ pdftk public.pdf output private.pdf user_pw PROMPT
-
-When you run this command, you will receive a prompt to set the required password, which can have a maximum of 32 characters. A new file, private.pdf, will be created with the identical content as public.pdf, but anyone will need to type the password to be able to view it.
-
-Ghostscript is widely available as an interpreter for the Postscript and PDF languages. The executable program associated with it is abbreviated to gs.
-
-This utility can do most of the operations pdftk can, as well as many others; see man gs for details. Use is somewhat complicated by the rather long nature of the options. For example:
-
-Combine three PDF files into one:
-$ gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite  -sOutputFile=all.pdf file1.pdf file2.pdf file3.pdf
-Split pages 10 to 20 out of a PDF file:
-$ gs -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dDOPDFMARKS=false -dFirstPage=10 -dLastPage=20\
--sOutputFile=split.pdf file.pdf
-
-ou can use other tools to work with PDF files, such as:
-
-pdfinfo 
-It can extract information about PDF files, especially when the files are very large or when a graphical interface is not available.
-flpsed 
-It can add data to a PostScript document. This tool is specifically useful for filling in forms or adding short comments into the document.
-pdfmod 
-It is a simple application that provides a graphical interface for modifying PDF documents. Using this tool, you can reorder, rotate, and remove pages; export images from a document; edit the title, subject, and author; add keywords; and combine documents using drag-and-drop action.
-For example, to collect the details of a document, you can use the following command:
-
-$ pdfinfo /usr/share/doc/readme.pdf
-
-Check to see if the enscript package has been installed on your system, and if not, install it.
-Using enscript, convert the text file /var/dmesg to PostScript format and name the result /tmp/dmesg.ps. As an alternative, you can use any large text file on your system. Make sure you can read the PostScript file (for example with evince) and compare to the original file.
-Note: On some systems, such as RHEL7/CentOS7, evince may have problems with the PostScript file, but the PDF file you produce from it will be fine for viewing.
-Convert the PostScript document to PDF format, using ps2pdf. Make sure you can read the resulting PDF file. Does it look identical to the PostScript version?
-Is there a way you can go straight to the PDF file without producing a PostScript file on the disk along the way?
-Using pdfinfo, determine what is the PDF version used to encode the file, the number of pages, the page size, and other metadata about the file. If you do not have pdfinfo you probably need to install the poppler-utils package.
-Click the link below to view a solution to the Lab exercise.
-
-
-
-Command	Usage
-awk '{ print $0 }' /etc/passwd	Print entire file
-awk -F: '{ print $1 }' /etc/passwd	Print first field (column) of every line, separated by a space
-awk -F: '{ print $1 $7 }' /etc/passwd	Print first and seventh field of every line
-    
-$cat > geekfile.txt
-unix is great os. unix is opensource. unix is free os.
-learn operating system.
-unix linux which one you choose.
-unix is easy to learn.unix is a multiuser os.Learn unix .unix is a powerful.
-Sample Commands
-
-Replacing or substituting string : Sed command is mostly used to replace the text in a file. The below simple sed command replaces the word “unix” with “linux” in the file.
-$sed 's/unix/linux/' geekfile.txt
-Output :
-
-
-
-linux is great os. unix is opensource. unix is free os.
-learn operating system.
-linux linux which one you choose.
-linux is easy to learn.unix is a multiuser os.Learn unix .unix is a powerful.
-Here the “s” specifies the substitution operation. The “/” are delimiters. The “unix” is the search pattern and the “linux” is the replacement string.
-
-By default, the sed command replaces the first occurrence of the pattern in each line and it won’t replace the second, third…occurrence in the line.
-
-Replacing the nth occurrence of a pattern in a line : Use the /1, /2 etc flags to replace the first, second occurrence of a pattern in a line. The below command replaces the second occurrence of the word “unix” with “linux” in a line.
-$sed 's/unix/linux/2' geekfile.txt
-Output:
-
-unix is great os. linux is opensource. unix is free os.
-learn operating system.
-unix linux which one you choose.
-unix is easy to learn.linux is a multiuser os.Learn unix .unix is a powerful.
-Replacing all the occurrence of the pattern in a line : The substitute flag /g (global replacement) specifies the sed command to replace all the occurrences of the string in the line.
-$sed 's/unix/linux/g' geekfile.txt
-Output :
-
-linux is great os. linux is opensource. linux is free os.
-learn operating system.
-linux linux which one you choose.
-linux is easy to learn.linux is a multiuser os.Learn linux .linux is a powerful.
-
-Deleting lines from a particular file : SED command can also be used for deleting lines from a particular file. SED command is used for performing deletion operation without even opening the file
-Examples:
-1. To Delete a particular line say n in this example
-Syntax:
-$ sed 'nd' filename.txt
-Example:
-$ sed '5d' filename.txt
-
-Duplicating the replaced line with /p flag : The /p print flag prints the replaced line twice on the terminal. If a line does not have the search pattern and is not replaced, then the /p prints that line only once.
-$sed 's/unix/linux/p' geekfile.txt
-
-
-_Repitative Ausführung von Befehlen über die Historie des Terminals_
-
-history befehl wiederholen mit !26 !"26" klären was das genau bedeutet
-
-_Ausgabe und Manipulation des Datum und der Zeit_
-
-date cal und in diesem Zusammenhang das Format diskutieren
 
 _Standardausgabe und Weiterleitung_[26]
 
@@ -654,15 +350,11 @@ Dabei ist USER der Login name des USers, tty steht für die virtuelle Konsolle, 
 An example of a situation where using VTs is helpful is when you run into problems with the graphical desktop. In this situation, you can switch to one of the text VTs and troubleshoot.
 
 To switch between VTs, press CTRL-ALT-function key for the VT. For example, press CTRL-ALT-F6 for VT 6. Actually, you only have to press the ALT-F6 key combination if you are in a VT and want to switch to another VT.
-_CREATE, DELETE, COPY, AND MOVE FILES AND DIRECTORIES_[28] 
 
-touch command will create a zero bytes empty file. To create a directory, we can use the mkdir command, which stands for making a directory. cp – copy command, we can use this command to rename the file while copying it to the new location. There is scp command – secure copy – to copy files or directory between different Linux servers.
-Another command is the mv command which we can use to move the file or directory to a new location, similar we can use this command to rename a file to a different name. 
-Sometimes when we create a file or directory, we will like to delete it, we can do this with the help of rm command. rmdir is a command we can use to remove an empty directory if that directory contains anything inside the command will fail. We can use rm -r where -r stands for recursive this will remove the directory and its content. The rm command removes files or directory instantly; there is no bin or trash where we can retrieve what we deleted back. rm -rf, where f stands for force, is a very dangerous command because it will remove everything in the current working directory without warring.
 
 _MAN Pages_[29]
 
-an interface to the on-line reference manuals
+man -k "keyword" 
 
 man -k print | head -n 5
 fmtmsg (3)           - print formatted error messages
@@ -674,66 +366,15 @@ abrt-action-list-dsos (1) - Prints out DSO from mapped memory regions.
 whatis
 display manual page descriptions
 
-1
-2
-3
 whatis ip
 ip (7)               - Linux IPv4 protocol implementation
 ip (8)               - show / manipulate routing, devices, pol...
 
 apropos
-search the manual page names and descriptions
-
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-apropos network | tail
-teamnl (8)           - team network device Netlink interface tool
-tracepath (8)        - traces path to a network host discoveri...
-tracepath6 (8)       - traces path to a network host discoveri...
-traceroute (8)       - print the route packets trace to networ...
-traceroute6 (8)      - print the route packets trace to networ...
-tshark (1)           - Dump and analyze network traffic
-umount.nfs (8)       - unmount a Network File System
-usernetctl (8)       - allow a user to manipulate a network in...
-wget (1)             - The non-interactive network downloader.
-wireshark (1)        - Interactively dump and analyze network ...
-
-fmt
-simple optimal text formatter
-
-u # uniform spacing: one space between words, two after sentences
-1
-2
-3
-4
-[root@tron ~]# cat test.txt
-Test.     Next sentence.   This    doesn't   look       right
-[root@tron ~]# fmt -u test.txt
-Test.  Next sentence.  This doesn't look right
-nl
-number lines of files
-
-1
-2
-3
-4
-5
-6
-nl test.txt
-     1    First line
-
-     2    Second line
-
-     3    Third line
+ apropos - search the manual page names and descriptions
+SYNOPSIS         top
+       apropos [-dalv?V] [-e|-w|-r] [-s list] [-m system[,...]] [-M
+       path] [-L locale] [-C file] keyword ...
 
 _Wildcards_
 
@@ -768,159 +409,3 @@ To enable verbose mode, add the -v flag to prints the name of each linked file i
 
 $ ln -sfv ~/bin/topprocs.sh topps.sh
 $ $ls -l topps.sh
-
-
-
-
-
-man -k "keyword" 
-
-
-Set up a mail server.
-The questions were outcome based, i.e. Set up a mail server.
-
-You were free to use the tools you deemed right as assessment was proficiency based.
-
-I don't know how much has changed but practice was key. i.e. I set up various mail servers before 
-
-ing an approach I was confident with.
-
-
-
-  apropos - search the manual page names and descriptions
-SYNOPSIS         top
-       apropos [-dalv?V] [-e|-w|-r] [-s list] [-m system[,...]] [-M
-       path] [-L locale] [-C file] keyword ...
-DESCRIPTION         top
-       Each manual page has a short description available within it.
-       apropos searches the descriptions for instances of keyword.
-
-       keyword is usually a regular expression, as if (-r) was used, or
-       may contain wildcards (-w), or match the exact keyword (-e).
-       Using these options, it may be necessary to quote the keyword or
-       escape (\) the special characters to stop the shell from
-       interpreting them.
-
-       The standard matching rules allow matches to be made against the
-       page name and word boundaries in the description.
-
-       The database searched by apropos is updated by the mandb program.
-       Depending on your installation, this may be run by a periodic
-       cron job, or may need to be run manually after new manual pages
-       have been installed.
-OPTIONS         top
-       -d, --debug
-              Print debugging information.
-
-       -v, --verbose
-              Print verbose warning messages.
-
-       -r, --regex
-              Interpret each keyword as a regular expression.  This is
-              the default behaviour.  Each keyword will be matched
-              against the page names and the descriptions independently.
-              It can match any part of either.  The match is not limited
-              to word boundaries.
-
-       -w, --wildcard
-              Interpret each keyword as a pattern containing shell style
-              wildcards.  Each keyword will be matched against the page
-              names and the descriptions independently.  If --exact is
-              also used, a match will only be found if an expanded
-              keyword matches an entire description or page name.
-              Otherwise the keyword is also allowed to match on word
-              boundaries in the description.
-
-       -e, --exact
-              Each keyword will be exactly matched against the page
-              names and the descriptions.
-
-       -a, --and
-              Only display items that match all the supplied keywords.
-              The default is to display items that match any keyword.
-
-       -l, --long
-              Do not trim output to the terminal width.  Normally,
-              output will be truncated to the terminal width to avoid
-              ugly results from poorly-written NAME sections.
-
-       -s list, --sections=list, --section=list
-              Search only the given manual sections.  list is a colon-
-              or comma-separated list of sections.  If an entry in list
-              is a simple section, for example "3", then the displayed
-              list of descriptions will include pages in sections "3",
-              "3perl", "3x", and so on; while if an entry in list has an
-              extension, for example "3perl", then the list will only
-              include pages in that exact part of the manual section.
-
-       -m system[,...], --systems=system[,...]
-              If this system has access to other operating system's
-              manual page descriptions, they can be searched using this
-              option.  To search NewOS's manual page descriptions, use
-              the option -m NewOS.
-
-              The system specified can be a combination of comma-
-              delimited operating system names.  To include a search of
-              the native operating system's whatis descriptions, include
-              the system name man in the argument string.  This option
-              will override the $SYSTEM environment variable.
-
-       -M path, --manpath=path
-              Specify an alternate set of colon-delimited manual page
-              hierarchies to search.  By default, apropos uses the
-              $MANPATH environment variable, unless it is empty or
-              unset, in which case it will determine an appropriate
-              manpath based on your $PATH environment variable.  This
-              option overrides the contents of $MANPATH.
-
-       -L locale, --locale=locale
-              apropos will normally determine your current locale by a
-              call to the C function setlocale(3) which interrogates
-              various environment variables, possibly including
-              $LC_MESSAGES and $LANG.  To temporarily override the
-              determined value, use this option to supply a locale
-              string directly to apropos.  Note that it will not take
-              effect until the search for pages actually begins.  Output
-              such as the help message will always be displayed in the
-              initially determined locale.
-
-       -C file, --config-file=file
-              Use this user configuration file rather than the default
-              of ~/.manpath.
-
-       -?, --help
-              Print a help message and exit.
-
-       --usage
-              Print a short usage message and exit.
-
-       -V, --version
-              Display version information.  
-       
-    Create a RAID 0 array using the two spare drives on (5GB) on this machine. 
-Size=2048MB
-Label=RAID_0
-Mount it persistently by Label at /storage
-Create a RAID 1 array using LVM using the two spare drives (5GB) on this machine
-size 1024MB
-Label=RAID_1
-Mount it persistently by UUID at /storage2
-Using the left over space on those one of those two drives, create a 1GB SWAP partition and add it to the existing SWAP pool - This SWAP space should mount at boot. 
-Assume that there is an NFS share somewhere on your network. Write the command you would use to mount the NFS share on /NFS_mount. Append your terminal code to a file named “network_mount.txt” and place it in the /root folder.
-The IP or DNS name for the share do not matter - Use whatever you would like. 
-Assume that there is an CIFS share somewhere on your network. Write the command you would use to mount the CIFS share on /CIFS_mount. Append your terminal code to a file named “network_mount.txt” and place it in the /root folder.
-The IP or DNS name for the share do not matter - Use whatever you would like.
-
-Create a bash script named “Infinite_loop” that does the following:
-Continually writes the string "Linux is fun" to the folder /dev/null
-Has no exit loop (that is, it will continue to run until told to stop
-Place the script in /root
-Give bob permissions to run infinite_loop
-Switch user to Bob and have him run infinite_loop
-Switch back to root
-As root, locate the now running infinite_loop and forcefully kill it by PID
-Create a backup of the /etc/yum.repos.d folder using tar or rsync; place your backup in /root
-Create a local repo using a live dvd iso of Centos
-Using your local repo, install the appropriate packages needed for virtualization.
-
-As always, consult man pages for more information. 
