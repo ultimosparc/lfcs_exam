@@ -89,6 +89,7 @@ T: Angenommen das System hat zwei SWAP Partition S1 und S2. Prioierensieren die 
 
 T: 
 
+Add static IP address to eno1 with an IP of 192.168.122.5/24 and gateway of 192.168.1.1
 
 ## 7. Solutions & Remarks
 
