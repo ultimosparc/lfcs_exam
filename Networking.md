@@ -125,12 +125,6 @@ In der Prüfung kann es nun vorkommen, das eine aktive Verbindung geändert werd
     nmcli con mod con-name ipv4.method manual                          //Change the method from static IP to DHCP
     nmcli con del "connectionname"                                  //Delete a connection
     
-    
-    
-    
-
-In /etc/resolv.conf there are configured DNS servers entry
-It is possible to insert more than one nameserver as backup (primary and secondary)
 packet filtering (iptables, no firewalld since it’s not related to RHEL)
 
 Configurations
