@@ -1,31 +1,27 @@
 # Operation_of_Running_Systems
 
-Priviligierte und nicht priviligierte Prozesse und userspace und systemspace. 
-Unix OS Kernel ist eine API mit verschiedenen Entry points, ein Entry point liefern service das der Kernel anbietet. 
-Kernel Ansammlung von Funktionen mit Api wo die Funktionen fest definiert sind mit Parametern und Datentypen, die dann als Entrypunkt für den Service dienen
-Kernel wird in den Systemspace geladen nach dem booten und bleibt dort bis zum zum shutdown
-user können über user prozesse mit dem Api mit dem Kernel kommunizieren, der die geforderten Resoucen verwaltet und ensprechende Werte zurückliefert.
+Der Linux Kernel ist eine API mit verschiedenen Entry points. Ein Entrypoint ist ein Zugang zu einem Service, der vom Kernel angeboten wird. Genauer definiert, es handelt sich um eine Methode mit Parameter, die bestimmte Werte zurückliefert. Beim Booten wird der Kernel in den Systemspace hochgeladen und bleibt dort bis das System wieder runterfährt.  
 The kernel provides many services to user programs, including
 
- process scheduling and management,
- I/O handling,
- physical and virtual memory management,
- device management,
- le management,
- signaling and inter-process communication,
- multi-threading,
- multi-tasking,
- real-time signaling and scheduling, and
- networking services.
+         process scheduling and management,
+         I/O handling,
+         physical and virtual memory management,
+         device management,
+         Idle management,
+         signaling and inter-process communication,
+         multi-threading,
+         multi-tasking,
+         real-time signaling and scheduling, and
+         networking services.
+         
 Network services include protocols such as HTTP, NIS, NFS, X.25, SSH, SFTP, TCP/IP, and Java.
-Exactly which protocols are supported is not important; what is important is for you to understand
-that the kernel provides the means by which a user program can make requests for these services.
+Es gibt zwei Arten, wie ein Service angefragt werden kann. 
 
-There are two dierent methods by which a program can make requests for services from the kernel:
- by making a system call to a function (i.e., entry point) built directly into the kernel, or
- by calling a higher-level library (i.q. system programs) routine that makes use of this call.
+        1. by making a system call to a function (i.e., entry point) built directly into the kernel
+        2. by calling a higher-level library (i.q. system programs) routine that makes use of this call.
 
 Ein System Programm kann man beispielweise unter /bin, /usr/bin gefunden werden
+
 _Priorisierung von Prozessen_ [5]
 
 Linux can run a lot of processes at a time, which can slow down the speed of some high priority processes and result in poor performance.
