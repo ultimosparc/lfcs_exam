@@ -1,3 +1,45 @@
+1. differ 
+	output in eine Datei senden
+	Vergleichen ein output mit anderen und sagen, welche Datei sich von anderen unterscheidet
+	ergebnis in eine Liste schreiben und abspeichern
+2. Intial password eines neues Users festlegen
+	Ablauf nach einem Tag 
+	User auffordern das Password nach dem ersten Login zu ändern
+	Primare Gruppe für einen neuen User festlegen
+3. Limits für eine Resourse für eine Gruppe festlegen
+4. Textdatei durchsuchen nach Lines die ganz am Ende ganz am Anfang irgendwo in der Mitte ein 
+speziesl Wort haben zeilenweise in eine Datexdatei schreiben
+5. Standardport für eine Services von 80 auf 735 festlegen
+6. Den Port eines Services bestimmen
+7. Find Methode
+	suche nachen Dateien eines bestimmten Mode
+	suche Dateien mit bestimmten rechten
+	suche Dateien nachen bestimmen Namenmuster
+	gebe jeweils die Liste und kopiere die Datien irgendwo hin
+	suche Dateien die nicht einem bestimmten User gehören Negation
+	suche nach Datein wo bestimmte S permition gesetzt sind	
+find Methoden mit exec Anhang
+	
+8. Starte einen Webserver und versichern das er aus gestartet wird mit jed
+em Boot
+9. Login anderen Server speichere die routetable ab
+10. Partition tabelle anlegen, Partition mit bestimmter größe, Filesystem anlegen bestimmtes, 
+sicherstellen das nach Neustart die Einstellungen noch aktiv sind
+Mounten in das primäre FS, FS Label setzen 
+11. FS System repairen
+12. Fehlgeschlagen Loginversuche im Log suchen
+13. Spezialle PErmision setzten --> man muss die ZAhlen kennen
+	ACL Tabelle für speizellen User setzen
+	Bestimmte Rechte setzen
+14 Docker 
+	lösche alten Docker container
+	erstelle dockercontainer neu mit runterladen nginx
+	starte Container
+	vergisssern mit Dockerd soll auch der container gestartet werden
+15. rediction von STout Error in beiden und dann einzelnend
+
+
+
 # Test Exam
 According to the exercises from the sources, I have created a serie of tasks for every topic. (Task (T))
 
