@@ -37,6 +37,8 @@ Mounten in das primäre FS, FS Label setzen
 	starte Container
 	vergisssern mit Dockerd soll auch der container gestartet werden
 15. rediction von STout Error in beiden und dann einzelnend
+16. Neue hostname resolution bla der IP 127.0.0.1 zuordnen
+17. Neuen Namensserver erstellen 
 
 
 
