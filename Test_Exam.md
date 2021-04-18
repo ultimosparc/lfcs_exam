@@ -1,5 +1,19 @@
 1. differ 
-	output in eine Datei senden
+a. Vergleiche zwei Dateien und gebe die Unterschiede aus in einer externen Datei. 
+b. Vergleiche die Dateien in einem Verzeichnis zueinander und schreibe die Outputs an, die sich unterschieden zu
+einer speziellen Dateien
+c. Vergleiche zwei zwei Verzeichnisse miteinander und gebe die Dateien zurück, die nicht in beiden Verzeichnissen liegen
+schreibe diese Dateien in eine File und speichere es ab --> Man müsste zunächst prüfen, ob es unterverzeichnisse existieren
+The question is how do we get the difference between two directories in Linux? Here, we want to know what files/subdirectories are common in the two directories, those that are present in one directory but not in the other.
+
+The conventional syntax for running diff is as follows:
+
+$ diff [OPTION]… FILES
+$ diff options dir1 dir2 
+By default, its output is ordered alphabetically by file/subdirectory name as shown in the screenshot below. In this command, the -q switch tells diff to report only when files differ.
+$ diff -qr directory-1/ directory-2/ 
+
+output in eine Datei senden
 	Vergleichen ein output mit anderen und sagen, welche Datei sich von anderen unterscheidet
 	ergebnis in eine Liste schreiben und abspeichern
 2. Intial password eines neues Users festlegen
