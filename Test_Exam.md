@@ -57,7 +57,7 @@ T: _Erstellen Sie einen neuen SSH Schlüssel und sperren Sie den alten Schlüsse
 
 T: _Erstellen Sie einen neuen SSH Schlüssel und sperren Sie den alten Schlüssel._
 
-1. differ 
+T: _Vergleichen Sie zwei Dateien miteinander1. differ 
 a. Vergleiche zwei Dateien und gebe die Unterschiede aus in einer externen Datei. 
 b. Vergleiche die Dateien in einem Verzeichnis zueinander und schreibe die Outputs an, die sich unterschieden zu
 einer speziellen Dateien
