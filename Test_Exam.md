@@ -1,25 +1,5 @@
-1. differ 
-a. Vergleiche zwei Dateien und gebe die Unterschiede aus in einer externen Datei. 
-b. Vergleiche die Dateien in einem Verzeichnis zueinander und schreibe die Outputs an, die sich unterschieden zu
-einer speziellen Dateien
-c. Vergleiche zwei zwei Verzeichnisse miteinander und gebe die Dateien zurück, die nicht in beiden Verzeichnissen liegen
-schreibe diese Dateien in eine File und speichere es ab --> Man müsste zunächst prüfen, ob es unterverzeichnisse existieren
-The question is how do we get the difference between two directories in Linux? Here, we want to know what files/subdirectories are common in the two directories, those that are present in one directory but not in the other.
 
-The conventional syntax for running diff is as follows:
 
-$ diff [OPTION]… FILES
-$ diff options dir1 dir2 
-By default, its output is ordered alphabetically by file/subdirectory name as shown in the screenshot below. In this command, the -q switch tells diff to report only when files differ.
-$ diff -qr directory-1/ directory-2/ 
-
-output in eine Datei senden
-	Vergleichen ein output mit anderen und sagen, welche Datei sich von anderen unterscheidet
-	ergebnis in eine Liste schreiben und abspeichern
-2. Intial password eines neues Users festlegen
-	Ablauf nach einem Tag 
-	User auffordern das Password nach dem ersten Login zu ändern
-	Primare Gruppe für einen neuen User festlegen
 3. Limits für eine Resourse für eine Gruppe festlegen
 4. Textdatei durchsuchen nach Lines die ganz am Ende ganz am Anfang irgendwo in der Mitte ein 
 speziesl Wort haben zeilenweise in eine Datexdatei schreiben
@@ -53,6 +33,8 @@ Mounten in das primäre FS, FS Label setzen
 15. rediction von STout Error in beiden und dann einzelnend
 16. Neue hostname resolution bla der IP 127.0.0.1 zuordnen
 17. Neuen Namensserver erstellen 
+18. 
+
 
 
 
@@ -73,11 +55,36 @@ T: _Erstelle ein komprimiertes Archiv "test.tar" der Dateien "datei1" und "datei
 
 T: _Erstellen Sie einen neuen SSH Schlüssel und sperren Sie den alten Schlüssel._
 
+T: _Erstellen Sie einen neuen SSH Schlüssel und sperren Sie den alten Schlüssel._
+
+1. differ 
+a. Vergleiche zwei Dateien und gebe die Unterschiede aus in einer externen Datei. 
+b. Vergleiche die Dateien in einem Verzeichnis zueinander und schreibe die Outputs an, die sich unterschieden zu
+einer speziellen Dateien
+c. Vergleiche zwei zwei Verzeichnisse miteinander und gebe die Dateien zurück, die nicht in beiden Verzeichnissen liegen
+schreibe diese Dateien in eine File und speichere es ab --> Man müsste zunächst prüfen, ob es unterverzeichnisse existieren
+The question is how do we get the difference between two directories in Linux? Here, we want to know what files/subdirectories are common in the two directories, those that are present in one directory but not in the other.
+
+The conventional syntax for running diff is as follows:
+
+$ diff [OPTION]… FILES
+$ diff options dir1 dir2 
+By default, its output is ordered alphabetically by file/subdirectory name as shown in the screenshot below. In this command, the -q switch tells diff to report only when files differ.
+$ diff -qr directory-1/ directory-2/ 
+
+output in eine Datei senden
+	Vergleichen ein output mit anderen und sagen, welche Datei sich von anderen unterscheidet
+	ergebnis in eine Liste schreiben und abspeichern
+
 ## 2. User and Group Management
 
 T: _Erstellen Sie einen neuen User "Peter" und geben Sie Ihm "Superuser"-Rechte._
 
 T: _Erstellen Sie eine neue Gruppe "Verkäufer" und fügen Sie den User Peter hinzu_
+
+T: _Ändern Sie das System so, das jeder neue User, alle 90 Tage das Passwort erneuern muss_
+
+T: _Erstellen Sie eine neuen User Stefan, der als Primäre Kunden hat, ein Initialpasswort "kunde" und nach dem ersten Login aufgefordert wird, das Initialpasswort zu ändern._  
 
 T: _Erstellen Sie einen Unterordner "Haus" und ändern Sie die Gruppe zu "Verkäufer" und den Besitzer zu root_
 
@@ -90,6 +97,14 @@ T: _Erstellen Sie einen Softlink und Hardlink auf die Datei "test"._
 T: _Geben Sie dem Prozess "Sleep" eine höhre Priorität, damit dieser schneller ausgeführt wird_
 
 T: _Legen Sie einen Chronjob an, der jede Minute das Skript /tmp/test.sh ausführt_
+
+T: _Legen Sie einen Chronjob an, der das Skript /bin/xyz zwischen 14-15 an jedem 20. des Monats ausführt_
+
+T: _Legen Sie einen Chronjob an, der das Skript /bin/xyz zwischen 14:49 Uhr am 10 des Aprils ausführt_
+
+T: _Legen Sie einen Chronjob an, der das Skript /bin/xyz alle 10 Minuten am 14. eines Monats ausführt_
+
+T: _Prüfen Sie im Verzeichnis /var/logs die Logs und finden Sie einen Eintrag eines Fehlgeschlag Login Versuchs als SU des Users freedom. Geben Sie die Ausgabe in der Datei /tmp/failed_login_ für die spätere Analyse wieder. 
 
 ## 4. Service Configuration
 
