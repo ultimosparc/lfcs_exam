@@ -1,7 +1,61 @@
 
 
 3. Limits für eine Resourse für eine Gruppe festlegen
-4. Textdatei durchsuchen nach Lines die ganz am Ende ganz am Anfang irgendwo in der Mitte ein 
+4. - user limits für beispielsweise eine Gruppe können über die Datei /etc/security/limits.conf definiert werden
+5. - <domain> <type> <item> <value> Aufbau der Einträge in diesem File
+6. - @student          hard           nproc                20 --> Gruppe student wird begrenzt auf 20 Prozesse
+7. - # cat /proc/PID/limits --> da können Grenze für ein bestimmten Prozess bestimmt werden
+8. - *               soft    core            0
+*               hard    nofile          512
+@student        hard    nproc           20
+@faculty        soft    nproc           20
+@faculty        hard    nproc           50
+ftp             hard    nproc           0
+@student        -       maxlogins       4
+:123            hard    cpu             5000
+@500:           soft    cpu             10000
+600:700         hard    locks           10
+	
+	als Beispiel.
+	
+	core
+limits the core file size (KB)
+data
+maximum data size (KB)
+fsize
+maximum filesize (KB)
+memlock
+maximum locked-in-memory address space (KB)
+nofile
+maximum number of open files
+rss
+maximum resident set size (KB) (Ignored in Linux 2.4.30 and higher)
+stack
+maximum stack size (KB)
+cpu
+maximum CPU time (minutes)
+nproc
+maximum number of processes
+as
+address space limit (KB)
+maxlogins
+maximum number of logins for this user except for this with uid=0
+maxsyslogins
+maximum number of all logins on system
+priority
+the priority to run user process with (negative values boost process priority)
+locks
+maximum locked files (Linux 2.4 and higher)
+sigpending
+maximum number of pending signals (Linux 2.6 and higher)
+msgqueue
+maximum memory used by POSIX message queues (bytes) (Linux 2.6 and higher)
+nice
+maximum nice priority allowed to raise to (Linux 2.6.12 and higher) values: [-20,19]
+rtprio
+maximum realtime priority allowed for non-privileged processes (Linux 2.6.12 and higher)
+All items support the values -1, unlimited or infinity indicating no limit, except for priority and nice.
+9. Textdatei durchsuchen nach Lines die ganz am Ende ganz am Anfang irgendwo in der Mitte ein 
 speziesl Wort haben zeilenweise in eine Datexdatei schreiben
 5. Standardport für eine Services von 80 auf 735 festlegen
 6. Den Port eines Services bestimmen
@@ -17,7 +71,71 @@ find Methoden mit exec Anhang
 8. Starte einen Webserver und versichern das er aus gestartet wird mit jed
 em Boot
 9. Login anderen Server speichere die routetable ab
-10. Partition tabelle anlegen, Partition mit bestimmter größe, Filesystem anlegen bestimmtes, 
+
+ip route show
+# route -n
+# netstat -rn
+
+Example 1: Disabling and enabling a network interface
+In this example, we will disable and enable eth1:
+# ip link show
+# ip link set eth1 down
+# ip link show
+
+Using a Linux server to route packages between a private networks and the Internet
+Another scenario where a Linux machine can be used as router is when you need to share your Internet connection with a private LAN.
+
+Router: Debian Wheezy 7.7 [eth0: Public IP, eth1: 10.0.0.15/24] - dev2
+Client: openSUSE 13.2 [enp0s3: 10.0.0.18/24] - dev4
+In addition to set up packet forwarding and the static routing table in the client as in the previous example, we need to add a few iptables rules in the router:
+
+# iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+# iptables -A FORWARD -i eth0 -o eth1 -m state --state RELATED,ESTABLISHED -j ACCEPT
+# iptables -A FORWARD -i eth1 -o eth0 -j ACCEPT
+
+The first command adds a rule to the POSTROUTING chain in the nat (Network Address Translation) table, indicating that the eth0 NIC should be used for outgoing packages.
+
+MASQUERADE indicates that this NIC has a dynamic IP and that before sending the package to the “wild wild world” of the Internet, the private source address of the packet has to be changed to that of the public IP of the router.
+
+In a LAN with many hosts, the router keeps track of established connections in /proc/net/ip_conntrack so it knows where to return the response from the Internet to.
+
+Only part of the output of:
+
+# cat /proc/net/ip_conntrack
+is show in the following screenshot.
+
+Route Packages in Linux
+Route Packages in Linux
+Where the origin (private IP of openSUSE box) and destination (Google DNS) of packets is highlighted. This was the result of running:
+
+# curl www.tecmint.com
+on the openSUSE box.
+
+As I’m sure you can already guess, the router is using Google’s 8.8.8.8 as nameserver, which explains why the destination of outgoing packets points to that address.
+
+Note: That incoming packages from the Internet are only accepted is if they are part of an already established connection (command #2), while outgoing packages are allowed “free exit” (command #3).
+
+Don’t forget to make your iptables rules persistent following the steps outlined in Part 8 – Configure Iptables Firewall of this series.
+
+Using a Linux server to route packets between two private networks
+We want to route icmp (ping) packets from dev2 to dev4 and the other way around as well (note that both client machines are on different networks). The name of each NIC, along with its corresponding IPv4 address, is given inside square brackets.
+
+Our test environment is as follows:
+
+Client 1: CentOS 7 [enp0s3: 192.168.0.17/24] - dev1
+Router: Debian Wheezy 7.7 [eth0: 192.168.0.15/24, eth1: 10.0.0.15/24] - dev2
+Client 2: openSUSE 13.2 [enp0s3: 10.0.0.18/24] - dev4
+Let’s view the routing table in dev1 (CentOS box):
+
+# ip route show
+and then modify it in order to use its enp0s3 NIC and the connection to 192.168.0.15 to access hosts in the 10.0.0.0/24 network:
+
+# ip route add 10.0.0.0/24 via 192.168.0.15 dev enp0s3
+Which essentially reads, “Add a route to the 10.0.0.0/24 network through the enp0s3 network interface using 192.168.0.15 as gateway”.
+
+
+
+11. Partition tabelle anlegen, Partition mit bestimmter größe, Filesystem anlegen bestimmtes, 
 sicherstellen das nach Neustart die Einstellungen noch aktiv sind
 Mounten in das primäre FS, FS Label setzen 
 11. FS System repairen
