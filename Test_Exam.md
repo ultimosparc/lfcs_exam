@@ -1,3 +1,5 @@
+https://github.com/StenlyTU/LFCS-official/blob/main/stuff/UserandGroupManagement.md#configure-user-resource-limits
+
 
 
 3. Limits für eine Resourse für eine Gruppe festlegen
