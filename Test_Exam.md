@@ -61,13 +61,24 @@ All items support the values -1, unlimited or infinity indicating no limit, exce
 speziesl Wort haben zeilenweise in eine Datexdatei schreiben
 5. Standardport für eine Services von 80 auf 735 festlegen
 6. Den Port eines Services bestimmen
-7. Find Methode
+	sudo netstat -ltup | grep software
+8. Find Methode
 	suche nachen Dateien eines bestimmten Mode
+	find / 
 	suche Dateien mit bestimmten rechten
+	# find / -user root -name tecmint.txt
 	suche Dateien nachen bestimmen Namenmuster
+	find . -type f -name "*.php"
 	gebe jeweils die Liste und kopiere die Datien irgendwo hin
+	# find . -type f -name "tecmint.txt" -exec rm -f {} \;
+	# find . -type f -name "tecmint.txt" -exec cp -f / {} \;
 	suche Dateien die nicht einem bestimmten User gehören Negation
+	# find / -type f ! -perm 777
 	suche nach Datein wo bestimmte S permition gesetzt sind	
+	# find / -perm 2644
+	# find / -mtime 50
+	# find / -type f -size +100M -exec rm -f {} \;
+	# find / -perm /u=r
 find Methoden mit exec Anhang
 	
 8. Starte einen Webserver und versichern das er aus gestartet wird mit jed
